@@ -351,10 +351,10 @@ tbody tr:hover td{background:var(--blue-lt)}
     </div>
     <main class="content">
       <div class="stats-row">
-        <div class="stat" style="animation-delay:.04s"><div class="stat-lbl">Total</div><div class="stat-val" id="s-total">—</div><div class="stat-sub">Employees</div></div>
-        <div class="stat" style="animation-delay:.08s"><div class="stat-lbl">Departments</div><div class="stat-val" id="s-depts">—</div><div class="stat-sub">Teams</div></div>
-        <div class="stat" style="animation-delay:.12s"><div class="stat-lbl">Avg tenure</div><div class="stat-val" id="s-tenure">—</div><div class="stat-sub">Years</div></div>
-        <div class="stat" style="animation-delay:.16s"><div class="stat-lbl">Last sync</div><div class="stat-val" id="s-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
+        <div class="stat" ><div class="stat-lbl">Total</div><div class="stat-val" id="s-total">—</div><div class="stat-sub">Employees</div></div>
+        <div class="stat" ><div class="stat-lbl">Departments</div><div class="stat-val" id="s-depts">—</div><div class="stat-sub">Teams</div></div>
+        <div class="stat" ><div class="stat-lbl">Avg tenure</div><div class="stat-val" id="s-tenure">—</div><div class="stat-sub">Years</div></div>
+        <div class="stat" ><div class="stat-lbl">Last sync</div><div class="stat-val" id="s-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
       </div>
       <div id="emp-list"></div>
     </main>
@@ -374,10 +374,10 @@ tbody tr:hover td{background:var(--blue-lt)}
     </div>
     <main class="content">
       <div class="stats-row">
-        <div class="stat" style="animation-delay:.04s"><div class="stat-lbl">Total</div><div class="stat-val" id="vs-total">—</div><div class="stat-sub">Vendors</div></div>
-        <div class="stat" style="animation-delay:.08s"><div class="stat-lbl">Active</div><div class="stat-val" id="vs-active">—</div><div class="stat-sub">Engaged</div></div>
-        <div class="stat" style="animation-delay:.12s"><div class="stat-lbl">Categories</div><div class="stat-val" id="vs-cats">—</div><div class="stat-sub">Service types</div></div>
-        <div class="stat" style="animation-delay:.16s"><div class="stat-lbl">Last sync</div><div class="stat-val" id="vs-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
+        <div class="stat" ><div class="stat-lbl">Total</div><div class="stat-val" id="vs-total">—</div><div class="stat-sub">Vendors</div></div>
+        <div class="stat" ><div class="stat-lbl">Active</div><div class="stat-val" id="vs-active">—</div><div class="stat-sub">Engaged</div></div>
+        <div class="stat" ><div class="stat-lbl">Categories</div><div class="stat-val" id="vs-cats">—</div><div class="stat-sub">Service types</div></div>
+        <div class="stat" ><div class="stat-lbl">Last sync</div><div class="stat-val" id="vs-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
       </div>
       <div id="vnd-list"></div>
     </main>
@@ -751,7 +751,7 @@ function renderEmps() {
   if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-users-off"></i><p>No employees found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add employee</button></div>`;return}
   if(activeView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((e,i)=>`
-      <div class="ecard" style="animation-delay:${Math.min(i*.025,.3)}s" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${e.first} ${e.last}">
+      <div class="ecard" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${e.first} ${e.last}">
         <div class="ctop">${avHtml(e)}<div style="min-width:0"><div class="cname">${e.first} ${e.last}</div><div class="crole">${e.role||'—'}</div><div class="emp-id">${e.id||''}</div></div></div>
         <div class="cmeta">
           <div class="cmr"><i class="ti ti-map-pin"></i><span>${e.loc||'—'}</span></div>
@@ -782,7 +782,7 @@ function renderVnds() {
   if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-building-off"></i><p>No vendors found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add vendor</button></div>`;return}
   if(activeVView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((v,i)=>`
-      <div class="ecard" style="animation-delay:${Math.min(i*.025,.3)}s" onclick="openVndPanel('${v.id}')" tabindex="0" role="button">
+      <div class="ecard" onclick="openVndPanel('${v.id}')" tabindex="0" role="button">
         <div class="ctop">
           <div style="width:46px;height:46px;border-radius:10px;background:var(--blue-lt);display:grid;place-items:center;flex-shrink:0"><i class="ti ti-building-store" style="font-size:20px;color:var(--blue)"></i></div>
           <div style="min-width:0"><div class="cname">${v.company}</div><div class="crole">${v.contact||'—'}</div><div class="emp-id">${v.id||''}</div></div>
