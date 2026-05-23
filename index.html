@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>KN PeopleBase · Employee &amp; Vendor Registry</title>
-<meta name="description" content="KneuralLabs internal employee and vendor registry — structured, precise, always current.">
-<meta property="og:title" content="KN PeopleBase · KneuralLabs">
-<meta property="og:description" content="Internal employee and vendor registry for KneuralLabs. Structured. Precise. Always current.">
+<meta name="description" content="Kneuralabs internal employee and vendor registry — structured, precise, always current.">
+<meta property="og:title" content="KN PeopleBase · Kneuralabs">
+<meta property="og:description" content="Internal employee and vendor registry for Kneuralabs. Structured. Precise. Always current.">
 <meta property="og:image" content="https://db.kneuralabs.com/og.svg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://db.kneuralabs.com">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="KN PeopleBase · KneuralLabs">
+<meta name="twitter:title" content="KN PeopleBase · Kneuralabs">
 <meta name="twitter:image" content="https://db.kneuralabs.com/og.svg">
 <link rel="icon" type="image/png" href="LOGO.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -545,7 +545,7 @@ html{overflow-x:hidden}
       <img src="LOGO.png" alt="KN logo">
       <div>
         <div class="login-logo-text">KN PeopleBase</div>
-        <div class="login-logo-sub">KneuralLabs Internal Registry</div>
+        <div class="login-logo-sub">Kneuralabs Internal Registry</div>
       </div>
     </div>
     <div id="login-step1">
@@ -832,7 +832,7 @@ html{overflow-x:hidden}
 <!-- CONTRACT DETAILS MODAL ──────────────────────────────────────────────── -->
 <div class="modal-bg" id="contract-modal" role="dialog" aria-modal="true">
   <div class="modal">
-    <div class="modal-title"><i class="ti ti-file-text"></i> Job Contract Details</div>
+    <div class="modal-title"><i class="ti ti-file-text"></i> Engagement Agreement Details</div>
     <input type="hidden" id="contract-emp-id">
     <div class="f2">
       <div class="frow"><label class="flbl">Cost to Company (CTC)</label><input id="contract-ctc" placeholder="₹ 12,00,000 per annum"></div>
@@ -1438,6 +1438,7 @@ function openVndPanel(id) {
       </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}
     <div class="panel-actions">
       <button class="btn" onclick="openVndEdit('${v.id}')" title="Edit"><i class="ti ti-edit"></i></button>
+      <button class="btn" onclick="genContract('VND:${v.id}')" title="Service Agreement"><i class="ti ti-file-text"></i></button>
       <button class="btn danger" onclick="deleteVnd('${v.id}')" title="Remove"><i class="ti ti-trash"></i></button>
     </div>`;
   showPanel();
@@ -1573,90 +1574,167 @@ async function deleteVnd(id){
 
 const closeModal=id=>document.getElementById(id).classList.remove('on');
 
-// ── JOB CONTRACT ──────────────────────────────────────────────────────────────
-function genContract(id) {
-  const e=employees.find(x=>x.id===id); if(!e) return;
-  const start=e.start||new Date().toISOString().slice(0,10);
+// ── ENGAGEMENT AGREEMENT ──────────────────────────────────────────────────────
+function genContract(rawId) {
+  const isVnd=rawId.startsWith('VND:');
+  const id=isVnd?rawId.slice(4):rawId;
+  const rec=isVnd?vendors.find(x=>x.id===id):employees.find(x=>x.id===id);
+  if(!rec) return;
+  const start=(isVnd?rec.contractStart:rec.start)||new Date().toISOString().slice(0,10);
   const defaultEnd=(()=>{const d=new Date(start);d.setFullYear(d.getFullYear()+1);return d.toISOString().slice(0,10)})();
-  document.getElementById('contract-emp-id').value=id;
-  document.getElementById('contract-ctc').value=e.ctc||'';
-  document.getElementById('contract-tenure').value=e.tenure||'1 Year';
+  document.getElementById('contract-emp-id').value=rawId;
+  document.getElementById('contract-ctc').value=rec.ctc||'';
+  document.getElementById('contract-tenure').value=rec.tenure||'1 Year';
   document.getElementById('contract-start').value=start;
-  document.getElementById('contract-end').value=e.contractEnd||defaultEnd;
+  document.getElementById('contract-end').value=rec.contractEnd||defaultEnd;
   document.getElementById('contract-modal').classList.add('on');
 }
 async function saveContractAndPrint() {
-  const id=document.getElementById('contract-emp-id').value;
-  const e=employees.find(x=>x.id===id); if(!e) return;
-  e.ctc=document.getElementById('contract-ctc').value.trim();
-  e.tenure=document.getElementById('contract-tenure').value.trim();
-  e.contractEnd=document.getElementById('contract-end').value;
+  const rawId=document.getElementById('contract-emp-id').value;
+  const isVnd=rawId.startsWith('VND:');
+  const id=isVnd?rawId.slice(4):rawId;
+  const ctc=document.getElementById('contract-ctc').value.trim();
+  const tenure=document.getElementById('contract-tenure').value.trim();
+  const contractEnd=document.getElementById('contract-end').value;
+  const contractStart=document.getElementById('contract-start').value;
   closeModal('contract-modal');
-  await saveEmps(`Contract details for ${e.first} ${e.last}`);
-  printContract(e);
+  if(isVnd){
+    const v=vendors.find(x=>x.id===id); if(!v) return;
+    v.ctc=ctc; v.tenure=tenure; v.contractEnd=contractEnd;
+    await saveVnds(`Contract for ${v.company}`);
+    printContract({id:v.id,name:v.company,contactName:v.contact,type:'Vendor',role:v.category,dept:null,
+      addr:[v.premise,v.address,v.city,v.country].filter(Boolean).join(', ')||v.loc||'—',
+      email:v.email,idProofType:null,idProofNum:null,ctc,tenure,start:v.contractStart||contractStart,end:contractEnd,city:v.city});
+  } else {
+    const e=employees.find(x=>x.id===id); if(!e) return;
+    e.ctc=ctc; e.tenure=tenure; e.contractEnd=contractEnd;
+    await saveEmps(`Contract for ${e.first} ${e.last}`);
+    printContract({id:e.id,name:e.first+' '+e.last,contactName:null,type:'Employee',role:e.role,dept:e.dept,
+      addr:[e.premise,e.address,e.city,e.country].filter(Boolean).join(', ')||e.loc||'—',
+      email:e.email,idProofType:e.idProofType,idProofNum:e.idProofNum,ctc,tenure,start:e.start||contractStart,end:contractEnd,city:e.city});
+  }
 }
-function printContract(e) {
-  const start=e.start||new Date().toISOString().slice(0,10);
-  const end=e.contractEnd||(()=>{const d=new Date(start);d.setFullYear(d.getFullYear()+1);return d.toISOString().slice(0,10)})();
-  const addr=[e.premise,e.address,e.city,e.country].filter(Boolean).join(', ')||e.loc||'—';
-  const w=window.open('','_blank','width=900,height=700');
-  w.document.write(`<!DOCTYPE html><html><head><title>Employment Contract — ${e.first} ${e.last}</title>
+function _parseTenureMonths(t){
+  if(!t) return 12;
+  const s=t.toLowerCase(), n=parseInt((s.match(/\d+/)||['1'])[0]);
+  return s.includes('month')?n:n*12;
+}
+function _monthlyAmt(ctc,tenure){
+  const num=parseFloat((ctc||'').replace(/,/g,'').match(/[\d.]+/)||[0]);
+  if(!num) return null;
+  const mo=_parseTenureMonths(tenure);
+  const curr=(ctc||'').match(/[₹$€£¥]/)||[''];
+  return curr[0]+(Math.round(num/mo)).toLocaleString();
+}
+function printContract(p) {
+  const origin=window.location.origin||'https://db.kneuralabs.com';
+  const logoUrl=`${origin}/LOGO.png`;
+  const now=new Date();
+  const fmtDate=d=>{try{return new Date(d).toLocaleDateString('en-US',{day:'2-digit',month:'long',year:'numeric'})}catch{return d||'—'}};
+  const monthly=_monthlyAmt(p.ctc,p.tenure);
+  const isEmp=p.type==='Employee';
+  const partyLabel=isEmp?'Employee':'Service Provider';
+  const w=window.open('','_blank','width=900,height=720');
+  w.document.write(`<!DOCTYPE html><html><head><title>Service Engagement Agreement — ${p.name}</title>
 <style>
-body{font-family:'Georgia',serif;max-width:780px;margin:0 auto;padding:60px 48px;color:#1a1d23;line-height:1.75;font-size:13px}
-.hdr{text-align:center;padding-bottom:24px;border-bottom:2px solid #1C5CAA;margin-bottom:36px}
-.co{font-size:22px;font-weight:700;color:#1C5CAA;letter-spacing:2px;text-transform:uppercase;font-family:'Helvetica',sans-serif}
-.ttl{font-size:15px;font-weight:600;margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px;font-family:'Helvetica',sans-serif}
-.ref{font-size:10px;color:#888;font-family:'Courier New',monospace}
-.sec{margin:28px 0 0}
-.slbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#1C5CAA;border-bottom:1px solid #dde4ec;padding-bottom:4px;margin-bottom:10px;font-family:'Helvetica',sans-serif}
-table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:13px}
-td{padding:5px 8px;vertical-align:top}td:first-child{width:160px;font-weight:600;color:#444;font-family:'Helvetica',sans-serif;font-size:12px}
-.clause{margin:10px 0;font-size:13px}.cn{font-weight:600}
-.sigs{display:flex;justify-content:space-between;margin-top:64px}
-.sb{width:220px;border-top:1px solid #888;padding-top:8px;font-size:12px;font-family:'Helvetica',sans-serif}
-.sbn{font-weight:700;font-size:11px;margin-bottom:32px;text-transform:uppercase;letter-spacing:.06em}
-.foot{text-align:center;margin-top:48px;font-size:10px;color:#aaa;font-family:'Helvetica',sans-serif}
-@media print{body{padding:40px 32px}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#fff;color:#1a1d23;font-size:11.5px;line-height:1.55;padding:36px 48px}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:2.5px solid #1C5CAA;margin-bottom:18px}
+.hdr-left{display:flex;align-items:center;gap:14px}
+.logo{width:44px;height:44px;object-fit:contain}
+.co-block .co-name{font-size:18px;font-weight:800;color:#1C5CAA;letter-spacing:.5px}
+.co-block .co-addr{font-size:9.5px;color:#666;margin-top:2px}
+.co-block .co-web{font-size:9.5px;color:#1C5CAA;margin-top:1px}
+.hdr-right{text-align:right}
+.doc-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#1a1d23}
+.doc-ref{font-size:9px;color:#999;font-family:'Courier New',monospace;margin-top:4px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;margin-bottom:14px}
+.sec{margin-bottom:14px}
+.slbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#1C5CAA;border-bottom:1px solid #dde4ec;padding-bottom:3px;margin-bottom:7px}
+table{width:100%;border-collapse:collapse}
+td{padding:3px 6px;vertical-align:top;font-size:11px}
+td:first-child{width:120px;font-weight:600;color:#555;font-size:10.5px;white-space:nowrap}
+td:last-child{color:#1a1d23}
+.clauses{column-count:2;column-gap:20px;margin-bottom:14px}
+.clause{break-inside:avoid;margin-bottom:8px;font-size:10.5px;line-height:1.5;color:#2a2d33}
+.cn{font-weight:700;color:#1C5CAA}
+.highlight{background:#f0f4fb;border-radius:4px;padding:6px 10px;display:inline-block;font-weight:700;font-size:12px;color:#1C5CAA}
+.sigs{display:flex;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid #e0e6ef;gap:20px}
+.sb{flex:1;min-width:0}
+.sb-line{border-top:1px solid #333;margin-bottom:5px}
+.sbn{font-weight:700;font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:#555;margin-bottom:22px}
+.sb-sub{font-size:10px;color:#555;line-height:1.5}
+.foot{text-align:center;margin-top:14px;font-size:9px;color:#bbb;border-top:1px solid #f0f0f0;padding-top:8px}
+@media print{body{padding:24px 36px}@page{size:A4;margin:0}}
 </style></head><body>
 <div class="hdr">
-  <div class="co">KneuralLabs</div>
-  <div class="ttl">Employment Contract</div>
-  <div class="ref">Ref: ${e.id} &nbsp;·&nbsp; Generated: ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
+  <div class="hdr-left">
+    <img class="logo" src="${logoUrl}" alt="Kneuralabs Logo" onerror="this.style.display='none'">
+    <div class="co-block">
+      <div class="co-name">Kneuralabs</div>
+      <div class="co-addr">345 Buckland Hills Drive, Manchester, Connecticut 06042, US</div>
+      <div class="co-web">kneuralabs.com</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="doc-title">Service Engagement Agreement</div>
+    <div class="doc-ref">Ref: ${p.id} &nbsp;·&nbsp; Date: ${now.toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})}</div>
+  </div>
 </div>
-<div class="sec"><div class="slbl">Employee Information</div>
+
+<div class="two-col">
+<div class="sec"><div class="slbl">${partyLabel} Details</div>
 <table>
-  <tr><td>Full Name</td><td>${e.first} ${e.last}</td></tr>
-  <tr><td>Employee ID</td><td><code>${e.id}</code></td></tr>
-  <tr><td>Designation</td><td>${e.role||'—'}</td></tr>
-  <tr><td>Department</td><td>${e.dept||'—'}</td></tr>
-  <tr><td>Address</td><td>${addr}</td></tr>
-  ${e.email?`<tr><td>Email</td><td>${e.email}</td></tr>`:''}
-  ${e.idProofType?`<tr><td>ID Proof</td><td>${e.idProofType}${e.idProofNum?' · '+e.idProofNum:''}</td></tr>`:''}
+  <tr><td>Full Name</td><td><strong>${p.name}</strong></td></tr>
+  <tr><td>ID / Ref</td><td><code style="font-family:monospace;font-size:10px">${p.id}</code></td></tr>
+  ${p.role?`<tr><td>${isEmp?'Designation':'Category'}</td><td>${p.role}</td></tr>`:''}
+  ${p.dept?`<tr><td>Department</td><td>${p.dept}</td></tr>`:''}
+  ${p.contactName?`<tr><td>Contact Person</td><td>${p.contactName}</td></tr>`:''}
+  ${p.email?`<tr><td>Email</td><td>${p.email}</td></tr>`:''}
+  ${p.addr&&p.addr!=='—'?`<tr><td>Address</td><td>${p.addr}</td></tr>`:''}
+  ${p.idProofType?`<tr><td>ID Proof</td><td>${p.idProofType}${p.idProofNum?' · '+p.idProofNum:''}</td></tr>`:''}
 </table></div>
-<div class="sec"><div class="slbl">Contract Terms</div>
+
+<div class="sec"><div class="slbl">Engagement Terms</div>
 <table>
-  <tr><td>Contract Type</td><td>Fixed Term Employment</td></tr>
-  <tr><td>Start Date</td><td>${start}</td></tr>
-  <tr><td>End Date</td><td>${end}</td></tr>
-  <tr><td>Duration</td><td>${e.tenure||'1 Year'}</td></tr>
-  <tr><td>Cost to Company</td><td><strong>${e.ctc||'As per offer letter'}</strong></td></tr>
+  <tr><td>Type</td><td>Fixed-Term ${isEmp?'Employment':'Service'} Agreement</td></tr>
+  <tr><td>Start Date</td><td>${fmtDate(p.start)}</td></tr>
+  <tr><td>End Date</td><td>${fmtDate(p.end)}</td></tr>
+  <tr><td>Duration</td><td>${p.tenure||'1 Year'}</td></tr>
+  <tr><td>Total Value</td><td><strong>${p.ctc||'As agreed'}</strong></td></tr>
+  ${monthly?`<tr><td>Monthly</td><td><span class="highlight">${monthly} / month</span></td></tr>`:''}
 </table></div>
+</div>
+
 <div class="sec"><div class="slbl">Terms &amp; Conditions</div>
-<div class="clause"><span class="cn">1. Position and Duties.</span> The Employee agrees to serve as ${e.role||'[Role]'} within the ${e.dept||'[Department]'} department and perform all duties reasonably assigned from time to time.</div>
-<div class="clause"><span class="cn">2. Compensation.</span> The Employee shall receive a total Cost to Company (CTC) of ${e.ctc||'[as per offer letter]'} per annum, inclusive of all allowances and deductions as per the compensation structure provided separately.</div>
-<div class="clause"><span class="cn">3. Working Hours.</span> Standard working hours are 9 hours per day, 5 days per week, with flexibility as required by operational needs.</div>
-<div class="clause"><span class="cn">4. Probation Period.</span> The first 90 days shall constitute a probation period; either party may terminate with 7 days' written notice during this period.</div>
-<div class="clause"><span class="cn">5. Confidentiality.</span> The Employee shall not disclose any proprietary, confidential, or trade-secret information of KneuralLabs to any third party during or after employment.</div>
-<div class="clause"><span class="cn">6. Intellectual Property.</span> All work product and intellectual property created during the course of employment shall be the exclusive property of KneuralLabs.</div>
-<div class="clause"><span class="cn">7. Non-Competition.</span> During employment and for 12 months post-termination, the Employee shall not engage with any direct competitor in a similar capacity.</div>
-<div class="clause"><span class="cn">8. Termination.</span> Either party may terminate this contract with 30 days' written notice. KneuralLabs reserves the right to make payment in lieu of notice.</div>
-<div class="clause"><span class="cn">9. Governing Law.</span> This contract is governed by the laws of India; disputes are subject to the exclusive jurisdiction of courts in ${e.city||'[City]'}.</div>
-</div>
+<div class="clauses">
+<div class="clause"><span class="cn">1. Scope of Engagement.</span> ${isEmp?`The Employee shall serve as ${p.role||'the designated role'} within ${p.dept?'the '+p.dept+' department':'the organisation'} and perform all duties reasonably assigned, exercising professional diligence.`:`The Service Provider shall deliver the services described in the mutually agreed scope of work and perform all tasks with professional skill and care.`}</div>
+<div class="clause"><span class="cn">2. Compensation &amp; Payment.</span> The total consideration is ${p.ctc||'as agreed'}${monthly?' payable in monthly instalments of '+monthly:''}. Payments are due on the last business day of each month. Neither party shall withhold amounts except as required by applicable law.</div>
+<div class="clause"><span class="cn">3. ${isEmp?'Work Hours &amp; Location':'Deliverables &amp; Standards'}.</span> ${isEmp?'Standard working hours are 9 hours per day, 5 days a week, with flexibility for operational needs. Remote work may be permitted with prior approval.':'Deliverables shall meet the quality standards specified in the applicable scope of work. Any delays must be communicated promptly with a revised timeline.'}</div>
+<div class="clause"><span class="cn">4. ${isEmp?'Probation Period':'Acceptance &amp; Review'}.</span> ${isEmp?'The initial 90 days constitute a probation period during which either party may terminate with 7 days\' written notice. Satisfactory completion leads to confirmed engagement.':'All deliverables are subject to a 5-business-day review period. Reasonable revision requests will be addressed at no additional cost; material scope changes require a written amendment.'}</div>
+<div class="clause"><span class="cn">5. Confidentiality.</span> Each party shall keep confidential all non-public information disclosed by the other party and shall not use it for any purpose other than fulfilling obligations under this Agreement. This obligation survives termination for 3 years.</div>
+<div class="clause"><span class="cn">6. Intellectual Property.</span> All work product, inventions, and deliverables created under this Agreement are the exclusive property of Kneuralabs upon full payment. ${isEmp?'Pre-existing personal IP of the Employee remains their own.':'The Service Provider retains ownership of pre-existing tools and frameworks.'}</div>
+<div class="clause"><span class="cn">7. Non-Solicitation.</span> During the term and for 12 months after, neither party shall directly solicit the other party's employees, contractors, or clients for competing engagements without prior written consent.</div>
+<div class="clause"><span class="cn">8. Liability Limitation.</span> Neither party shall be liable for indirect, incidental, or consequential damages. Each party's total liability under this Agreement is capped at the total fees paid in the 3 months preceding the event giving rise to the claim.</div>
+<div class="clause"><span class="cn">9. Termination.</span> Either party may terminate this Agreement with 30 days' written notice. Kneuralabs may terminate immediately for material breach, non-performance, or violation of confidentiality. Upon termination, all amounts due for work completed shall be settled within 14 days.</div>
+<div class="clause"><span class="cn">10. Dispute Resolution.</span> Parties shall first attempt good-faith negotiation. Unresolved disputes shall be submitted to binding arbitration under the rules of the jurisdiction in which Kneuralabs is incorporated, before recourse to any court.</div>
+<div class="clause"><span class="cn">11. Amendments.</span> This Agreement may only be modified by a written instrument signed by authorised representatives of both parties. No verbal agreement shall be binding.</div>
+<div class="clause"><span class="cn">12. Entire Agreement.</span> This document constitutes the entire agreement between the parties and supersedes all prior discussions, representations, and understandings relating to its subject matter. If any provision is found unenforceable, the remaining provisions remain in full effect.</div>
+</div></div>
+
 <div class="sigs">
-  <div class="sb"><div class="sbn">Employee</div>${e.first} ${e.last}<br><small style="color:#999">Date: _______________</small></div>
-  <div class="sb"><div class="sbn">Authorised Signatory</div>KneuralLabs<br><small style="color:#999">Date: _______________</small></div>
+  <div class="sb">
+    <div class="sbn">${partyLabel} Signature</div>
+    <div class="sb-line"></div>
+    <div class="sb-sub"><strong>${p.name}</strong><br>${p.role||partyLabel}<br>Date: ________________________</div>
+  </div>
+  <div class="sb">
+    <div class="sbn">Authorised Signatory — Kneuralabs</div>
+    <div class="sb-line"></div>
+    <div class="sb-sub"><strong>Kneuralabs</strong><br>345 Buckland Hills Drive, Manchester, CT 06042, US<br>Date: ________________________</div>
+  </div>
 </div>
-<div class="foot">CONFIDENTIAL &nbsp;·&nbsp; KneuralLabs Internal Document &nbsp;·&nbsp; ${e.id}</div>
+<div class="foot">CONFIDENTIAL &nbsp;·&nbsp; Kneuralabs Engagement Agreement &nbsp;·&nbsp; ${p.id} &nbsp;·&nbsp; kneuralabs.com</div>
 <script>window.onload=()=>{window.focus();window.print()}<\/script>
 </body></html>`);
   w.document.close();
