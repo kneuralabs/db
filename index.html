@@ -433,40 +433,21 @@ html{overflow-x:hidden}
 .login-spinner{display:none;justify-content:center;padding:24px}
 
 /* ── ID CARD OVERLAY ─────────────────────────────────────────────────────── */
-.idcard-overlay{position:fixed;inset:0;background:rgba(10,15,30,.93);z-index:400;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:24px;opacity:0;pointer-events:none;transition:opacity .22s ease}
+.idcard-overlay{position:fixed;inset:0;background:rgba(10,15,30,.93);z-index:400;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:28px;opacity:0;pointer-events:none;transition:opacity .22s ease}
 .idcard-overlay.on{opacity:1;pointer-events:all}
 .idcard-scene{perspective:1200px;cursor:pointer;flex-shrink:0;touch-action:manipulation;position:relative;transition:transform .28s cubic-bezier(.34,1.2,.64,1),opacity .22s}
 .idcard-overlay:not(.on) .idcard-scene{transform:scale(.94) translateY(10px);opacity:0}
 .idcard-overlay.on .idcard-scene{transform:none;opacity:1}
 .idcard-scene:focus{outline:none}
-.idcard-card{position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);width:340px;height:calc(340px * 520 / 340)}
+/* Card always fits viewport: min of max-size, width-based, height-based */
+.idcard-card{position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);width:min(340px,calc(100vw - 56px),calc((100vh - 100px) * 340 / 520));height:calc(min(340px,calc(100vw - 56px),calc((100vh - 100px) * 340 / 520)) * 520 / 340)}
 .idcard-scene.flipped .idcard-card{transform:rotateY(180deg)}
 .idcard-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(10,15,30,.7),0 4px 16px rgba(10,15,30,.4)}
 .idcard-back-face{transform:rotateY(180deg)}
 .idcard-tap-hint{font-size:10px;color:rgba(255,255,255,.38);display:flex;align-items:center;gap:5px;letter-spacing:.02em;pointer-events:none;user-select:none}
-/* Close icon — overlaid on top-right corner of the card */
-.idcard-close-icon{position:absolute;top:-14px;right:-14px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(10,15,30,.82);border:1.5px solid rgba(255,255,255,.22);color:#fff;font-size:15px;cursor:pointer;font-family:inherit;display:grid;place-items:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .15s,transform .15s,border-color .15s;box-shadow:0 2px 16px rgba(0,0,0,.55)}
-.idcard-close-icon:hover{background:rgba(200,40,30,.88);border-color:rgba(200,40,30,.5);transform:scale(1.1)}
-/* Portrait phones — card fills screen with padding + rounded corners */
-@media(max-width:600px) and (orientation:portrait){
-  .idcard-overlay{padding:max(20px,env(safe-area-inset-top,20px)) 20px max(20px,env(safe-area-inset-bottom,20px));gap:10px}
-  .idcard-card{width:calc(100vw - 40px);height:calc((100vw - 40px) * 520 / 340)}
-  .idcard-tap-hint{display:none}
-}
-/* Short portrait — constrain by height */
-@media(max-width:600px) and (orientation:portrait) and (max-height:700px){
-  .idcard-card{height:calc(100vh - 80px);height:calc(100dvh - 80px);width:calc((100vh - 80px) * 340 / 520)}
-}
-/* Landscape phones — constrain by height */
-@media(max-height:500px) and (orientation:landscape){
-  .idcard-overlay{padding:max(14px,env(safe-area-inset-top,14px)) max(20px,env(safe-area-inset-right,20px)) max(14px,env(safe-area-inset-bottom,14px)) max(20px,env(safe-area-inset-left,20px));gap:12px}
-  .idcard-card{height:calc(100vh - 28px);height:calc(100dvh - 28px);width:calc((100dvh - 28px) * 340 / 520);width:calc((100vh - 28px) * 340 / 520)}
-  .idcard-tap-hint{display:none}
-}
-/* Tablet portrait */
-@media(min-width:601px) and (max-width:1024px){
-  .idcard-card{width:min(320px,calc(100vw - 80px));height:calc(min(320px,calc(100vw - 80px)) * 520 / 340)}
-}
+/* Close icon — inside card bounds, top-right, above both faces */
+.idcard-close-icon{position:absolute;top:10px;right:10px;z-index:10;width:32px;height:32px;border-radius:50%;background:rgba(10,15,30,.72);border:1.5px solid rgba(255,255,255,.25);color:#fff;font-size:14px;cursor:pointer;font-family:inherit;display:grid;place-items:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .15s,transform .15s;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.idcard-close-icon:hover{background:rgba(200,40,30,.9);transform:scale(1.1)}
 
 /* ── ID CARD FACES ───────────────────────────────────────────────────────── */
 .kc-front{background:#F5F4EF;display:flex;flex-direction:column;height:100%}
