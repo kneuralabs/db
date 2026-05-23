@@ -367,7 +367,6 @@ html{overflow-x:hidden}
   #search,#search:focus{width:100%}
   .app-tagline,.sync-badge span{display:none}
   .sync-badge{padding:4px 7px}
-  #add-btn-lbl{display:none}
   .vt{display:none}
   .section-tabs{position:relative;top:auto;padding:0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .section-tabs::-webkit-scrollbar{display:none}
@@ -560,14 +559,14 @@ html{overflow-x:hidden}
     <div id="login-step1">
       <div class="login-title">Sign in</div>
       <input id="login-id" class="login-input" type="text" placeholder="Enter admin or Employee ID (e.g. KN-2026-001)" autocomplete="username" onkeydown="if(event.key==='Enter')handleLoginId()">
-      <button class="login-btn" onclick="handleLoginId()"><i class="ti ti-arrow-right"></i> Continue</button>
+      <button class="login-btn" onclick="handleLoginId()" title="Continue"><i class="ti ti-arrow-right"></i></button>
       <div class="login-hint">Employees: enter your ID · Admins: enter <b>admin</b></div>
     </div>
     <div id="login-step2" style="display:none">
-      <button class="login-back" onclick="backToStep1()"><i class="ti ti-arrow-left"></i> Back</button>
+      <button class="login-back" onclick="backToStep1()" title="Back"><i class="ti ti-arrow-left"></i></button>
       <div class="login-title">Admin Password</div>
       <input id="login-pw" class="login-input" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleLoginPw()">
-      <button class="login-btn" onclick="handleLoginPw()"><i class="ti ti-lock-open"></i> Login</button>
+      <button class="login-btn" onclick="handleLoginPw()" title="Login"><i class="ti ti-lock-open"></i></button>
     </div>
     <div id="login-spinner" class="login-spinner"><i class="ti ti-loader spin" style="font-size:24px;color:var(--blue)"></i></div>
     <div id="login-error" class="login-error" style="display:none"><i class="ti ti-alert-circle"></i><span id="login-error-msg"></span></div>
@@ -588,8 +587,8 @@ html{overflow-x:hidden}
       <input id="tp-token" type="password" placeholder="github_pat_…">
       <div class="hint">Contents: read &amp; write permission. Stored in localStorage on this device only.</div>
     </div>
-    <button class="btn primary" style="width:100%;justify-content:center;padding:11px;margin-top:8px" onclick="saveTokenPrompt()">
-      <i class="ti ti-plug"></i> Connect &amp; Load
+    <button class="btn primary" style="width:100%;justify-content:center;padding:11px;margin-top:8px" onclick="saveTokenPrompt()" title="Connect &amp; Load">
+      <i class="ti ti-plug"></i>
     </button>
   </div>
 </div>
@@ -613,17 +612,17 @@ html{overflow-x:hidden}
     <!-- action buttons: always on the same row as the logo -->
     <div class="topbar-actions">
       <button class="btn btn-top icon" onclick="syncNow()" title="Sync" aria-label="Sync"><i class="ti ti-refresh"></i></button>
-      <button class="btn primary icon" onclick="openAdd()" id="add-btn" title="Add" aria-label="Add"><i class="ti ti-plus"></i><span id="add-btn-lbl" style="margin-left:4px">Add</span></button>
+      <button class="btn primary icon" onclick="openAdd()" id="add-btn" title="Add" aria-label="Add"><i class="ti ti-plus"></i></button>
       <button class="btn btn-top icon" onclick="showGhSettings()" title="Settings" aria-label="Settings" id="admin-settings-btn"><i class="ti ti-settings"></i></button>
     </div>
   </header>
 
   <nav class="section-tabs" aria-label="Sections">
-    <button class="stab active" id="tab-employees" onclick="switchSection('employees')" aria-selected="true">
-      <i class="ti ti-users"></i> Employees <span class="stab-count" id="tc-employees">0</span>
+    <button class="stab active" id="tab-employees" onclick="switchSection('employees')" aria-selected="true" title="Employees">
+      <i class="ti ti-users"></i> <span class="stab-count" id="tc-employees">0</span>
     </button>
-    <button class="stab" id="tab-vendors" onclick="switchSection('vendors')" aria-selected="false">
-      <i class="ti ti-building-store"></i> Vendors <span class="stab-count" id="tc-vendors">0</span>
+    <button class="stab" id="tab-vendors" onclick="switchSection('vendors')" aria-selected="false" title="Vendors">
+      <i class="ti ti-building-store"></i> <span class="stab-count" id="tc-vendors">0</span>
     </button>
   </nav>
 
@@ -1152,7 +1151,8 @@ function switchSection(sec) {
   document.getElementById('tab-vendors').classList.toggle('active',sec==='vendors');
   document.getElementById('tab-employees').setAttribute('aria-selected',sec==='employees');
   document.getElementById('tab-vendors').setAttribute('aria-selected',sec==='vendors');
-  document.getElementById('add-btn-lbl').textContent=sec==='employees'?'Add employee':'Add vendor';
+  document.getElementById('add-btn').title=sec==='employees'?'Add employee':'Add vendor';
+  document.getElementById('add-btn').setAttribute('aria-label',sec==='employees'?'Add employee':'Add vendor');
   document.getElementById('search').placeholder=sec==='employees'?'Search employees…':'Search vendors…';
   render();
 }
@@ -1193,7 +1193,7 @@ function docCountBadge(docs) {
 function renderEmps() {
   renderEmpStats();
   const list=filteredEmps(); const el=document.getElementById('emp-list');
-  if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-users-off"></i><p>No employees found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add employee</button></div>`;return}
+  if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-users-off"></i><p>No employees found</p><button class="btn primary icon" onclick="openAdd()" title="Add employee" aria-label="Add employee"><i class="ti ti-plus"></i></button></div>`;return}
   if(activeView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((e,i)=>`
       <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${e.first} ${e.last}">
@@ -1224,7 +1224,7 @@ function renderEmps() {
 function renderVnds() {
   renderVndStats();
   const list=filteredVnds(); const el=document.getElementById('vnd-list');
-  if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-building-off"></i><p>No vendors found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add vendor</button></div>`;return}
+  if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-building-off"></i><p>No vendors found</p><button class="btn primary icon" onclick="openAdd()" title="Add vendor" aria-label="Add vendor"><i class="ti ti-plus"></i></button></div>`;return}
   if(activeVView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((v,i)=>`
       <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openVndPanel('${v.id}')" tabindex="0" role="button">
