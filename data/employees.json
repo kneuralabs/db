@@ -71,6 +71,12 @@
     "idProofNum": "",
     "docs": [],
     "premise": "15113",
-    "country": "United States"
+    "country": "United States",
+    "ctc": "NA",
+    "tenure": "",
+    "contractEnd": "",
+    "revokedAt": "",
+    "idCardGenerated": false,
+    "idCardGeneratedAt": ""
   }
 ]
