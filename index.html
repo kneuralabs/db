@@ -391,6 +391,113 @@ tbody tr:hover td{background:var(--blue-lt)}
   .stat{padding:12px 16px}
   .stat-val{font-size:22px}
 }
+
+/* ── LOGIN SCREEN ────────────────────────────────────────────────────────── */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:36px 32px;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.login-logo img{width:48px;height:48px;border-radius:12px;object-fit:contain}
+.login-logo-text{font-weight:700;font-size:20px;color:var(--blue)}
+.login-logo-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.login-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:18px}
+.login-input{width:100%;padding:11px 14px;border:1.5px solid var(--border-strong);border-radius:var(--r);background:var(--surface2);font-size:14px;color:var(--text);outline:none;font-family:inherit;transition:border-color .15s,box-shadow .15s;margin-bottom:12px}
+.login-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(28,92,170,.12)}
+.login-btn{width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.login-btn:hover{background:var(--blue-dk)}
+.login-btn:active{transform:scale(.98)}
+.login-back{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:14px;background:none;border:none;padding:0;font-family:inherit}
+.login-back:hover{color:var(--text)}
+.login-error{background:var(--red-lt);border:1px solid rgba(200,40,30,.2);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--red);margin-top:10px;display:flex;align-items:center;gap:8px}
+.login-hint{font-size:11px;color:var(--text3);margin-top:8px;text-align:center;line-height:1.6}
+.login-spinner{display:none;justify-content:center;padding:24px}
+
+/* ── ID CARD OVERLAY ─────────────────────────────────────────────────────── */
+.idcard-overlay{position:fixed;inset:0;background:rgba(13,46,90,.88);z-index:400;display:none;align-items:center;justify-content:center;flex-direction:column;padding:16px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.idcard-overlay.on{display:flex}
+.idcard-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;max-height:100vh;width:100%}
+.idcard-scene{perspective:1200px;cursor:pointer;flex-shrink:0;touch-action:manipulation}
+.idcard-scene:focus{outline:none}
+.idcard-card{position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);width:340px;height:520px}
+.idcard-scene.flipped .idcard-card{transform:rotateY(180deg)}
+.idcard-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(13,46,90,.35),0 2px 8px rgba(13,46,90,.2)}
+.idcard-back-face{transform:rotateY(180deg)}
+.idcard-tap-hint{font-size:11px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:6px;letter-spacing:.02em}
+.idcard-close-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 28px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;backdrop-filter:blur(4px)}
+.idcard-close-btn:hover{background:rgba(255,255,255,.2)}
+@media(max-width:379px){
+  .idcard-card{width:calc(100vw - 32px);height:calc((100vw - 32px) * 520 / 340)}
+}
+@media(max-height:640px){
+  .idcard-card{width:260px;height:calc(260 * 520 / 340 * 1px)}
+  .idcard-card{height:398px}
+}
+
+/* ── ID CARD FACES ───────────────────────────────────────────────────────── */
+.kc-front{background:#F5F4EF;display:flex;flex-direction:column;height:100%}
+.kc-front-top{padding:22px 24px 0;flex-shrink:0}
+.kc-front-logo{display:flex;align-items:center;gap:10px}
+.kc-front-logo-box{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#e8edf4;display:flex;align-items:center;justify-content:center}
+.kc-front-logo-box img{width:100%;height:100%;object-fit:contain}
+.kc-front-logo span{font-size:16px;font-weight:700;color:#1a1d23;letter-spacing:-.3px}
+.kc-front-mid{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:0 24px 16px;text-align:right}
+.kc-front-name{font-size:21px;font-weight:700;color:#1a1d23;letter-spacing:-.4px;line-height:1.2}
+.kc-front-role{font-size:12px;color:#6B7280;margin-top:4px;font-weight:500}
+.kc-front-dept{font-size:11px;color:#9BA3AE;margin-top:2px}
+.kc-front-div{height:1px;background:#E0DDD4;margin:0 24px;flex-shrink:0}
+.kc-front-bot{padding:16px 24px;display:flex;align-items:center;flex-shrink:0}
+.kc-front-photo{width:100px;height:100px;flex-shrink:0;overflow:hidden;border-radius:8px}
+.kc-front-idblock{flex:1;text-align:right;padding-left:14px}
+.kc-front-idval{font-size:16px;font-weight:700;color:#1C5CAA;letter-spacing:.5px;font-family:'Courier New',monospace}
+.kc-front-status{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.kc-status-dot{width:7px;height:7px;border-radius:50%}
+.kc-front-footer{padding:8px 24px 6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kc-tap-hint{font-size:10px;color:#B0A898;display:flex;align-items:center;gap:4px}
+.kc-front-security{font-size:9px;color:#C4BAA8;text-align:center;padding-bottom:8px;flex-shrink:0}
+
+.kc-back{background:#F5F4EF;display:flex;flex-direction:column;height:100%}
+.kc-back-stripe{height:5px;display:flex;flex-shrink:0}
+.kc-back-stripe-blue{flex:7;background:#1C5CAA}
+.kc-back-stripe-red{flex:3;background:#C8281E}
+.kc-back-header{padding:10px 18px 6px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.kc-back-co{font-size:12px;font-weight:600;color:#1a1d23}
+.kc-back-yr{font-size:11px;color:#9BA3AE;font-weight:500}
+.kc-back-body{flex:1;display:flex;padding:4px 18px 8px;gap:12px;overflow:hidden;min-height:0}
+.kc-back-fields{flex:1;overflow:hidden}
+.kc-field{padding:5px 0;border-bottom:1px solid #E8E4DA}
+.kc-field:last-child{border-bottom:none}
+.kc-field-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#B0A898;margin-bottom:1px}
+.kc-field-val{font-size:11px;font-weight:500;color:#1a1d23;line-height:1.25;word-break:break-word}
+.kc-back-qr{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.kc-back-qr img{width:56px;height:56px;border-radius:3px}
+.kc-qr-lbl{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9BA3AE}
+.kc-back-strip{background:linear-gradient(90deg,#1C5CAA 65%,#C8281E 65%);padding:8px 18px;text-align:center;font-size:9px;font-weight:700;color:#fff;letter-spacing:.12em;text-transform:uppercase;flex-shrink:0}
+.kc-back-footer{padding:6px 18px 8px;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0}
+.kc-back-sec{font-size:8px;color:#B0A898;display:flex;align-items:center;gap:3px}
+.kc-back-sec-dot{width:4px;height:4px;border-radius:50%;background:#22c55e}
+
+/* ── TOKEN PROMPT ────────────────────────────────────────────────────────── */
+.token-prompt{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px}
+.token-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:32px;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
+
+/* ── MOBILE ADMIN IMPROVEMENTS ───────────────────────────────────────────── */
+@media(max-width:767px){
+  /* Panel action buttons — icon grid */
+  .panel-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding-top:16px;border-top:1px solid var(--border);margin-top:16px}
+  .panel-actions .btn{flex:none;padding:10px;justify-content:center;font-size:0;gap:0;min-height:44px;border-radius:var(--r)}
+  .panel-actions .btn i{font-size:18px}
+  /* Stats compact */
+  .stat-lbl{font-size:9px}
+  /* Topbar tighter */
+  .topbar .app-name{font-size:13px}
+  /* Chips scroll area */
+  .toolbar{gap:4px}
+}
+@media(max-width:479px){
+  .panel-actions{grid-template-columns:repeat(4,1fr)}
+  .panel-actions .btn{min-height:48px}
+  /* Table edit btn icon only */
+  .tbl-edit-lbl{display:none}
+}
 </style>
 <script>(function(){var s=localStorage.getItem('kn_theme'),h=new Date().getHours();document.documentElement.setAttribute('data-theme',s||(h>=6&&h<18?'light':'dark'))})()</script>
 </head>
@@ -399,33 +506,49 @@ tbody tr:hover td{background:var(--blue-lt)}
 <div id="progress-bar" class="progress"></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<!-- SETUP ───────────────────────────────────────────────────────────────────── -->
-<div id="setup-screen" class="setup" style="display:none">
-  <div class="setup-card">
-    <div class="setup-header">
-      <img src="LOGO.png" width="44" height="44" alt="Kneuralabs logo" style="border-radius:8px;object-fit:contain">
+<!-- LOGIN SCREEN ────────────────────────────────────────────────────────────── -->
+<div id="login-screen" class="login-screen" style="display:none">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="LOGO.png" alt="KN logo">
       <div>
-        <div style="font-weight:700;font-size:18px;color:var(--blue)">KN PeopleBase</div>
-        <div style="font-size:12px;color:var(--text3)">KneuralLabs Internal Registry</div>
+        <div class="login-logo-text">KN PeopleBase</div>
+        <div class="login-logo-sub">KneuralLabs Internal Registry</div>
       </div>
     </div>
-    <h2>Connect to GitHub</h2>
-    <p>Your employee and vendor data is stored as JSON files in your GitHub repository — a live master database, accessible from any device, synced in real time.</p>
-    <div class="setup-steps">
-      <b>1.</b> Create a GitHub repo (e.g. <code>kneuralabs/db</code>)<br>
-      <b>2.</b> Enable <b>GitHub Pages</b> → Settings → Pages → Deploy from branch<br>
-      <b>3.</b> Generate a <b>PAT</b>: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained → <i>Contents: read &amp; write</i><br>
-      <b>4.</b> Fill in the fields below and click Connect
+    <div id="login-step1">
+      <div class="login-title">Sign in</div>
+      <input id="login-id" class="login-input" type="text" placeholder="Enter admin or Employee ID (e.g. KN-2026-001)" autocomplete="username" onkeydown="if(event.key==='Enter')handleLoginId()">
+      <button class="login-btn" onclick="handleLoginId()"><i class="ti ti-arrow-right"></i> Continue</button>
+      <div class="login-hint">Employees: enter your ID · Admins: enter <b>admin</b></div>
     </div>
-    <div class="frow"><label class="flbl">GitHub owner / organisation</label><input id="cfg-owner" type="text" placeholder="kneuralabs"></div>
-    <div class="frow"><label class="flbl">Repository name</label><input id="cfg-repo" type="text" placeholder="db"></div>
-    <div class="frow">
-      <label class="flbl">Personal Access Token <span style="color:var(--text3);font-weight:400">— stored locally only</span></label>
-      <input id="cfg-token" type="password" placeholder="github_pat_…">
-      <div class="hint">Never transmitted beyond the GitHub API. Stays in your browser's localStorage.</div>
+    <div id="login-step2" style="display:none">
+      <button class="login-back" onclick="backToStep1()"><i class="ti ti-arrow-left"></i> Back</button>
+      <div class="login-title">Admin Password</div>
+      <input id="login-pw" class="login-input" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleLoginPw()">
+      <button class="login-btn" onclick="handleLoginPw()"><i class="ti ti-lock-open"></i> Login</button>
     </div>
-    <button class="btn primary" style="width:100%;justify-content:center;padding:11px;margin-top:8px" onclick="saveConfig()">
-      <i class="ti ti-plug"></i> Connect &amp; Load Data
+    <div id="login-spinner" class="login-spinner"><i class="ti ti-loader spin" style="font-size:24px;color:var(--blue)"></i></div>
+    <div id="login-error" class="login-error" style="display:none"><i class="ti ti-alert-circle"></i><span id="login-error-msg"></span></div>
+  </div>
+</div>
+
+<!-- TOKEN PROMPT (admin first login, no token saved) ─────────────────────── -->
+<div id="token-prompt" class="token-prompt" style="display:none">
+  <div class="token-card">
+    <div class="login-logo" style="margin-bottom:20px">
+      <img src="LOGO.png" alt="KN logo" style="width:44px;height:44px;border-radius:12px;object-fit:contain">
+      <div>
+        <div class="login-logo-text">Connect to GitHub</div>
+        <div class="login-logo-sub">One-time setup · stored locally</div>
+      </div>
+    </div>
+    <div class="frow"><label class="flbl">GitHub Personal Access Token</label>
+      <input id="tp-token" type="password" placeholder="github_pat_…">
+      <div class="hint">Contents: read &amp; write permission. Stored in localStorage on this device only.</div>
+    </div>
+    <button class="btn primary" style="width:100%;justify-content:center;padding:11px;margin-top:8px" onclick="saveTokenPrompt()">
+      <i class="ti ti-plug"></i> Connect &amp; Load
     </button>
   </div>
 </div>
@@ -444,10 +567,10 @@ tbody tr:hover td{background:var(--blue-lt)}
         <i class="ti ti-search"></i>
         <input id="search" type="search" placeholder="Search…" oninput="render()" aria-label="Search">
       </div>
-      <button class="btn btn-top" onclick="syncNow()" title="Sync" aria-label="Sync"><i class="ti ti-refresh"></i></button>
-      <button class="btn btn-top" onclick="exportCSV()" title="Export CSV" aria-label="Export CSV"><i class="ti ti-download"></i></button>
-      <button class="btn primary" onclick="openAdd()" id="add-btn"><i class="ti ti-plus"></i><span id="add-btn-lbl">Add employee</span></button>
-      <button class="btn btn-top icon" onclick="showSettings()" title="Settings" aria-label="Settings"><i class="ti ti-settings"></i></button>
+      <button class="btn btn-top icon" onclick="syncNow()" title="Sync" aria-label="Sync"><i class="ti ti-refresh"></i></button>
+      <button class="btn btn-top icon" onclick="exportCSV()" title="Export CSV" aria-label="Export CSV"><i class="ti ti-download"></i></button>
+      <button class="btn primary icon" onclick="openAdd()" id="add-btn" title="Add" aria-label="Add"><i class="ti ti-plus"></i><span id="add-btn-lbl" style="margin-left:4px">Add</span></button>
+      <button class="btn btn-top icon" onclick="showGhSettings()" title="Settings" aria-label="Settings" id="admin-settings-btn"><i class="ti ti-settings"></i></button>
     </div>
   </header>
 
@@ -584,6 +707,10 @@ tbody tr:hover td{background:var(--blue-lt)}
       <div class="frow"><label class="flbl">Cost to Company (CTC)</label><input id="f-ctc" placeholder="₹ 12,00,000 p.a."></div>
       <div class="frow"><label class="flbl">Contract tenure</label><input id="f-tenure" placeholder="1 Year"></div>
     </div>
+    <div class="frow">
+      <label class="flbl">Blood Group</label>
+      <select id="f-blood"><option value="">— Select —</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+    </div>
 
     <div class="frow">
       <label class="flbl">Documents <span style="color:var(--text3);font-weight:400">— attach any number of files (max 10 MB each)</span></label>
@@ -597,8 +724,8 @@ tbody tr:hover td{background:var(--blue-lt)}
     </div>
 
     <div class="modal-foot">
-      <button class="btn" onclick="closeModal('emp-modal')">Cancel</button>
-      <button class="btn primary" onclick="saveEmp()"><i class="ti ti-check"></i> Save</button>
+      <button class="btn" onclick="closeModal('emp-modal')" title="Cancel"><i class="ti ti-x"></i></button>
+      <button class="btn primary" onclick="saveEmp()" title="Save"><i class="ti ti-check"></i></button>
     </div>
   </div>
 </div>
@@ -649,26 +776,23 @@ tbody tr:hover td{background:var(--blue-lt)}
     </div>
 
     <div class="modal-foot">
-      <button class="btn" onclick="closeModal('vnd-modal')">Cancel</button>
-      <button class="btn primary" onclick="saveVendor()"><i class="ti ti-check"></i> Save</button>
+      <button class="btn" onclick="closeModal('vnd-modal')" title="Cancel"><i class="ti ti-x"></i></button>
+      <button class="btn primary" onclick="saveVendor()" title="Save"><i class="ti ti-check"></i></button>
     </div>
   </div>
 </div>
 
-<!-- SETTINGS MODAL ──────────────────────────────────────────────────────── -->
+<!-- GITHUB SETTINGS MODAL (admin only) ──────────────────────────────────── -->
 <div class="modal-bg" id="settings-modal" role="dialog" aria-modal="true">
   <div class="modal">
-    <div class="modal-title"><i class="ti ti-settings"></i> GitHub settings</div>
-    <div class="frow"><label class="flbl">Owner / organisation</label><input id="s-owner" placeholder="kneuralabs"></div>
-    <div class="frow"><label class="flbl">Repository</label><input id="s-repo" placeholder="db"></div>
-    <div class="frow">
-      <label class="flbl">Personal Access Token</label>
+    <div class="modal-title"><i class="ti ti-settings"></i> GitHub Settings</div>
+    <div class="frow"><label class="flbl">Personal Access Token</label>
       <input id="s-token" type="password" placeholder="github_pat_…">
       <div class="hint">Stored in localStorage on this device only.</div>
     </div>
     <div class="modal-foot">
-      <button class="btn" onclick="closeModal('settings-modal')">Cancel</button>
-      <button class="btn primary" onclick="updateConfig()"><i class="ti ti-check"></i> Save &amp; reload</button>
+      <button class="btn" onclick="closeModal('settings-modal')"><i class="ti ti-x"></i></button>
+      <button class="btn primary" onclick="updateConfig()"><i class="ti ti-check"></i></button>
     </div>
   </div>
 </div>
@@ -688,9 +812,25 @@ tbody tr:hover td{background:var(--blue-lt)}
     </div>
     <div class="hint" style="margin-bottom:4px">End date defaults to 1 year from start. Edit either date as needed.</div>
     <div class="modal-foot">
-      <button class="btn" onclick="closeModal('contract-modal')">Cancel</button>
-      <button class="btn primary" onclick="saveContractAndPrint()"><i class="ti ti-printer"></i> Save &amp; Generate PDF</button>
+      <button class="btn" onclick="closeModal('contract-modal')" title="Cancel"><i class="ti ti-x"></i></button>
+      <button class="btn primary" onclick="saveContractAndPrint()" title="Save &amp; Print"><i class="ti ti-printer"></i></button>
     </div>
+  </div>
+</div>
+
+<!-- ID CARD OVERLAY ─────────────────────────────────────────────────────── -->
+<div class="idcard-overlay" id="idcard-overlay">
+  <div class="idcard-wrap">
+    <div class="idcard-scene" id="idcard-scene" tabindex="0" role="button" aria-label="Flip card"
+         onclick="this.classList.toggle('flipped')"
+         onkeydown="if(event.key==='Enter'||event.key===' ')this.classList.toggle('flipped')">
+      <div class="idcard-card" id="idcard-card">
+        <div class="idcard-face" id="idcard-front"></div>
+        <div class="idcard-face idcard-back-face" id="idcard-back"></div>
+      </div>
+    </div>
+    <div class="idcard-tap-hint"><i class="ti ti-rotate-clockwise-2"></i> Tap card to flip</div>
+    <button class="idcard-close-btn" onclick="closeIdCard()"><i class="ti ti-x"></i> Close</button>
   </div>
 </div>
 
@@ -700,6 +840,10 @@ tbody tr:hover td{background:var(--blue-lt)}
 // ── STATE ─────────────────────────────────────────────────────────────────────
 const CFG_KEY = 'kn_config';
 let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
+// Ensure defaults
+if(!cfg.owner) cfg.owner='kneuralabs';
+if(!cfg.repo) cfg.repo='db';
+let authedAdmin = false;
 let employees = [], vendors = [];
 let empSha = '', vndSha = '';
 let editEmpId = null, editVndId = null;
@@ -825,6 +969,7 @@ async function writeFile(path,sha,data,msg) {
 }
 
 async function loadData() {
+  initSticky();
   setSyncBadge('loading','Loading…'); setProgress(20);
   try {
     const [er,vr] = await Promise.all([fetchFile(EMP_PATH),fetchFile(VND_PATH)]);
@@ -858,21 +1003,101 @@ async function saveVnds(msg='Update vendors') {
 }
 const syncNow = () => loadData();
 
-// ── CONFIG ────────────────────────────────────────────────────────────────────
-function saveConfig() {
-  const o=document.getElementById('cfg-owner').value.trim(), r=document.getElementById('cfg-repo').value.trim(), t=document.getElementById('cfg-token').value.trim();
-  if(!o||!r||!t){toast('Please fill all fields');return}
-  cfg={owner:o,repo:r,token:t}; localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
-  document.getElementById('setup-screen').style.display='none'; document.getElementById('app').style.display=''; loadData();
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+function showLoginError(msg){
+  const el=document.getElementById('login-error');
+  document.getElementById('login-error-msg').textContent=msg;
+  el.style.display='flex';
+  document.getElementById('login-spinner').style.display='none';
 }
-function showSettings() {
-  document.getElementById('s-owner').value=cfg.owner||''; document.getElementById('s-repo').value=cfg.repo||''; document.getElementById('s-token').value=cfg.token||'';
+function clearLoginError(){document.getElementById('login-error').style.display='none'}
+function backToStep1(){
+  document.getElementById('login-step2').style.display='none';
+  document.getElementById('login-step1').style.display='';
+  document.getElementById('login-pw').value='';
+  clearLoginError();
+  setTimeout(()=>document.getElementById('login-id').focus(),50);
+}
+function handleLoginId(){
+  clearLoginError();
+  const id=document.getElementById('login-id').value.trim();
+  if(!id){showLoginError('Please enter your ID');return}
+  if(id.toLowerCase()==='admin'){
+    document.getElementById('login-step1').style.display='none';
+    document.getElementById('login-step2').style.display='';
+    setTimeout(()=>document.getElementById('login-pw').focus(),50);
+    return;
+  }
+  if(/^KN-\d{4}-\d{3,}$/i.test(id)){
+    lookupEmployeeId(id.toUpperCase());
+    return;
+  }
+  showLoginError('Enter "admin" or your Employee ID (e.g. KN-2026-001)');
+}
+function handleLoginPw(){
+  clearLoginError();
+  const pw=document.getElementById('login-pw').value;
+  if(pw!=='S1ogger$'){
+    showLoginError('Incorrect password');
+    document.getElementById('login-pw').value='';
+    setTimeout(()=>document.getElementById('login-pw').focus(),50);
+    return;
+  }
+  authedAdmin=true;
+  document.getElementById('login-screen').style.display='none';
+  if(!cfg.token){
+    document.getElementById('token-prompt').style.display='';
+  } else {
+    document.getElementById('app').style.display='';
+    loadData();
+  }
+}
+async function lookupEmployeeId(id){
+  clearLoginError();
+  const spinner=document.getElementById('login-spinner');
+  spinner.style.display='flex';
+  document.getElementById('login-step1').querySelector('.login-btn').disabled=true;
+  try{
+    let data=null;
+    // Try public raw first
+    try{
+      const r=await fetch(`https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/main/data/employees.json`);
+      if(r.ok) data=await r.json();
+    }catch(e){}
+    // Fallback: GitHub API with token
+    if(!data&&cfg.token){
+      const r=await fetch(apiUrl(EMP_PATH),{headers:ghHdrs()});
+      if(r.ok){const d=await r.json();data=JSON.parse(atob(d.content.replace(/\n/g,'')))}
+    }
+    if(!data){showLoginError('Could not load employee data. Please try again.');return}
+    const emp=data.find(e=>e.id&&e.id.toUpperCase()===id);
+    if(!emp){showLoginError('Employee does not exist.');return}
+    document.getElementById('login-screen').style.display='none';
+    showIdCardOverlay(emp);
+  }catch(e){showLoginError('Error: '+e.message)}
+  finally{
+    spinner.style.display='none';
+    document.getElementById('login-step1').querySelector('.login-btn').disabled=false;
+  }
+}
+
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+function saveTokenPrompt(){
+  const t=document.getElementById('tp-token').value.trim();
+  if(!t){toast('Please enter your GitHub token');return}
+  cfg.token=t; localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+  document.getElementById('token-prompt').style.display='none';
+  document.getElementById('app').style.display='';
+  loadData();
+}
+function showGhSettings(){
+  document.getElementById('s-token').value=cfg.token||'';
   document.getElementById('settings-modal').classList.add('on');
 }
-function updateConfig() {
-  const o=document.getElementById('s-owner').value.trim(), r=document.getElementById('s-repo').value.trim(), t=document.getElementById('s-token').value.trim();
-  if(!o||!r||!t){toast('Please fill all fields');return}
-  cfg={owner:o,repo:r,token:t}; localStorage.setItem(CFG_KEY,JSON.stringify(cfg)); closeModal('settings-modal'); loadData();
+function updateConfig(){
+  const t=document.getElementById('s-token').value.trim();
+  if(!t){toast('Please enter a token');return}
+  cfg.token=t; localStorage.setItem(CFG_KEY,JSON.stringify(cfg)); closeModal('settings-modal'); loadData();
 }
 
 // ── SECTION SWITCH ────────────────────────────────────────────────────────────
@@ -1117,6 +1342,7 @@ function openEmpPanel(id) {
     <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Start date</span><span class="dv">${e.start||'—'}</span></div>
     <div class="drow"><i class="ti ti-clock"></i><span class="dk">Tenure</span><span class="dv">${e.start?tenure(e.start)+' yrs':'—'}</span></div>
     <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${sBadge(e.status||'Active')}</span></div>
+    ${e.blood?`<div class="drow"><i class="ti ti-droplet"></i><span class="dk">Blood Group</span><span class="dv" style="font-weight:700;color:var(--red)">${e.blood}</span></div>`:''}
     <div class="drow"><i class="ti ti-id"></i><span class="dk">Employee ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${e.id}</span></div>
     ${e.ctc||e.tenure||e.contractEnd?`<div class="slbl">Contract</div>
     ${e.ctc?`<div class="drow"><i class="ti ti-currency-rupee"></i><span class="dk">CTC</span><span class="dv">${e.ctc}</span></div>`:''}
@@ -1132,15 +1358,14 @@ function openEmpPanel(id) {
         <button class="doc-btn dl" onclick="downloadDoc(${JSON.stringify(d).replace(/'/g,'\\x27')})" title="Download"><i class="ti ti-download"></i></button>
         <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
       </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}
-    <div class="panel-actions" style="flex-wrap:wrap;gap:6px">
-      <button class="btn" style="flex:1;min-width:120px" onclick="openEmpEdit('${e.id}')"${revoked?' disabled style="flex:1;min-width:120px;opacity:.4"':''}>
-        <i class="ti ti-edit"></i> Edit</button>
-      <button class="btn" style="flex:1;min-width:120px" onclick="genContract('${e.id}')"><i class="ti ti-file-text"></i> Job Contract</button>
-      <button class="btn" style="flex:1;min-width:120px" onclick="genIdCard('${e.id}')"><i class="ti ti-id-badge-2"></i> ID Card</button>
+    <div class="panel-actions">
+      <button class="btn" onclick="openEmpEdit('${e.id}')" title="Edit"${revoked?' disabled style="opacity:.4"':''}><i class="ti ti-edit"></i></button>
+      <button class="btn" onclick="genContract('${e.id}')" title="Job Contract"><i class="ti ti-file-text"></i></button>
+      <button class="btn" onclick="genIdCard('${e.id}')" title="ID Card"><i class="ti ti-id-badge-2"></i></button>
       ${revoked
-        ?`<button class="btn" style="flex:1;min-width:120px;opacity:.4;color:var(--red)" disabled><i class="ti ti-ban"></i> Revoked</button>`
-        :`<button class="btn danger" style="flex:1;min-width:120px" onclick="revokeEmp('${e.id}')"><i class="ti ti-ban"></i> Revoke</button>`}
-      <button class="btn danger" style="flex:1;min-width:120px" onclick="deleteEmp('${e.id}')"><i class="ti ti-trash"></i> Remove</button>
+        ?`<button class="btn" style="opacity:.4;color:var(--red)" disabled title="Revoked"><i class="ti ti-ban"></i></button>`
+        :`<button class="btn danger" onclick="revokeEmp('${e.id}')" title="Revoke"><i class="ti ti-ban"></i></button>`}
+      <button class="btn danger" onclick="deleteEmp('${e.id}')" title="Remove"><i class="ti ti-trash"></i></button>
     </div>`;
   showPanel();
 }
@@ -1180,8 +1405,8 @@ function openVndPanel(id) {
         <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
       </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}
     <div class="panel-actions">
-      <button class="btn" style="flex:1" onclick="openVndEdit('${v.id}')"><i class="ti ti-edit"></i> Edit</button>
-      <button class="btn danger" style="flex:1" onclick="deleteVnd('${v.id}')"><i class="ti ti-trash"></i> Remove</button>
+      <button class="btn" onclick="openVndEdit('${v.id}')" title="Edit"><i class="ti ti-edit"></i></button>
+      <button class="btn danger" onclick="deleteVnd('${v.id}')" title="Remove"><i class="ti ti-trash"></i></button>
     </div>`;
   showPanel();
 }
@@ -1221,7 +1446,7 @@ function openEmpAdd(){
   editEmpId=null; pendingPhoto=null; docsPending=[]; docsToDelete=[];
   document.getElementById('emp-modal-title').textContent='Add employee';
   ['f-first','f-last','f-role','f-loc','f-email','f-phone','f-address','f-city','f-pin','f-idnum','f-premise','f-ctc','f-tenure'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-date').value=''; document.getElementById('f-status').value='Active'; document.getElementById('f-dept').value='Engineering'; document.getElementById('f-idtype').value=''; document.getElementById('f-country').value=''; document.getElementById('f-isd').textContent='—';
+  document.getElementById('f-date').value=''; document.getElementById('f-status').value='Active'; document.getElementById('f-dept').value='Engineering'; document.getElementById('f-idtype').value=''; document.getElementById('f-country').value=''; document.getElementById('f-isd').textContent='—'; document.getElementById('f-blood').value='';
   resetPhotoUI(); renderModalDocs('emp');
   document.getElementById('emp-modal').classList.add('on');
 }
@@ -1239,7 +1464,7 @@ function openEmpEdit(id){
   document.getElementById('f-pin').value=e.pin||''; document.getElementById('f-idtype').value=e.idProofType||'';
   document.getElementById('f-idnum').value=e.idProofNum||''; document.getElementById('f-premise').value=e.premise||'';
   document.getElementById('f-country').value=e.country||''; document.getElementById('f-isd').textContent=e.country?(COUNTRY_ISD[e.country]||'—'):'—';
-  document.getElementById('f-ctc').value=e.ctc||''; document.getElementById('f-tenure').value=e.tenure||'';
+  document.getElementById('f-ctc').value=e.ctc||''; document.getElementById('f-tenure').value=e.tenure||''; document.getElementById('f-blood').value=e.blood||'';
   if(e.photo){document.getElementById('photo-preview').innerHTML=`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover">`;document.getElementById('photo-lbl-text').textContent='Photo on file — click to change'}
   else resetPhotoUI();
   document.getElementById('f-photo').value='';
@@ -1258,7 +1483,7 @@ async function saveEmp(){
   const newDocs=[];
   for(const f of docsPending){try{newDocs.push(await uploadDoc('emp',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
   const prev=editEmpId?employees.find(e=>e.id===editEmpId):{};
-  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,premise:document.getElementById('f-premise').value.trim(),address:document.getElementById('f-address').value.trim(),city:document.getElementById('f-city').value.trim(),pin:document.getElementById('f-pin').value.trim(),country:document.getElementById('f-country').value,idProofType:document.getElementById('f-idtype').value,idProofNum:document.getElementById('f-idnum').value.trim(),ctc:document.getElementById('f-ctc').value.trim(),tenure:document.getElementById('f-tenure').value.trim(),contractEnd:prev.contractEnd||'',revokedAt:prev.revokedAt||'',idCardGenerated:prev.idCardGenerated||false,idCardGeneratedAt:prev.idCardGeneratedAt||'',photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
+  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,premise:document.getElementById('f-premise').value.trim(),address:document.getElementById('f-address').value.trim(),city:document.getElementById('f-city').value.trim(),pin:document.getElementById('f-pin').value.trim(),country:document.getElementById('f-country').value,idProofType:document.getElementById('f-idtype').value,idProofNum:document.getElementById('f-idnum').value.trim(),ctc:document.getElementById('f-ctc').value.trim(),tenure:document.getElementById('f-tenure').value.trim(),blood:document.getElementById('f-blood').value,contractEnd:prev.contractEnd||'',revokedAt:prev.revokedAt||'',idCardGenerated:prev.idCardGenerated||false,idCardGeneratedAt:prev.idCardGeneratedAt||'',photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
   if(editEmpId) Object.assign(employees.find(e=>e.id===editEmpId),data);
   else employees.push({id,...data});
   closeModal('emp-modal'); render();
@@ -1408,10 +1633,16 @@ td{padding:5px 8px;vertical-align:top}td:first-child{width:160px;font-weight:600
 // ── ID CARD ───────────────────────────────────────────────────────────────────
 function genIdCard(id) {
   const e=employees.find(x=>x.id===id); if(!e) return;
+  showIdCardOverlay(e);
+  e.idCardGenerated=true; e.idCardGeneratedAt=new Date().toISOString().slice(0,10);
+  saveEmps(`ID card generated for ${e.first} ${e.last}`);
+}
+
+function showIdCardOverlay(e) {
   const ini=(e.first[0]||'')+(e.last[0]||'');
-  const photoFront=e.photo
+  const photoHtml=e.photo
     ?`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${e.first} ${e.last}">`
-    :`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8edf4;font-size:36px;font-weight:700;color:#1C5CAA;letter-spacing:-1px">${ini}</div>`;
+    :`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8edf4;font-size:32px;font-weight:700;color:#1C5CAA">${ini}</div>`;
   const startFmt=e.start?new Date(e.start).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
   const yr=e.start?new Date(e.start).getFullYear():new Date().getFullYear();
   const statusColor=e.status==='Revoked'?'#C8281E':e.status==='Active'?'#085041':'#633806';
@@ -1420,163 +1651,82 @@ function genIdCard(id) {
   const origin=window.location.origin||'https://db.kneuralabs.com';
   const logoUrl=`${origin}/LOGO.png`;
   const qrData=encodeURIComponent(`${e.id}|${e.first} ${e.last}|${e.role||''}|${e.dept||''}`);
-  const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=80x80&color=0D2E5A&bgcolor=F5F4EF&data=${qrData}`;
+  const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=56x56&color=0D2E5A&bgcolor=F5F4EF&data=${qrData}`;
 
-  const w=window.open('','_blank','width=520,height=760');
-  w.document.write(`<!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KneuralID — ${e.first} ${e.last}</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;background:#e9edf2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;user-select:none}
-/* ── top bar (mimics app) */
-.bar{position:fixed;top:0;left:0;right:0;height:52px;background:#0D2E5A;display:flex;align-items:center;padding:0 20px;gap:10px;z-index:10}
-.bar img{width:28px;height:28px;object-fit:contain}
-.bar-title{font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px}
-.bar-back{margin-left:auto;font-size:11px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:4px;cursor:pointer}
-.bar-theme{margin-left:8px;width:30px;height:30px;border:1px solid rgba(255,255,255,.2);border-radius:50%;background:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:14px;display:grid;place-items:center}
-/* ── scene */
-.scene{perspective:1200px;width:340px;cursor:pointer;margin-top:52px}
-.scene:focus{outline:none}
-/* ── card */
-.card{width:340px;height:520px;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1)}
-.scene.flipped .card{transform:rotateY(180deg)}
-/* ── faces */
-.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(13,46,90,.18),0 2px 8px rgba(13,46,90,.12)}
-.back-face{transform:rotateY(180deg)}
-/* ── FRONT ── */
-.front{background:#F5F4EF;display:flex;flex-direction:column}
-.front-top{padding:28px 28px 0;flex-shrink:0}
-.front-logo{display:flex;align-items:center;gap:10px}
-.front-logo img{width:36px;height:36px;object-fit:contain}
-.front-logo span{font-size:18px;font-weight:700;color:#1a1d23;letter-spacing:-.3px}
-.front-mid{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:0 28px 20px;text-align:right}
-.front-name{font-size:22px;font-weight:700;color:#1a1d23;letter-spacing:-.4px;line-height:1.2}
-.front-role{font-size:13px;color:#6B7280;margin-top:5px;font-weight:500}
-.front-dept{font-size:12px;color:#9BA3AE;margin-top:3px}
-.front-div{height:1px;background:#E0DDD4;margin:0 28px;flex-shrink:0}
-.front-bot{padding:20px 28px;display:flex;align-items:center;gap:0;flex-shrink:0}
-.front-photo{width:110px;height:110px;flex-shrink:0;overflow:hidden;border-radius:6px}
-.front-idblock{flex:1;text-align:right;padding-left:16px}
-.front-idval{font-size:18px;font-weight:700;color:#1C5CAA;letter-spacing:.5px;font-family:'Courier New',monospace}
-.front-status{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
-.status-dot{width:7px;height:7px;border-radius:50%}
-.front-footer{padding:10px 28px 14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.tap-hint{font-size:10px;color:#B0A898;display:flex;align-items:center;gap:4px}
-.front-security{font-size:9px;color:#C4BAA8;text-align:center;padding-bottom:10px;flex-shrink:0}
-/* ── BACK ── */
-.back{background:#F5F4EF;display:flex;flex-direction:column}
-.back-stripe{height:5px;display:flex;flex-shrink:0;border-radius:0}
-.back-stripe-blue{flex:7;background:#1C5CAA}
-.back-stripe-red{flex:3;background:#C8281E}
-.back-header{padding:16px 24px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.back-co{font-size:13px;font-weight:600;color:#1a1d23}
-.back-yr{font-size:12px;color:#9BA3AE;font-weight:500}
-.back-fields{flex:1;padding:0 24px;overflow:hidden}
-.field{padding:9px 0;border-bottom:1px solid #E8E4DA}
-.field:last-child{border-bottom:none}
-.field-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#B0A898;margin-bottom:3px}
-.field-val{font-size:13px;font-weight:500;color:#1a1d23;line-height:1.3}
-.back-bot{padding:16px 24px 12px;display:flex;align-items:flex-end;justify-content:flex-end;flex-shrink:0}
-.qr-block{display:flex;flex-direction:column;align-items:center;gap:4px}
-.qr-block img{width:80px;height:80px;border-radius:4px}
-.qr-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9BA3AE}
-.back-strip{background:linear-gradient(90deg,#1C5CAA 65%,#C8281E 65%);padding:10px 24px;text-align:center;font-size:10px;font-weight:700;color:#fff;letter-spacing:.12em;text-transform:uppercase;flex-shrink:0}
-.back-footer{padding:8px 24px 10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-shrink:0}
-.back-sec-item{font-size:9px;color:#B0A898;display:flex;align-items:center;gap:3px}
-.back-sec-dot{width:4px;height:4px;border-radius:50%;background:#22c55e}
-/* ── print btn */
-.actions{display:flex;gap:10px;margin-top:18px}
-.pbtn{padding:9px 22px;background:#1C5CAA;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:background .15s}
-.pbtn:hover{background:#0D2E5A}
-.pbtn.sec{background:transparent;color:#6B7280;border:1px solid #d1d5db}
-.pbtn.sec:hover{background:#f3f4f6}
-@media print{body{background:#fff;padding:0;justify-content:flex-start}.bar,.actions,.back-footer{display:none}.scene{margin-top:10px}}
-</style></head><body>
-<div class="bar">
-  <img src="${logoUrl}" alt="Kneuralabs logo">
-  <span class="bar-title">Employee Portal</span>
-  <span class="bar-back">‹</span>
-  <button class="bar-theme" onclick="document.body.style.background=document.body.style.background==\\'#111827\\'?\\'#e9edf2\\':\\'#111827\\'" title="toggle bg">◐</button>
-</div>
-
-<div class="scene" id="scene" tabindex="0" role="button" aria-label="Flip card" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' ')this.classList.toggle('flipped')">
-  <div class="card">
-
-    <!-- FRONT -->
-    <div class="face front">
-      <div class="front-top">
-        <div class="front-logo">
-          <img src="${logoUrl}" alt="Kneuralabs">
+  // Build front face
+  document.getElementById('idcard-front').innerHTML=`
+    <div class="kc-front">
+      <div class="kc-front-top">
+        <div class="kc-front-logo">
+          <div class="kc-front-logo-box"><img src="${logoUrl}" alt="KN"></div>
           <span>Kneuralabs</span>
         </div>
       </div>
-      <div class="front-mid">
-        <div class="front-name">${e.first} ${e.last}</div>
-        <div class="front-role">${e.role||'Employee'}</div>
-        <div class="front-dept">${e.dept||'—'}</div>
+      <div class="kc-front-mid">
+        <div class="kc-front-name">${e.first} ${e.last}</div>
+        <div class="kc-front-role">${e.role||'Employee'}</div>
+        <div class="kc-front-dept">${e.dept||'—'}</div>
       </div>
-      <div class="front-div"></div>
-      <div class="front-bot">
-        <div class="front-photo">${photoFront}</div>
-        <div class="front-idblock">
-          <div class="front-idval">${e.id}</div>
-          <div class="front-status">
-            <div class="status-dot" style="background:${statusDot}"></div>
+      <div class="kc-front-div"></div>
+      <div class="kc-front-bot">
+        <div class="kc-front-photo">${photoHtml}</div>
+        <div class="kc-front-idblock">
+          <div class="kc-front-idval">${e.id}</div>
+          <div class="kc-front-status">
+            <div class="kc-status-dot" style="background:${statusDot}"></div>
             <span style="color:${statusColor}">${e.status||'Active'}</span>
           </div>
         </div>
       </div>
-      <div class="front-footer">
-        <span class="tap-hint">↺ tap card to flip</span>
-      </div>
-      <div class="front-security">Internal &nbsp;·&nbsp; Secure KneuralID &nbsp;·&nbsp; Do not share</div>
-    </div>
+      <div class="kc-front-footer"><span class="kc-tap-hint">↺ tap to flip</span></div>
+      <div class="kc-front-security">Internal · Secure KneuralID · Do not share</div>
+    </div>`;
 
-    <!-- BACK -->
-    <div class="face back-face back">
-      <div class="back-stripe"><div class="back-stripe-blue"></div><div class="back-stripe-red"></div></div>
-      <div class="back-header">
-        <span class="back-co">Kneuralabs</span>
-        <span class="back-yr">${yr}</span>
-      </div>
-      <div class="back-fields">
-        <div class="field"><div class="field-lbl">ID</div><div class="field-val">${e.id}</div></div>
-        <div class="field"><div class="field-lbl">Joined</div><div class="field-val">${startFmt}</div></div>
-        ${e.email?`<div class="field"><div class="field-lbl">Email</div><div class="field-val">${e.email}</div></div>`:''}
-        ${e.phone?`<div class="field"><div class="field-lbl">Phone</div><div class="field-val">${e.phone}</div></div>`:''}
-        <div class="field"><div class="field-lbl">Dept</div><div class="field-val">${e.dept||'—'}</div></div>
-        ${locStr!=='—'?`<div class="field"><div class="field-lbl">Location</div><div class="field-val">${locStr}</div></div>`:''}
-      </div>
-      <div class="back-bot">
-        <div class="qr-block">
-          <img src="${qrUrl}" alt="QR code" crossorigin="anonymous">
-          <span class="qr-lbl">Scan to verify</span>
+  // Build back face
+  document.getElementById('idcard-back').innerHTML=`
+    <div class="kc-back">
+      <div class="kc-back-stripe"><div class="kc-back-stripe-blue"></div><div class="kc-back-stripe-red"></div></div>
+      <div class="kc-back-header"><span class="kc-back-co">Kneuralabs</span><span class="kc-back-yr">${yr}</span></div>
+      <div class="kc-back-body">
+        <div class="kc-back-fields">
+          <div class="kc-field"><div class="kc-field-lbl">Employee ID</div><div class="kc-field-val">${e.id}</div></div>
+          <div class="kc-field"><div class="kc-field-lbl">Joined</div><div class="kc-field-val">${startFmt}</div></div>
+          ${e.email?`<div class="kc-field"><div class="kc-field-lbl">Email</div><div class="kc-field-val" style="font-size:10px">${e.email}</div></div>`:''}
+          ${e.phone?`<div class="kc-field"><div class="kc-field-lbl">Phone</div><div class="kc-field-val">${e.phone}</div></div>`:''}
+          <div class="kc-field"><div class="kc-field-lbl">Department</div><div class="kc-field-val">${e.dept||'—'}</div></div>
+          ${locStr!=='—'?`<div class="kc-field"><div class="kc-field-lbl">Location</div><div class="kc-field-val">${locStr}</div></div>`:''}
+          ${e.blood?`<div class="kc-field"><div class="kc-field-lbl">Blood Group</div><div class="kc-field-val" style="color:#C8281E;font-weight:700">${e.blood}</div></div>`:''}
+        </div>
+        <div class="kc-back-qr">
+          <img src="${qrUrl}" alt="QR" crossorigin="anonymous">
+          <span class="kc-qr-lbl">Verify</span>
         </div>
       </div>
-      <div class="back-strip">Authorized Personnel Only</div>
-      <div class="back-footer">
-        <span class="back-sec-item"><span class="back-sec-dot"></span>Read-only</span>
-        <span class="back-sec-item">Password protected</span>
-        <span class="back-sec-item">Secure KneuralID</span>
-        <span class="back-sec-item">Do not share</span>
+      <div class="kc-back-strip">Authorized Personnel Only</div>
+      <div class="kc-back-footer">
+        <span class="kc-back-sec"><span class="kc-back-sec-dot"></span>Read-only</span>
+        <span class="kc-back-sec">Secure KneuralID</span>
       </div>
-    </div>
+    </div>`;
 
-  </div>
-</div>
+  // Reset flip state and show overlay
+  document.getElementById('idcard-scene').classList.remove('flipped');
+  document.getElementById('idcard-overlay').classList.add('on');
+  // Prevent body scroll
+  document.body.style.overflow='hidden';
+}
 
-<div class="actions">
-  <button class="pbtn" onclick="window.print()">Print / Save PDF</button>
-  <button class="pbtn sec" onclick="document.getElementById('scene').classList.toggle('flipped')">Flip card</button>
-</div>
-
-</body></html>`);
-  w.document.close();
-  e.idCardGenerated=true; e.idCardGeneratedAt=new Date().toISOString().slice(0,10);
-  saveEmps(`ID card generated for ${e.first} ${e.last}`);
+function closeIdCard(){
+  document.getElementById('idcard-overlay').classList.remove('on');
+  document.body.style.overflow='';
+  // If came from login (not admin), go back to login
+  if(!authedAdmin){
+    document.getElementById('login-screen').style.display='';
+    document.getElementById('login-step1').style.display='';
+    document.getElementById('login-step2').style.display='none';
+    document.getElementById('login-id').value='';
+    clearLoginError();
+  }
 }
 
 // ── REVOKE EMPLOYMENT ─────────────────────────────────────────────────────────
@@ -1631,9 +1781,9 @@ function initSticky(){
   window.addEventListener('resize',update,{passive:true});
 }
 function init(){
-  initTheme(); populateCountrySelects(); initSticky();
-  if(!cfg.owner||!cfg.repo||!cfg.token) document.getElementById('setup-screen').style.display='';
-  else{document.getElementById('app').style.display='';loadData()}
+  initTheme(); populateCountrySelects();
+  document.getElementById('login-screen').style.display='';
+  setTimeout(()=>document.getElementById('login-id').focus(),100);
 }
 init();
 </script>
