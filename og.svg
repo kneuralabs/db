@@ -23,8 +23,9 @@
   <!-- KN Logo mark -->
   <g transform="translate(80, 220)">
     <rect width="140" height="140" rx="22" fill="#1C5CAA"/>
-    <polygon points="88,24 130,70 88,116" fill="#C8281E"/>
-    <polygon points="18,24 60,24 96,70 60,116 18,116 54,70" fill="#D0D2D6"/>
+    <polygon points="52,70 130,48 130,92" fill="#C8281E"/>
+    <polygon points="26,70 130,8 130,48 52,70" fill="#D0D2D6"/>
+    <polygon points="26,70 130,132 130,92 52,70" fill="#D0D2D6"/>
   </g>
 
   <!-- App name -->
