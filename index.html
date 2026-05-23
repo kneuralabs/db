@@ -1059,6 +1059,7 @@ function handleLoginPw(){
   }
   authedAdmin=true;
   document.getElementById('login-screen').style.display='none';
+  document.getElementById('theme-btn').style.display='';
   if(!cfg.token){
     document.getElementById('token-prompt').style.display='';
   } else {
@@ -1813,7 +1814,6 @@ function showIdCardOverlay(e) {
 
 function closeIdCard(){
   document.getElementById('idcard-overlay').classList.remove('on');
-  document.getElementById('theme-btn').style.display='';
   document.body.style.overflow='';
   // If came from login (not admin), go back to login
   if(!authedAdmin){
@@ -1822,6 +1822,8 @@ function closeIdCard(){
     document.getElementById('login-step2').style.display='none';
     document.getElementById('login-id').value='';
     clearLoginError();
+  } else {
+    document.getElementById('theme-btn').style.display='';
   }
 }
 
@@ -1883,6 +1885,7 @@ function initSticky(){
 function init(){
   initTheme(); populateCountrySelects();
   document.getElementById('login-screen').style.display='';
+  document.getElementById('theme-btn').style.display='none';
   setTimeout(()=>document.getElementById('login-id').focus(),100);
 }
 init();
