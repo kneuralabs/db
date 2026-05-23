@@ -70,13 +70,17 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 /* ── TOPBAR ───────────────────────────────────────────────────────────────── */
 .topbar{background:var(--blue-dk);padding:0 24px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
 .logo-mark{width:34px;height:34px;flex-shrink:0;border-radius:8px}
+.topbar-brand{flex-shrink:0;min-width:0}
 .app-name{font-weight:700;font-size:15px;letter-spacing:-.3px;color:#fff;white-space:nowrap}
 .app-tagline{font-size:11px;color:rgba(255,255,255,.45);white-space:nowrap}
-.sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;transition:all .2s;white-space:nowrap}
+/* centre: badge + search — grows to fill the middle */
+.topbar-center{flex:1 1 auto;display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+/* right: action buttons — never shrinks */
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;transition:all .2s;white-space:nowrap;flex-shrink:0}
 .sync-badge.ok{background:rgba(28,92,170,.3);color:#7BB8F0}
 .sync-badge.err{background:rgba(200,40,30,.25);color:#F08080}
 .sync-badge.loading{background:rgba(255,255,255,.1);color:rgba(255,255,255,.45)}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
 
 .search-wrap{position:relative;display:flex;align-items:center}
 .search-wrap i{position:absolute;left:10px;font-size:14px;color:rgba(255,255,255,.4);pointer-events:none}
@@ -299,7 +303,10 @@ html{overflow-x:hidden}
 
 /* ── 768–1023px Tablet portrait ── */
 @media(min-width:768px) and (max-width:1023px){
-  .topbar{padding:0 20px}
+  .topbar{padding:0 20px;gap:10px}
+  .app-tagline{display:none}
+  #search{width:150px}
+  #search:focus{width:200px}
   .section-tabs{padding:0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .section-tabs::-webkit-scrollbar{display:none}
   .toolbar{padding:10px 20px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -321,12 +328,16 @@ html{overflow-x:hidden}
 
 /* ── 480–767px Large phone / small tablet portrait ── */
 @media(min-width:480px) and (max-width:767px){
-  .topbar{height:auto;padding:8px 16px;flex-wrap:wrap;gap:8px}
-  .sync-badge{padding:4px 8px}
-  .topbar-right{order:10;flex:1 1 100%;margin-left:0}
-  .search-wrap{order:0;flex:1 1 auto}
+  /* Row 1: logo + brand(grows) + action buttons */
+  .topbar{height:auto;padding:8px 16px;flex-wrap:wrap;column-gap:8px;row-gap:6px}
+  .topbar-brand{flex:1 1 auto}
+  .topbar-actions{flex-shrink:0}
+  /* Row 2: badge + search (full-width) */
+  .topbar-center{order:10;flex:1 1 100%;justify-content:flex-start;gap:8px}
+  .search-wrap{flex:1 1 auto}
   #search,#search:focus{width:100%}
   .app-tagline,.sync-badge span{display:none}
+  .sync-badge{padding:4px 8px}
   .section-tabs{padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .section-tabs::-webkit-scrollbar{display:none}
   .toolbar{padding:8px 16px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -346,12 +357,17 @@ html{overflow-x:hidden}
 
 /* ── ≤479px Mobile portrait ── */
 @media(max-width:479px){
-  .topbar{height:auto;padding:8px 14px;flex-wrap:wrap;gap:6px}
-  .sync-badge{padding:4px 7px}
-  .topbar-right{order:10;flex:1 1 100%;margin-left:0}
-  .search-wrap{order:0;flex:1 1 auto}
+  /* Row 1: logo + brand(grows) + action buttons */
+  .topbar{height:auto;padding:8px 14px;flex-wrap:wrap;column-gap:6px;row-gap:6px}
+  .topbar-brand{flex:1 1 auto}
+  .topbar-actions{flex-shrink:0}
+  /* Row 2: badge icon + search (full-width) */
+  .topbar-center{order:10;flex:1 1 100%;justify-content:flex-start;gap:6px}
+  .search-wrap{flex:1 1 auto}
   #search,#search:focus{width:100%}
   .app-tagline,.sync-badge span{display:none}
+  .sync-badge{padding:4px 7px}
+  #add-btn-lbl{display:none}
   .vt{display:none}
   .section-tabs{position:relative;top:auto;padding:0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .section-tabs::-webkit-scrollbar{display:none}
@@ -375,7 +391,6 @@ html{overflow-x:hidden}
   .modal-foot .btn{width:100%;justify-content:center;padding:12px}
   .setup{margin:20px auto;padding:12px}
   .setup-card{padding:20px 16px}
-  #add-btn-lbl{display:none}
   .toast{bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 28px);white-space:normal;text-align:center}
   .theme-btn{bottom:calc(16px + env(safe-area-inset-bottom,0px));right:auto;left:50%;transform:translateX(-50%);width:44px;height:44px}
   .theme-btn:hover{transform:translateX(-50%) scale(1.1)}
@@ -394,11 +409,12 @@ html{overflow-x:hidden}
 /* ── Short landscape (height ≤ 500px) – phones sideways ── */
 @media(max-height:500px) and (orientation:landscape){
   /* Single-row topbar — override any portrait flex-wrap */
-  .topbar{height:44px;min-height:44px;padding:0 max(16px,env(safe-area-inset-left,0px));flex-wrap:nowrap}
-  .topbar-right{order:0;flex:0 0 auto;margin-left:auto}
-  .search-wrap{order:0;flex:1 1 auto;max-width:220px}
-  #search{width:100%}
-  #search:focus{width:100%}
+  .topbar{height:44px;min-height:44px;padding:0 max(16px,env(safe-area-inset-left,0px));flex-wrap:nowrap;gap:8px}
+  .topbar-brand{flex:0 0 auto}
+  .topbar-center{order:0;flex:1 1 auto;justify-content:flex-end;gap:8px}
+  .topbar-actions{flex-shrink:0}
+  .search-wrap{flex:1 1 auto;max-width:200px}
+  #search,#search:focus{width:100%}
   .app-tagline,.sync-badge span{display:none}
   .sync-badge{padding:4px 8px}
   .section-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 max(12px,env(safe-area-inset-left,0px))}
@@ -578,18 +594,21 @@ html{overflow-x:hidden}
 <div id="app" style="display:none">
   <header class="topbar">
     <img src="LOGO.png" class="logo-mark" alt="Kneuralabs logo" style="object-fit:contain">
-    <div>
+    <div class="topbar-brand">
       <div class="app-name">KN PeopleBase</div>
       <div class="app-tagline">Employee &amp; Vendor Registry</div>
     </div>
-    <div class="topbar-right">
+    <!-- badge + search: fills middle, drops to row 2 on mobile -->
+    <div class="topbar-center">
       <span class="sync-badge loading" id="sync-badge"><i class="ti ti-loader spin"></i> <span>Loading</span></span>
       <div class="search-wrap">
         <i class="ti ti-search"></i>
         <input id="search" type="search" placeholder="Search…" oninput="render()" aria-label="Search">
       </div>
+    </div>
+    <!-- action buttons: always on the same row as the logo -->
+    <div class="topbar-actions">
       <button class="btn btn-top icon" onclick="syncNow()" title="Sync" aria-label="Sync"><i class="ti ti-refresh"></i></button>
-
       <button class="btn primary icon" onclick="openAdd()" id="add-btn" title="Add" aria-label="Add"><i class="ti ti-plus"></i><span id="add-btn-lbl" style="margin-left:4px">Add</span></button>
       <button class="btn btn-top icon" onclick="showGhSettings()" title="Settings" aria-label="Settings" id="admin-settings-btn"><i class="ti ti-settings"></i></button>
     </div>
