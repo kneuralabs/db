@@ -48,7 +48,9 @@
     "idProofNum": "",
     "docs": [],
     "premise": "15113",
-    "country": "United States"
+    "country": "United States",
+    "idCardGenerated": true,
+    "idCardGeneratedAt": "2026-05-23"
   },
   {
     "id": "KN-2026-003",
