@@ -127,7 +127,7 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 .content{padding:24px;max-width:1400px;margin:0 auto}
 
 .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;position:relative;overflow:hidden;animation:up .3s var(--ease) both}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;position:relative;overflow:hidden;animation:up .28s var(--ease) both;will-change:transform,opacity}
 .stat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue)}
 .stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px}
 .stat-val{font-size:26px;font-weight:700;letter-spacing:-.5px;color:var(--blue)}
@@ -135,7 +135,7 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 
 /* ── GRID ─────────────────────────────────────────────────────────────────── */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-.ecard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;cursor:pointer;transition:transform .2s var(--ease),border-color .15s,box-shadow .2s var(--ease);animation:up .22s var(--ease) both}
+.ecard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;cursor:pointer;transition:transform .2s var(--ease),border-color .15s,box-shadow .2s var(--ease);animation:up .24s var(--ease) both;will-change:transform,opacity}
 .ecard:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:var(--shadow)}
 .ecard:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .ecard:active{transform:scale(.98)}
@@ -249,7 +249,9 @@ tbody tr:hover td{background:var(--blue-lt)}
 .empty p{font-size:14px;color:var(--text3);margin-bottom:16px}
 .spin{display:inline-block;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink-active{0%,100%{opacity:1}50%{opacity:.45}}
+.active-blink{animation:blink-active 2.2s ease-in-out infinite}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--canvas);padding:10px 20px;border-radius:var(--r);font-size:13px;font-weight:500;z-index:300;transition:transform .25s var(--ease);white-space:nowrap;box-shadow:var(--shadow-lg)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .progress{height:2px;background:var(--blue-sky);position:fixed;top:0;left:0;z-index:400;transition:width .3s var(--ease);width:0}
@@ -431,42 +433,37 @@ html{overflow-x:hidden}
 .login-spinner{display:none;justify-content:center;padding:24px}
 
 /* ── ID CARD OVERLAY ─────────────────────────────────────────────────────── */
-.idcard-overlay{position:fixed;inset:0;background:rgba(13,46,90,.88);z-index:400;display:none;align-items:center;justify-content:center;flex-direction:column;padding:16px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-.idcard-overlay.on{display:flex}
-.idcard-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;max-height:100vh;width:100%}
-.idcard-scene{perspective:1200px;cursor:pointer;flex-shrink:0;touch-action:manipulation}
+.idcard-overlay{position:fixed;inset:0;background:rgba(10,15,30,.93);z-index:400;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .22s ease}
+.idcard-overlay.on{opacity:1;pointer-events:all}
+.idcard-scene{perspective:1200px;cursor:pointer;flex-shrink:0;touch-action:manipulation;position:relative;transition:transform .28s cubic-bezier(.34,1.2,.64,1),opacity .22s}
+.idcard-overlay:not(.on) .idcard-scene{transform:scale(.94) translateY(10px);opacity:0}
+.idcard-overlay.on .idcard-scene{transform:none;opacity:1}
 .idcard-scene:focus{outline:none}
 .idcard-card{position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);width:340px;height:520px}
 .idcard-scene.flipped .idcard-card{transform:rotateY(180deg)}
-.idcard-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(13,46,90,.35),0 2px 8px rgba(13,46,90,.2)}
+.idcard-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;overflow:hidden;box-shadow:0 16px 56px rgba(10,15,30,.6),0 4px 12px rgba(10,15,30,.4)}
 .idcard-back-face{transform:rotateY(180deg)}
-.idcard-tap-hint{font-size:11px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:6px;letter-spacing:.02em}
-.idcard-close-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 28px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;backdrop-filter:blur(4px)}
-.idcard-close-btn:hover{background:rgba(255,255,255,.2)}
-/* Mobile portrait — scale card to fit viewport with room for controls */
+.idcard-tap-hint{font-size:10px;color:rgba(255,255,255,.38);display:flex;align-items:center;gap:5px;letter-spacing:.02em;pointer-events:none;user-select:none}
+/* Close icon — floating icon overlaid on top-right of the card */
+.idcard-close-icon{position:absolute;top:-14px;right:-14px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(10,15,30,.78);border:1.5px solid rgba(255,255,255,.22);color:#fff;font-size:15px;cursor:pointer;font-family:inherit;display:grid;place-items:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .15s,transform .15s,border-color .15s;box-shadow:0 2px 16px rgba(0,0,0,.5)}
+.idcard-close-icon:hover{background:rgba(200,40,30,.85);border-color:rgba(200,40,30,.6);transform:scale(1.1)}
+/* Mobile — card fills the entire screen */
 @media(max-width:767px){
-  .idcard-overlay{padding:12px;overflow-y:auto;justify-content:flex-start;padding-top:max(16px,env(safe-area-inset-top,0px))}
-  .idcard-wrap{gap:12px;padding-bottom:max(16px,env(safe-area-inset-bottom,0px));min-height:min-content}
-  .idcard-card{width:min(300px,calc(100vw - 24px));height:calc(min(300px,calc(100vw - 24px)) * 520 / 340)}
-  .idcard-close-btn{min-width:min(300px,calc(100vw - 24px));padding:13px 28px}
+  .idcard-overlay{gap:0;padding:0}
+  .idcard-scene{width:100vw;height:100vh;height:100dvh;perspective:2400px}
+  .idcard-card{width:100%;height:100%;border-radius:0!important}
+  .idcard-face{border-radius:0!important;box-shadow:none}
+  .idcard-tap-hint{display:none}
+  .idcard-close-icon{position:fixed;top:max(14px,env(safe-area-inset-top,14px));right:max(14px,env(safe-area-inset-right,14px));width:40px;height:40px;font-size:17px}
 }
-@media(max-width:379px){
-  .idcard-card{width:calc(100vw - 24px);height:calc((100vw - 24px) * 520 / 340)}
-}
-/* Short viewport portrait (small phones with address bar) */
-@media(max-height:640px) and (orientation:portrait){
-  .idcard-overlay{overflow-y:auto;justify-content:flex-start;padding-top:8px}
-  .idcard-wrap{gap:8px}
-  .idcard-card{width:min(240px,calc(100vw - 24px));height:calc(min(240px,calc(100vw - 24px)) * 520 / 340)}
-}
-/* Landscape phones — horizontal layout */
+/* Landscape phones */
 @media(max-height:500px) and (orientation:landscape){
-  .idcard-overlay{flex-direction:row;align-items:center;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));gap:16px;justify-content:center;overflow-x:auto}
-  .idcard-wrap{flex-direction:row;align-items:center;gap:16px;max-height:100%;width:auto;flex-shrink:0}
-  .idcard-scene{flex-shrink:0}
-  .idcard-card{width:auto;height:calc(100vh - 24px);aspect-ratio:340/520}
-  .idcard-tap-hint{writing-mode:vertical-rl;font-size:10px}
-  .idcard-close-btn{flex-direction:column;padding:12px 14px;min-width:0}
+  .idcard-overlay{gap:0;padding:0}
+  .idcard-scene{width:100vw;height:100vh;height:100dvh;perspective:2400px}
+  .idcard-card{width:auto;height:100%;border-radius:0!important;aspect-ratio:340/520}
+  .idcard-face{border-radius:0!important;box-shadow:none}
+  .idcard-tap-hint{display:none}
+  .idcard-close-icon{position:fixed;top:max(14px,env(safe-area-inset-top,14px));right:max(14px,env(safe-area-inset-right,14px))}
 }
 
 /* ── ID CARD FACES ───────────────────────────────────────────────────────── */
@@ -633,10 +630,10 @@ html{overflow-x:hidden}
     </div>
     <main class="content">
       <div class="stats-row">
-        <div class="stat" ><div class="stat-lbl">Total</div><div class="stat-val" id="s-total">—</div><div class="stat-sub">Employees</div></div>
-        <div class="stat" ><div class="stat-lbl">Departments</div><div class="stat-val" id="s-depts">—</div><div class="stat-sub">Teams</div></div>
-        <div class="stat" ><div class="stat-lbl">Avg tenure</div><div class="stat-val" id="s-tenure">—</div><div class="stat-sub">Years</div></div>
-        <div class="stat" ><div class="stat-lbl">Last sync</div><div class="stat-val" id="s-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
+        <div class="stat" style="animation-delay:0ms"><div class="stat-lbl">Total</div><div class="stat-val" id="s-total">—</div><div class="stat-sub">Employees</div></div>
+        <div class="stat" style="animation-delay:60ms"><div class="stat-lbl">Departments</div><div class="stat-val" id="s-depts">—</div><div class="stat-sub">Teams</div></div>
+        <div class="stat" style="animation-delay:120ms"><div class="stat-lbl">Avg tenure</div><div class="stat-val" id="s-tenure">—</div><div class="stat-sub">Years</div></div>
+        <div class="stat" style="animation-delay:180ms"><div class="stat-lbl">Last sync</div><div class="stat-val" id="s-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
       </div>
       <div id="emp-list"></div>
     </main>
@@ -656,10 +653,10 @@ html{overflow-x:hidden}
     </div>
     <main class="content">
       <div class="stats-row">
-        <div class="stat" ><div class="stat-lbl">Total</div><div class="stat-val" id="vs-total">—</div><div class="stat-sub">Vendors</div></div>
-        <div class="stat" ><div class="stat-lbl">Active</div><div class="stat-val" id="vs-active">—</div><div class="stat-sub">Engaged</div></div>
-        <div class="stat" ><div class="stat-lbl">Categories</div><div class="stat-val" id="vs-cats">—</div><div class="stat-sub">Service types</div></div>
-        <div class="stat" ><div class="stat-lbl">Last sync</div><div class="stat-val" id="vs-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
+        <div class="stat" style="animation-delay:0ms"><div class="stat-lbl">Total</div><div class="stat-val" id="vs-total">—</div><div class="stat-sub">Vendors</div></div>
+        <div class="stat" style="animation-delay:60ms"><div class="stat-lbl">Active</div><div class="stat-val" id="vs-active">—</div><div class="stat-sub">Engaged</div></div>
+        <div class="stat" style="animation-delay:120ms"><div class="stat-lbl">Categories</div><div class="stat-val" id="vs-cats">—</div><div class="stat-sub">Service types</div></div>
+        <div class="stat" style="animation-delay:180ms"><div class="stat-lbl">Last sync</div><div class="stat-val" id="vs-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
       </div>
       <div id="vnd-list"></div>
     </main>
@@ -852,18 +849,16 @@ html{overflow-x:hidden}
 
 <!-- ID CARD OVERLAY ─────────────────────────────────────────────────────── -->
 <div class="idcard-overlay" id="idcard-overlay">
-  <div class="idcard-wrap">
-    <div class="idcard-scene" id="idcard-scene" tabindex="0" role="button" aria-label="Flip card"
-         onclick="this.classList.toggle('flipped')"
-         onkeydown="if(event.key==='Enter'||event.key===' ')this.classList.toggle('flipped')">
-      <div class="idcard-card" id="idcard-card">
-        <div class="idcard-face" id="idcard-front"></div>
-        <div class="idcard-face idcard-back-face" id="idcard-back"></div>
-      </div>
+  <div class="idcard-scene" id="idcard-scene" tabindex="0" role="button" aria-label="Flip card"
+       onclick="this.classList.toggle('flipped')"
+       onkeydown="if(event.key==='Enter'||event.key===' ')this.classList.toggle('flipped')">
+    <div class="idcard-card" id="idcard-card">
+      <div class="idcard-face" id="idcard-front"></div>
+      <div class="idcard-face idcard-back-face" id="idcard-back"></div>
     </div>
-    <div class="idcard-tap-hint"><i class="ti ti-rotate-clockwise-2"></i> Tap card to flip</div>
-    <button class="idcard-close-btn" onclick="closeIdCard()"><i class="ti ti-x"></i> Close</button>
+    <button class="idcard-close-icon" onclick="event.stopPropagation();closeIdCard()" aria-label="Close ID card"><i class="ti ti-x"></i></button>
   </div>
+  <div class="idcard-tap-hint"><i class="ti ti-rotate-clockwise-2"></i> Tap to flip</div>
 </div>
 
 <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme"></button>
@@ -931,7 +926,7 @@ function initTheme(){const s=localStorage.getItem(THEME_KEY),h=new Date().getHou
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 const initials = n => n.trim().split(/\s+/).map(x=>x[0]||'').join('').slice(0,2).toUpperCase();
 const tenure = s => { const y=(Date.now()-new Date(s))/(1000*60*60*24*365.25); return y<1?'<1':y.toFixed(1) };
-const badge = (txt,map) => { const c=map[txt]||map._; return `<span class="badge" style="background:${c.bg};color:${c.c}">${txt}</span>` };
+const badge = (txt,map) => { const c=map[txt]||map._; return `<span class="badge${txt==='Active'?' active-blink':''}" style="background:${c.bg};color:${c.c}">${txt}</span>` };
 const dBadge = d => badge(d,DC);
 const cBadge = c => badge(c,VC);
 const sBadge = s => badge(s,SC);
@@ -1185,7 +1180,7 @@ function renderEmps() {
   if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-users-off"></i><p>No employees found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add employee</button></div>`;return}
   if(activeView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((e,i)=>`
-      <div class="ecard" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${e.first} ${e.last}">
+      <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${e.first} ${e.last}">
         <div class="ctop">${avHtml(e)}<div style="min-width:0"><div class="cname">${e.first} ${e.last}</div><div class="crole">${e.role||'—'}</div><div class="emp-id">${e.id||''}</div></div></div>
         <div class="cmeta">
           <div class="cmr"><i class="ti ti-map-pin"></i><span>${e.loc||'—'}</span></div>
@@ -1216,7 +1211,7 @@ function renderVnds() {
   if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-building-off"></i><p>No vendors found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add vendor</button></div>`;return}
   if(activeVView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((v,i)=>`
-      <div class="ecard" onclick="openVndPanel('${v.id}')" tabindex="0" role="button">
+      <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openVndPanel('${v.id}')" tabindex="0" role="button">
         <div class="ctop">
           <div style="width:46px;height:46px;border-radius:10px;background:var(--blue-lt);display:grid;place-items:center;flex-shrink:0"><i class="ti ti-building-store" style="font-size:20px;color:var(--blue)"></i></div>
           <div style="min-width:0"><div class="cname">${v.company}</div><div class="crole">${v.contact||'—'}</div><div class="emp-id">${v.id||''}</div></div>
@@ -1759,6 +1754,7 @@ function showIdCardOverlay(e) {
   const yr=e.start?new Date(e.start).getFullYear():new Date().getFullYear();
   const statusColor=e.status==='Revoked'?'#C8281E':e.status==='Active'?'#085041':'#633806';
   const statusDot=e.status==='Revoked'?'#C8281E':e.status==='Active'?'#22c55e':'#f59e0b';
+  const activeClass=e.status==='Active'?' active-blink':'';
   const locStr=[e.city,e.country].filter(Boolean).join(', ')||e.loc||'—';
   const origin=window.location.origin||'https://db.kneuralabs.com';
   const logoUrl=`${origin}/LOGO.png`;
@@ -1785,8 +1781,8 @@ function showIdCardOverlay(e) {
         <div class="kc-front-idblock">
           <div class="kc-front-idval">${e.id}</div>
           <div class="kc-front-status">
-            <div class="kc-status-dot" style="background:${statusDot}"></div>
-            <span style="color:${statusColor}">${e.status||'Active'}</span>
+            <div class="kc-status-dot${activeClass}" style="background:${statusDot}"></div>
+            <span class="${activeClass.trim()}" style="color:${statusColor}">${e.status||'Active'}</span>
           </div>
         </div>
       </div>
@@ -1873,7 +1869,11 @@ let toastT;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3000)}
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closePanel();closeModal('emp-modal');closeModal('vnd-modal');closeModal('settings-modal')}
+  if(e.key==='Escape'){
+    const ov=document.getElementById('idcard-overlay');
+    if(ov&&ov.classList.contains('on')){closeIdCard();return}
+    closePanel();closeModal('emp-modal');closeModal('vnd-modal');closeModal('settings-modal');closeModal('contract-modal');
+  }
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.getElementById('search').focus()}
   if(e.key==='Enter'&&e.target.classList.contains('ecard'))e.target.click();
 });
