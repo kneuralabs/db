@@ -322,7 +322,7 @@ html{overflow-x:hidden}
 /* ── 480–767px Large phone / small tablet portrait ── */
 @media(min-width:480px) and (max-width:767px){
   .topbar{height:auto;padding:8px 16px;flex-wrap:wrap;gap:8px}
-  .sync-badge{margin-left:auto;padding:4px 8px}
+  .sync-badge{padding:4px 8px}
   .topbar-right{order:10;flex:1 1 100%;margin-left:0}
   .search-wrap{order:0;flex:1 1 auto}
   #search,#search:focus{width:100%}
@@ -345,7 +345,7 @@ html{overflow-x:hidden}
 /* ── ≤479px Mobile portrait ── */
 @media(max-width:479px){
   .topbar{height:auto;padding:8px 14px;flex-wrap:wrap;gap:6px}
-  .sync-badge{margin-left:auto;padding:4px 7px}
+  .sync-badge{padding:4px 7px}
   .topbar-right{order:10;flex:1 1 100%;margin-left:0}
   .search-wrap{order:0;flex:1 1 auto}
   #search,#search:focus{width:100%}
@@ -392,7 +392,6 @@ html{overflow-x:hidden}
 @media(max-height:500px) and (orientation:landscape){
   /* Single-row topbar — override any portrait flex-wrap */
   .topbar{height:44px;min-height:44px;padding:0 max(16px,env(safe-area-inset-left,0px));flex-wrap:nowrap}
-  .sync-badge{margin-left:0}
   .topbar-right{order:0;flex:0 0 auto;margin-left:auto}
   .search-wrap{order:0;flex:1 1 auto;max-width:220px}
   #search{width:100%}
@@ -580,8 +579,8 @@ html{overflow-x:hidden}
       <div class="app-name">KN PeopleBase</div>
       <div class="app-tagline">Employee &amp; Vendor Registry</div>
     </div>
-    <span class="sync-badge loading" id="sync-badge"><i class="ti ti-loader spin"></i> <span>Loading</span></span>
     <div class="topbar-right">
+      <span class="sync-badge loading" id="sync-badge"><i class="ti ti-loader spin"></i> <span>Loading</span></span>
       <div class="search-wrap">
         <i class="ti ti-search"></i>
         <input id="search" type="search" placeholder="Search…" oninput="render()" aria-label="Search">
