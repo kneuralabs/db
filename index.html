@@ -69,7 +69,7 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 
 /* ── TOPBAR ───────────────────────────────────────────────────────────────── */
 .topbar{background:var(--blue-dk);padding:0 24px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
-.logo-mark{width:34px;height:34px;flex-shrink:0}
+.logo-mark{width:34px;height:34px;flex-shrink:0;border-radius:8px}
 .app-name{font-weight:700;font-size:15px;letter-spacing:-.3px;color:#fff;white-space:nowrap}
 .app-tagline{font-size:11px;color:rgba(255,255,255,.45);white-space:nowrap}
 .sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;transition:all .2s;white-space:nowrap}
@@ -153,7 +153,7 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.02em}
 
 /* ── TABLE ────────────────────────────────────────────────────────────────── */
-.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;animation:up .2s var(--ease)}
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow-x:auto;-webkit-overflow-scrolling:touch;animation:up .2s var(--ease)}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
 th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border);background:var(--surface2);cursor:pointer;user-select:none;white-space:nowrap}
 th:hover{color:var(--text);background:var(--surface2)}
@@ -256,12 +256,17 @@ tbody tr:hover td{background:var(--blue-lt)}
 
 /* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
 
+/* Prevent horizontal overflow site-wide */
+html{overflow-x:hidden}
+
 /* Dynamic sticky chain — JS ResizeObserver sets --topbar-h and --tabs-h */
 :root{--topbar-h:56px;--tabs-h:42px}
 
 /* Safe-area insets (notch / home bar) */
 .topbar{padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.section-tabs{padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
 .content{padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.pb{padding-bottom:max(20px,env(safe-area-inset-bottom,0px))}
 .toast{bottom:max(24px,env(safe-area-inset-bottom,0px))}
 .theme-btn{bottom:max(24px,env(safe-area-inset-bottom,0px));right:max(24px,env(safe-area-inset-right,0px))}
 
@@ -293,8 +298,10 @@ tbody tr:hover td{background:var(--blue-lt)}
 /* ── 768–1023px Tablet portrait ── */
 @media(min-width:768px) and (max-width:1023px){
   .topbar{padding:0 20px}
-  .section-tabs{padding:0 20px}
-  .toolbar{padding:10px 20px}
+  .section-tabs{padding:0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .section-tabs::-webkit-scrollbar{display:none}
+  .toolbar{padding:10px 20px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .toolbar::-webkit-scrollbar{display:none}
   .content{padding:18px 20px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
   .stats-row{grid-template-columns:repeat(4,1fr)}
@@ -302,12 +309,21 @@ tbody tr:hover td{background:var(--blue-lt)}
   td:nth-child(5),th:nth-child(5),td:nth-child(6),th:nth-child(6){display:none}
 }
 
-/* ── 480–767px Mobile landscape / large phone ── */
+/* ── Tablet landscape (768-1024px, short viewport) ── */
+@media(min-width:768px) and (max-width:1024px) and (orientation:landscape) and (max-height:768px){
+  .stats-row{grid-template-columns:repeat(4,1fr)}
+  .content{padding:12px 20px}
+  .stat{padding:12px 16px}
+  .stat-val{font-size:22px}
+}
+
+/* ── 480–767px Large phone / small tablet portrait ── */
 @media(min-width:480px) and (max-width:767px){
   .topbar{height:auto;padding:8px 16px;flex-wrap:wrap;gap:8px}
   .search-wrap{order:10;flex:1 1 100%}
   #search,#search:focus{width:100%}
-  .app-tagline{display:none}
+  .app-tagline,.sync-badge span{display:none}
+  .sync-badge{padding:4px 8px}
   .section-tabs{padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .section-tabs::-webkit-scrollbar{display:none}
   .toolbar{padding:8px 16px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -325,71 +341,74 @@ tbody tr:hover td{background:var(--blue-lt)}
 
 /* ── ≤479px Mobile portrait ── */
 @media(max-width:479px){
-  /* Topbar stays sticky; search wraps to 2nd row */
   .topbar{height:auto;padding:8px 14px;flex-wrap:wrap;gap:6px}
   .search-wrap{order:10;flex:1 1 100%}
   #search,#search:focus{width:100%}
-  .app-tagline{display:none}
+  .app-tagline,.sync-badge span{display:none}
+  .sync-badge{padding:4px 7px}
   .vt{display:none}
-  /* Section tabs – relative (can't use sticky with variable topbar height) */
   .section-tabs{position:relative;top:auto;padding:0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .section-tabs::-webkit-scrollbar{display:none}
-  /* Toolbar – relative */
   .toolbar{position:relative;top:auto;padding:8px 14px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .toolbar::-webkit-scrollbar{display:none}
-  /* Content */
   .content{padding:12px 14px}
-  /* Stats 2-col */
   .stats-row{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
   .stat{padding:12px 14px}
   .stat-val{font-size:20px}
   .stat-sub{font-size:10px}
-  /* Grid 1-col */
   .grid{grid-template-columns:1fr;gap:10px}
   .ecard{padding:14px}
-  /* Table horizontal scroll */
-  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
   td:nth-child(3),th:nth-child(3),td:nth-child(4),th:nth-child(4),td:nth-child(5),th:nth-child(5),td:nth-child(6),th:nth-child(6){display:none}
-  /* Panel – bottom sheet */
   .panel{width:100%;top:auto;height:88vh;border-left:none;border-top:1px solid var(--border);border-radius:16px 16px 0 0;transform:translateY(100%)}
   .panel.on{transform:translateY(0)}
   .panel::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:var(--border-strong);z-index:1}
-  /* Modal – bottom sheet */
   .modal-bg{align-items:flex-end;padding:0}
   .modal{border-radius:16px 16px 0 0;max-height:92vh;width:100%;max-width:100%;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))}
   .f2{grid-template-columns:1fr}
   .modal-foot{flex-direction:column-reverse;gap:8px}
   .modal-foot .btn{width:100%;justify-content:center;padding:12px}
-  /* Setup */
   .setup{margin:20px auto;padding:12px}
   .setup-card{padding:20px 16px}
-  /* Add-btn icon only */
   #add-btn-lbl{display:none}
-  /* Toast + theme-btn above home bar */
   .toast{bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 28px);white-space:normal;text-align:center}
   .theme-btn{bottom:calc(16px + env(safe-area-inset-bottom,0px));right:14px;width:44px;height:44px}
+  .login-card{padding:24px 18px}
+  .login-logo{margin-bottom:20px}
+}
+
+/* ── Very small phones (≤360px) ── */
+@media(max-width:360px){
+  .topbar{padding:6px 10px;gap:4px}
+  .login-card{padding:20px 14px}
+  .token-card{padding:20px 14px}
+  .stats-row{gap:6px}
 }
 
 /* ── Short landscape (height ≤ 500px) – phones sideways ── */
 @media(max-height:500px) and (orientation:landscape){
-  .topbar{min-height:44px;height:44px;padding:0 16px}
+  /* Single-row topbar — override any portrait flex-wrap */
+  .topbar{height:44px;min-height:44px;padding:0 max(16px,env(safe-area-inset-left,0px));flex-wrap:nowrap}
+  .search-wrap{order:0;flex:1 1 auto;max-width:220px}
+  #search{width:100%}
+  #search:focus{width:100%}
+  .app-tagline,.sync-badge span{display:none}
+  .sync-badge{padding:4px 8px}
+  .section-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 max(12px,env(safe-area-inset-left,0px))}
+  .section-tabs::-webkit-scrollbar{display:none}
+  .toolbar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:6px max(12px,env(safe-area-inset-left,0px))}
+  .toolbar::-webkit-scrollbar{display:none}
   .stats-row{grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
   .stat{padding:8px 12px}
   .stat-val{font-size:18px}
   .stat-sub{display:none}
-  .content{padding:8px 16px}
+  .content{padding:8px max(16px,env(safe-area-inset-left,0px))}
   .modal{max-height:96vh;padding:14px 20px}
-  .panel{top:44px;height:calc(100vh - 44px)}
+  .panel{top:44px;height:calc(100vh - 44px);border-radius:0}
   .empty{padding:24px}
   .setup{margin:12px auto}
-}
-
-/* ── Tablet landscape portrait safe (1024px height < 768) ── */
-@media(min-width:768px) and (max-width:1024px) and (orientation:landscape) and (max-height:768px){
-  .stats-row{grid-template-columns:repeat(4,1fr)}
-  .content{padding:12px 20px}
-  .stat{padding:12px 16px}
-  .stat-val{font-size:22px}
+  .login-screen,.token-prompt{padding:8px 16px}
+  .login-card,.token-card{padding:16px 20px;max-height:calc(100vh - 16px);overflow-y:auto}
+  .login-logo{margin-bottom:12px}
 }
 
 /* ── LOGIN SCREEN ────────────────────────────────────────────────────────── */
@@ -424,12 +443,30 @@ tbody tr:hover td{background:var(--blue-lt)}
 .idcard-tap-hint{font-size:11px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:6px;letter-spacing:.02em}
 .idcard-close-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 28px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;backdrop-filter:blur(4px)}
 .idcard-close-btn:hover{background:rgba(255,255,255,.2)}
-@media(max-width:379px){
-  .idcard-card{width:calc(100vw - 32px);height:calc((100vw - 32px) * 520 / 340)}
+/* Mobile portrait — scale card to fit viewport with room for controls */
+@media(max-width:767px){
+  .idcard-overlay{padding:12px;overflow-y:auto;justify-content:flex-start;padding-top:max(16px,env(safe-area-inset-top,0px))}
+  .idcard-wrap{gap:12px;padding-bottom:max(16px,env(safe-area-inset-bottom,0px));min-height:min-content}
+  .idcard-card{width:min(300px,calc(100vw - 24px));height:calc(min(300px,calc(100vw - 24px)) * 520 / 340)}
+  .idcard-close-btn{min-width:min(300px,calc(100vw - 24px));padding:13px 28px}
 }
-@media(max-height:640px){
-  .idcard-card{width:260px;height:calc(260 * 520 / 340 * 1px)}
-  .idcard-card{height:398px}
+@media(max-width:379px){
+  .idcard-card{width:calc(100vw - 24px);height:calc((100vw - 24px) * 520 / 340)}
+}
+/* Short viewport portrait (small phones with address bar) */
+@media(max-height:640px) and (orientation:portrait){
+  .idcard-overlay{overflow-y:auto;justify-content:flex-start;padding-top:8px}
+  .idcard-wrap{gap:8px}
+  .idcard-card{width:min(240px,calc(100vw - 24px));height:calc(min(240px,calc(100vw - 24px)) * 520 / 340)}
+}
+/* Landscape phones — horizontal layout */
+@media(max-height:500px) and (orientation:landscape){
+  .idcard-overlay{flex-direction:row;align-items:center;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));gap:16px;justify-content:center;overflow-x:auto}
+  .idcard-wrap{flex-direction:row;align-items:center;gap:16px;max-height:100%;width:auto;flex-shrink:0}
+  .idcard-scene{flex-shrink:0}
+  .idcard-card{width:auto;height:calc(100vh - 24px);aspect-ratio:340/520}
+  .idcard-tap-hint{writing-mode:vertical-rl;font-size:10px}
+  .idcard-close-btn{flex-direction:column;padding:12px 14px;min-width:0}
 }
 
 /* ── ID CARD FACES ───────────────────────────────────────────────────────── */
@@ -481,21 +518,16 @@ tbody tr:hover td{background:var(--blue-lt)}
 
 /* ── MOBILE ADMIN IMPROVEMENTS ───────────────────────────────────────────── */
 @media(max-width:767px){
-  /* Panel action buttons — icon grid */
   .panel-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding-top:16px;border-top:1px solid var(--border);margin-top:16px}
   .panel-actions .btn{flex:none;padding:10px;justify-content:center;font-size:0;gap:0;min-height:44px;border-radius:var(--r)}
   .panel-actions .btn i{font-size:18px}
-  /* Stats compact */
   .stat-lbl{font-size:9px}
-  /* Topbar tighter */
   .topbar .app-name{font-size:13px}
-  /* Chips scroll area */
   .toolbar{gap:4px}
 }
 @media(max-width:479px){
   .panel-actions{grid-template-columns:repeat(4,1fr)}
   .panel-actions .btn{min-height:48px}
-  /* Table edit btn icon only */
   .tbl-edit-lbl{display:none}
 }
 </style>
