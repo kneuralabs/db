@@ -322,10 +322,11 @@ html{overflow-x:hidden}
 /* ── 480–767px Large phone / small tablet portrait ── */
 @media(min-width:480px) and (max-width:767px){
   .topbar{height:auto;padding:8px 16px;flex-wrap:wrap;gap:8px}
-  .search-wrap{order:10;flex:1 1 100%}
+  .sync-badge{margin-left:auto;padding:4px 8px}
+  .topbar-right{order:10;flex:1 1 100%;margin-left:0}
+  .search-wrap{order:0;flex:1 1 auto}
   #search,#search:focus{width:100%}
   .app-tagline,.sync-badge span{display:none}
-  .sync-badge{padding:4px 8px}
   .section-tabs{padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .section-tabs::-webkit-scrollbar{display:none}
   .toolbar{padding:8px 16px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -344,10 +345,11 @@ html{overflow-x:hidden}
 /* ── ≤479px Mobile portrait ── */
 @media(max-width:479px){
   .topbar{height:auto;padding:8px 14px;flex-wrap:wrap;gap:6px}
-  .search-wrap{order:10;flex:1 1 100%}
+  .sync-badge{margin-left:auto;padding:4px 7px}
+  .topbar-right{order:10;flex:1 1 100%;margin-left:0}
+  .search-wrap{order:0;flex:1 1 auto}
   #search,#search:focus{width:100%}
   .app-tagline,.sync-badge span{display:none}
-  .sync-badge{padding:4px 7px}
   .vt{display:none}
   .section-tabs{position:relative;top:auto;padding:0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .section-tabs::-webkit-scrollbar{display:none}
@@ -390,6 +392,8 @@ html{overflow-x:hidden}
 @media(max-height:500px) and (orientation:landscape){
   /* Single-row topbar — override any portrait flex-wrap */
   .topbar{height:44px;min-height:44px;padding:0 max(16px,env(safe-area-inset-left,0px));flex-wrap:nowrap}
+  .sync-badge{margin-left:0}
+  .topbar-right{order:0;flex:0 0 auto;margin-left:auto}
   .search-wrap{order:0;flex:1 1 auto;max-width:220px}
   #search{width:100%}
   #search:focus{width:100%}
@@ -433,14 +437,14 @@ html{overflow-x:hidden}
 .login-spinner{display:none;justify-content:center;padding:24px}
 
 /* ── ID CARD OVERLAY ─────────────────────────────────────────────────────── */
-.idcard-overlay{position:fixed;inset:0;background:rgba(10,15,30,.93);z-index:400;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:28px;opacity:0;pointer-events:none;transition:opacity .22s ease}
+.idcard-overlay{position:fixed;inset:0;background:rgba(10,15,30,.93);z-index:400;overflow:hidden;overscroll-behavior:none;touch-action:none;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:max(20px,env(safe-area-inset-top,20px)) max(20px,env(safe-area-inset-right,20px)) max(20px,env(safe-area-inset-bottom,20px)) max(20px,env(safe-area-inset-left,20px));opacity:0;pointer-events:none;transition:opacity .22s ease}
 .idcard-overlay.on{opacity:1;pointer-events:all}
 .idcard-scene{perspective:1200px;cursor:pointer;flex-shrink:0;touch-action:manipulation;position:relative;transition:transform .28s cubic-bezier(.34,1.2,.64,1),opacity .22s}
 .idcard-overlay:not(.on) .idcard-scene{transform:scale(.94) translateY(10px);opacity:0}
 .idcard-overlay.on .idcard-scene{transform:none;opacity:1}
 .idcard-scene:focus{outline:none}
 /* Card always fits viewport: min of max-size, width-based, height-based */
-.idcard-card{position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);width:min(340px,calc(100vw - 56px),calc((100vh - 100px) * 340 / 520));height:calc(min(340px,calc(100vw - 56px),calc((100vh - 100px) * 340 / 520)) * 520 / 340)}
+.idcard-card{position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);width:min(340px,calc(100vw - 56px),calc((100vh - 180px) * 340 / 520));height:calc(min(340px,calc(100vw - 56px),calc((100vh - 180px) * 340 / 520)) * 520 / 340)}
 .idcard-scene.flipped .idcard-card{transform:rotateY(180deg)}
 .idcard-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(10,15,30,.7),0 4px 16px rgba(10,15,30,.4)}
 .idcard-back-face{transform:rotateY(180deg)}
@@ -1059,6 +1063,7 @@ function handleLoginPw(){
   }
   authedAdmin=true;
   document.getElementById('login-screen').style.display='none';
+  document.getElementById('theme-btn').style.display='';
   if(!cfg.token){
     document.getElementById('token-prompt').style.display='';
   } else {
@@ -1809,12 +1814,13 @@ function showIdCardOverlay(e) {
   document.getElementById('idcard-overlay').classList.add('on');
   document.getElementById('theme-btn').style.display='none';
   document.body.style.overflow='hidden';
+  document.documentElement.style.overflow='hidden';
 }
 
 function closeIdCard(){
   document.getElementById('idcard-overlay').classList.remove('on');
-  document.getElementById('theme-btn').style.display='';
   document.body.style.overflow='';
+  document.documentElement.style.overflow='';
   // If came from login (not admin), go back to login
   if(!authedAdmin){
     document.getElementById('login-screen').style.display='';
@@ -1822,6 +1828,8 @@ function closeIdCard(){
     document.getElementById('login-step2').style.display='none';
     document.getElementById('login-id').value='';
     clearLoginError();
+  } else {
+    document.getElementById('theme-btn').style.display='';
   }
 }
 
@@ -1883,6 +1891,7 @@ function initSticky(){
 function init(){
   initTheme(); populateCountrySelects();
   document.getElementById('login-screen').style.display='';
+  document.getElementById('theme-btn').style.display='none';
   setTimeout(()=>document.getElementById('login-id').focus(),100);
 }
 init();
