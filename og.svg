@@ -21,12 +21,7 @@
   <polygon points="1000,0 1200,0 1200,400" fill="#C8281E" opacity="0.06"/>
 
   <!-- KN Logo mark -->
-  <g transform="translate(80, 220)">
-    <rect width="140" height="140" rx="22" fill="#1C5CAA"/>
-    <polygon points="52,70 130,48 130,92" fill="#C8281E"/>
-    <polygon points="26,70 130,8 130,48 52,70" fill="#D0D2D6"/>
-    <polygon points="26,70 130,132 130,92 52,70" fill="#D0D2D6"/>
-  </g>
+  <image href="https://db.kneuralabs.com/LOGO.png" x="80" y="220" width="140" height="140"/>
 
   <!-- App name -->
   <text x="250" y="282" font-family="'Inter','Arial',sans-serif" font-size="64" font-weight="700" fill="#FFFFFF" letter-spacing="-1">KN PeopleBase</text>
