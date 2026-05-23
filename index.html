@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workbase · Employee Database</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.8.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1D9E75;--green-dk:#0F6E56;--green-lt:#E1F5EE;
+  --bg:#f8f9fb;--surface:#fff;--surface2:#f3f4f6;
+  --border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);
+  --text:#111;--text2:#555;--text3:#888;
+  --red:#E24B4A;--red-lt:#FCEBEB;--amber:#BA7517;--amber-lt:#FAEEDA;
+  --info:#185FA5;--info-lt:#E6F1FB;
+  --radius:10px;--radius-lg:14px;
+  --ease:cubic-bezier(.4,0,.2,1);
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#0f1117;--surface:#1a1d24;--surface2:#22262f;
+    --border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.18);
+    --text:#f0f0f0;--text2:#9ba3ae;--text3:#626a75;
+    --green-lt:#04342C;--red-lt:#501313;--amber-lt:#412402;--info-lt:#042C53;
+    --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.2);
+  }
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50;backdrop-filter:blur(8px)}
+.logo{width:30px;height:30px;background:var(--green);border-radius:8px;display:grid;place-items:center;flex-shrink:0}
+.logo i{color:#fff;font-size:16px}
+.app-name{font-weight:600;font-size:15px;letter-spacing:-.2px}
+.sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;padding:4px 9px;border-radius:20px;font-weight:500;transition:all .2s}
+.sync-badge.ok{background:var(--green-lt);color:var(--green)}
+.sync-badge.err{background:var(--red-lt);color:var(--red)}
+.sync-badge.warn{background:var(--amber-lt);color:var(--amber)}
+.sync-badge.loading{background:var(--surface2);color:var(--text3)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.search-wrap{position:relative;display:flex;align-items:center}
+.search-wrap i{position:absolute;left:9px;font-size:14px;color:var(--text3);pointer-events:none}
+#search{padding:7px 11px 7px 30px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);font-size:13px;color:var(--text);width:200px;outline:none;transition:all .2s var(--ease)}
+#search:focus{border-color:var(--green);background:var(--surface);width:260px;box-shadow:0 0 0 3px rgba(29,158,117,.12)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;font-size:13px;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--surface2)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.primary:hover{background:var(--green-dk)}
+.btn.danger{color:var(--red);border-color:rgba(226,75,74,.3)}
+.btn.danger:hover{background:var(--red-lt)}
+.btn.icon{padding:7px;width:34px;justify-content:center}
+
+/* ── TOOLBAR ── */
+.toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:54px;z-index:40}
+.chip{padding:5px 12px;border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text2);cursor:pointer;background:transparent;transition:all .15s;font-weight:500;display:inline-flex;align-items:center;gap:4px;font-family:inherit}
+.chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+.chip:hover:not(.active){background:var(--surface2);color:var(--text)}
+.chip-n{font-size:10px;opacity:.8}
+.vt{margin-left:auto;display:flex;gap:2px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:3px}
+.vtb{padding:5px 9px;border:none;background:transparent;cursor:pointer;border-radius:7px;color:var(--text3);transition:all .15s;font-size:15px;line-height:1}
+.vtb.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* ── CONTENT ── */
+.content{padding:20px;max-width:1400px;margin:0 auto}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;animation:up .3s var(--ease) both}
+.stat-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:5px}
+.stat-val{font-size:24px;font-weight:700;letter-spacing:-.5px;color:var(--text)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ecard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:transform .18s var(--ease),border-color .15s,box-shadow .18s;animation:up .22s var(--ease) both;position:relative;overflow:hidden}
+.ecard::before{content:'';position:absolute;inset:0;background:var(--green);opacity:0;transition:opacity .15s}
+.ecard:hover{transform:translateY(-3px);border-color:var(--border2);box-shadow:var(--shadow)}
+.ecard:active{transform:scale(.98)}
+.ctop{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0;letter-spacing:.5px}
+.cname{font-weight:600;font-size:14px;line-height:1.2}
+.crole{font-size:12px;color:var(--text2);margin-top:2px}
+.cmeta{display:flex;flex-direction:column;gap:5px}
+.cmr{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
+.cmr i{font-size:13px;color:var(--text3)}
+.dept-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;margin-top:9px;letter-spacing:.02em}
+
+/* ── TABLE ── */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;animation:up .2s var(--ease)}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--surface2);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--text)}
+th .sort-icon{opacity:.4;font-size:12px;vertical-align:-1px}
+th.sorted .sort-icon{opacity:1;color:var(--green)}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr{cursor:pointer;transition:background .1s}
+tbody tr:hover td{background:var(--surface2)}
+.tav{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700}
+
+/* ── PANEL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;opacity:0;pointer-events:none;transition:opacity .22s;backdrop-filter:blur(2px)}
+.overlay.on{opacity:1;pointer-events:all}
+.panel{position:fixed;right:0;top:0;bottom:0;width:390px;max-width:100vw;background:var(--surface);border-left:1px solid var(--border);z-index:101;transform:translateX(100%);transition:transform .26s var(--ease);display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.12)}
+.panel.on{transform:none}
+.ph{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;position:sticky;top:0;background:var(--surface);z-index:1}
+.ph-av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:18px;font-weight:700;flex-shrink:0}
+.ph-name{font-size:16px;font-weight:700}
+.ph-role{font-size:13px;color:var(--text2);margin-top:2px}
+.close-btn{margin-left:auto;background:none;border:1px solid var(--border);width:30px;height:30px;border-radius:var(--radius);cursor:pointer;display:grid;place-items:center;color:var(--text2);font-size:16px;transition:all .15s}
+.close-btn:hover{background:var(--surface2)}
+.pb{padding:20px;flex:1;overflow-y:auto}
+.section-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.drow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.drow:last-child{border-bottom:none}
+.drow i{font-size:15px;color:var(--text3);width:18px;flex-shrink:0}
+.dk{color:var(--text2);min-width:78px}
+.dv{margin-left:auto;text-align:right;color:var(--text);word-break:break-all}
+.panel-actions{display:flex;gap:8px;margin-top:20px}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px;backdrop-filter:blur(4px)}
+.modal-bg.on{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;width:100%;max-width:460px;transform:scale(.95) translateY(10px);transition:transform .22s var(--ease);box-shadow:var(--shadow)}
+.modal-bg.on .modal{transform:none}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.frow{margin-bottom:13px}
+.flbl{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block}
+.frow input,.frow select{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:border-color .15s,box-shadow .15s}
+.frow input:focus,.frow select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.12)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-foot{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+
+/* ── SETUP SCREEN ── */
+.setup{max-width:480px;margin:60px auto;padding:20px}
+.setup-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow)}
+.setup-icon{width:48px;height:48px;background:var(--green);border-radius:12px;display:grid;place-items:center;margin-bottom:16px}
+.setup-icon i{color:#fff;font-size:24px}
+.setup h2{font-size:18px;font-weight:700;margin-bottom:6px}
+.setup p{font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.6}
+.setup-steps{background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:18px;font-size:12px;color:var(--text2);line-height:1.9}
+.setup-steps b{color:var(--text);font-weight:600}
+.hint{font-size:11px;color:var(--text3);margin-top:4px}
+.link{color:var(--green);text-decoration:none}
+.link:hover{text-decoration:underline}
+
+/* ── MISC ── */
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty i{font-size:40px;margin-bottom:12px;display:block}
+.empty p{font-size:14px}
+.spin{display:inline-block;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:var(--radius);font-size:13px;font-weight:500;z-index:300;transition:transform .25s var(--ease);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.progress{height:2px;background:var(--green);position:fixed;top:0;left:0;z-index:200;transition:width .3s var(--ease);width:0}
+
+@media(max-width:640px){
+  .topbar{height:auto;padding:10px 14px;flex-wrap:wrap;gap:8px}
+  #search{width:100%}#search:focus{width:100%}
+  .search-wrap{flex:1;min-width:0;order:3;width:100%}
+  .toolbar{top:auto;position:relative}
+  .panel{width:100%}
+  .f2{grid-template-columns:1fr}
+  .content{padding:14px}
+  td:nth-child(3),th:nth-child(3),td:nth-child(5),th:nth-child(5){display:none}
+}
+@media(max-width:400px){td:nth-child(4),th:nth-child(4){display:none}}
+</style>
+</head>
+<body>
+
+<div id="progress-bar" class="progress"></div>
+<div id="toast" class="toast"></div>
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen" class="setup" style="display:none">
+  <div class="setup-card">
+    <div class="setup-icon"><i class="ti ti-brand-github"></i></div>
+    <h2>Connect to GitHub</h2>
+    <p>Your employee data is stored as a JSON file in your GitHub repository. This makes it a live master database — accessible from any device, synced in real time.</p>
+    <div class="setup-steps">
+      <b>1.</b> Create a GitHub repo (e.g. <code>my-company/workbase</code>)<br>
+      <b>2.</b> Enable <b>GitHub Pages</b> → Settings → Pages → Deploy from branch<br>
+      <b>3.</b> Generate a <b>PAT</b>: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained → <i>Contents: read & write</i><br>
+      <b>4.</b> Fill in the fields below and click Save
+    </div>
+    <div class="frow">
+      <label class="flbl">GitHub owner / username</label>
+      <input id="cfg-owner" type="text" placeholder="your-username">
+    </div>
+    <div class="frow">
+      <label class="flbl">Repository name</label>
+      <input id="cfg-repo" type="text" placeholder="workbase">
+    </div>
+    <div class="frow">
+      <label class="flbl">Personal Access Token (PAT) <span style="color:var(--text3);font-weight:400">— stored locally only</span></label>
+      <input id="cfg-token" type="password" placeholder="github_pat_…">
+      <div class="hint">Never shared. Stays in your browser's localStorage.</div>
+    </div>
+    <button class="btn primary" style="width:100%;justify-content:center;margin-top:4px" onclick="saveConfig()">
+      <i class="ti ti-plug"></i> Connect & Load Data
+    </button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
+  <div class="topbar">
+    <div class="logo"><i class="ti ti-users"></i></div>
+    <span class="app-name">Workbase</span>
+    <span class="sync-badge loading" id="sync-badge"><i class="ti ti-loader spin"></i> Loading</span>
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input id="search" type="text" placeholder="Search employees…" oninput="render()">
+      </div>
+      <button class="btn" onclick="syncNow()" title="Sync with GitHub"><i class="ti ti-refresh"></i></button>
+      <button class="btn" onclick="exportCSV()" title="Export CSV"><i class="ti ti-download"></i></button>
+      <button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i><span>Add employee</span></button>
+      <button class="btn icon" onclick="showSettings()" title="Settings"><i class="ti ti-settings"></i></button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="chip active" onclick="setDept(this,'All')">All <span class="chip-n" id="n-All">0</span></button>
+    <button class="chip" onclick="setDept(this,'Engineering')">Engineering <span class="chip-n" id="n-Engineering">0</span></button>
+    <button class="chip" onclick="setDept(this,'Design')">Design <span class="chip-n" id="n-Design">0</span></button>
+    <button class="chip" onclick="setDept(this,'Marketing')">Marketing <span class="chip-n" id="n-Marketing">0</span></button>
+    <button class="chip" onclick="setDept(this,'Sales')">Sales <span class="chip-n" id="n-Sales">0</span></button>
+    <button class="chip" onclick="setDept(this,'Operations')">Operations <span class="chip-n" id="n-Operations">0</span></button>
+    <button class="chip" onclick="setDept(this,'HR')">HR <span class="chip-n" id="n-HR">0</span></button>
+    <div class="vt">
+      <button class="vtb active" id="vb-grid" onclick="setView('grid')" title="Grid"><i class="ti ti-layout-grid"></i></button>
+      <button class="vtb" id="vb-table" onclick="setView('table')" title="Table"><i class="ti ti-table"></i></button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat" style="animation-delay:.04s"><div class="stat-lbl">Total</div><div class="stat-val" id="s-total">—</div><div class="stat-sub">Employees</div></div>
+      <div class="stat" style="animation-delay:.08s"><div class="stat-lbl">Departments</div><div class="stat-val" id="s-depts">—</div><div class="stat-sub">Teams</div></div>
+      <div class="stat" style="animation-delay:.12s"><div class="stat-lbl">Avg tenure</div><div class="stat-val" id="s-tenure">—</div><div class="stat-sub">Years</div></div>
+      <div class="stat" style="animation-delay:.16s"><div class="stat-lbl">Last sync</div><div class="stat-val" id="s-sync" style="font-size:15px;padding-top:5px">—</div><div class="stat-sub">GitHub</div></div>
+    </div>
+    <div id="list"></div>
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <div class="ph">
+    <div class="ph-av" id="p-av"></div>
+    <div><div class="ph-name" id="p-name"></div><div class="ph-role" id="p-role"></div></div>
+    <button class="close-btn" onclick="closePanel()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="pb" id="pb"></div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-bg" id="emp-modal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-user-plus"></i><span id="modal-title">Add employee</span></div>
+    <div class="f2">
+      <div class="frow"><label class="flbl">First name *</label><input id="f-first" placeholder="Alex"></div>
+      <div class="frow"><label class="flbl">Last name *</label><input id="f-last" placeholder="Kim"></div>
+    </div>
+    <div class="frow"><label class="flbl">Role / title</label><input id="f-role" placeholder="Senior Engineer"></div>
+    <div class="f2">
+      <div class="frow"><label class="flbl">Department</label>
+        <select id="f-dept">
+          <option>Engineering</option><option>Design</option><option>Marketing</option>
+          <option>Sales</option><option>Operations</option><option>HR</option>
+        </select>
+      </div>
+      <div class="frow"><label class="flbl">Location</label><input id="f-loc" placeholder="Remote / City"></div>
+    </div>
+    <div class="f2">
+      <div class="frow"><label class="flbl">Email</label><input id="f-email" type="email" placeholder="alex@co.com"></div>
+      <div class="frow"><label class="flbl">Phone</label><input id="f-phone" placeholder="+1 555 000 0000"></div>
+    </div>
+    <div class="f2">
+      <div class="frow"><label class="flbl">Start date</label><input id="f-date" type="date"></div>
+      <div class="frow"><label class="flbl">Status</label>
+        <select id="f-status"><option value="Active">Active</option><option value="On leave">On leave</option><option value="Remote">Remote</option></select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('emp-modal')">Cancel</button>
+      <button class="btn primary" onclick="saveEmployee()" id="save-btn"><i class="ti ti-check"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settings-modal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-settings"></i> GitHub settings</div>
+    <div class="frow"><label class="flbl">Owner</label><input id="s-owner" placeholder="username"></div>
+    <div class="frow"><label class="flbl">Repository</label><input id="s-repo" placeholder="workbase"></div>
+    <div class="frow"><label class="flbl">Personal Access Token</label><input id="s-token" type="password" placeholder="github_pat_…"></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('settings-modal')">Cancel</button>
+      <button class="btn primary" onclick="updateConfig()"><i class="ti ti-check"></i> Save & reload</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const CFG_KEY='wb_config';
+let cfg=JSON.parse(localStorage.getItem(CFG_KEY)||'{}');
+let employees=[];let fileSha='';let editId=null;
+let activeDept='All';let activeView='grid';
+let sortCol='last';let sortDir=1;
+
+const DEPT_COLORS={
+  Engineering:{bg:'#E6F1FB',c:'#0C447C'},
+  Design:{bg:'#EEEDFE',c:'#3C3489'},
+  Marketing:{bg:'#FAECE7',c:'#712B13'},
+  Sales:{bg:'#E1F5EE',c:'#085041'},
+  Operations:{bg:'#FAEEDA',c:'#633806'},
+  HR:{bg:'#FCEBEB',c:'#791F1F'}
+};
+
+function init(){
+  if(!cfg.owner||!cfg.repo||!cfg.token){
+    document.getElementById('setup-screen').style.display='';
+  } else {
+    document.getElementById('app').style.display='';
+    loadData();
+  }
+}
+
+// ── GITHUB API ────────────────────────────────────────────────────────────────
+const DBPATH='data/employees.json';
+const apiBase=()=>`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${DBPATH}`;
+const headers=()=>({'Authorization':'token '+cfg.token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'});
+
+function setProgress(w){document.getElementById('progress-bar').style.width=w+'%'}
+
+async function loadData(){
+  setSyncBadge('loading','Loading…');setProgress(20);
+  try{
+    const r=await fetch(apiBase(),{headers:headers()});
+    if(r.status===404){
+      // File doesn't exist yet — start fresh
+      employees=[];fileSha='';
+      await saveToGitHub('Initial database');
+      setSyncBadge('ok','Synced');setProgress(100);setTimeout(()=>setProgress(0),600);
+      render();return;
+    }
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    fileSha=d.sha;
+    employees=JSON.parse(atob(d.content.replace(/\n/g,'')));
+    setSyncBadge('ok','Synced');
+    document.getElementById('s-sync').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  }catch(e){
+    setSyncBadge('err','Error: '+e.message);toast('⚠ Could not load data: '+e.message);
+  }
+  setProgress(100);setTimeout(()=>setProgress(0),600);
+  render();
+}
+
+async function saveToGitHub(msg='Update employees'){
+  setProgress(30);setSyncBadge('loading','Saving…');
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(employees,null,2))));
+  const body={message:msg,content};
+  if(fileSha)body.sha=fileSha;
+  try{
+    const r=await fetch(apiBase(),{method:'PUT',headers:headers(),body:JSON.stringify(body)});
+    if(!r.ok){const e=await r.json();throw new Error(e.message||'HTTP '+r.status)}
+    const d=await r.json();
+    fileSha=d.content.sha;
+    setSyncBadge('ok','Synced');
+    document.getElementById('s-sync').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    toast('✓ Saved to GitHub');
+  }catch(e){
+    setSyncBadge('err','Save failed');toast('✗ Save failed: '+e.message);
+  }
+  setProgress(100);setTimeout(()=>setProgress(0),600);
+}
+
+async function syncNow(){await loadData()}
+
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+function saveConfig(){
+  cfg={owner:document.getElementById('cfg-owner').value.trim(),repo:document.getElementById('cfg-repo').value.trim(),token:document.getElementById('cfg-token').value.trim()};
+  if(!cfg.owner||!cfg.repo||!cfg.token){toast('Please fill all fields');return}
+  localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('app').style.display='';
+  loadData();
+}
+function showSettings(){
+  document.getElementById('s-owner').value=cfg.owner||'';
+  document.getElementById('s-repo').value=cfg.repo||'';
+  document.getElementById('s-token').value=cfg.token||'';
+  document.getElementById('settings-modal').classList.add('on');
+}
+function updateConfig(){
+  cfg={owner:document.getElementById('s-owner').value.trim(),repo:document.getElementById('s-repo').value.trim(),token:document.getElementById('s-token').value.trim()};
+  localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+  closeModal('settings-modal');loadData();
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+const initials=n=>n.trim().split(/\s+/).map(x=>x[0]||'').join('').slice(0,2).toUpperCase();
+const tenure=s=>{const y=(Date.now()-new Date(s))/(1000*60*60*24*365.25);return y<1?'<1':y.toFixed(1)};
+const deptBadge=d=>{const c=DEPT_COLORS[d]||{bg:'#eee',c:'#444'};return`<span class="dept-badge" style="background:${c.bg};color:${c.c}">${d}</span>`};
+const avStyle=(d,sz=42,fs=13)=>{const c=DEPT_COLORS[d]||{bg:'#eee',c:'#444'};return`width:${sz}px;height:${sz}px;background:${c.bg};color:${c.c};font-size:${fs}px`};
+
+function filtered(){
+  const q=document.getElementById('search').value.toLowerCase();
+  return employees
+    .filter(e=>(activeDept==='All'||e.dept===activeDept)&&(!q||(e.first+' '+e.last+e.role+e.dept+e.loc).toLowerCase().includes(q)))
+    .sort((a,b)=>{const av=a[sortCol]||'',bv=b[sortCol]||'';return av<bv?-sortDir:av>bv?sortDir:0});
+}
+
+function renderStats(){
+  document.getElementById('s-total').textContent=employees.length;
+  document.getElementById('s-depts').textContent=new Set(employees.map(e=>e.dept)).size;
+  const avg=employees.length?employees.reduce((s,e)=>{return s+(Date.now()-new Date(e.start))/(1000*60*60*24*365.25)},0)/employees.length:0;
+  document.getElementById('s-tenure').textContent=employees.length?avg.toFixed(1):'—';
+  ['All','Engineering','Design','Marketing','Sales','Operations','HR'].forEach(d=>{
+    const el=document.getElementById('n-'+d);
+    if(el)el.textContent=d==='All'?employees.length:employees.filter(e=>e.dept===d).length;
+  });
+}
+
+function render(){
+  renderStats();
+  const list=filtered();
+  const el=document.getElementById('list');
+  if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-user-off"></i><p>No employees found</p></div>`;return}
+  if(activeView==='grid'){
+    el.innerHTML=`<div class="grid">${list.map((e,i)=>`
+      <div class="ecard" style="animation-delay:${Math.min(i*.025,.3)}s" onclick="openPanel('${e.id}')">
+        <div class="ctop">
+          <div class="av" style="${avStyle(e.dept)}">${initials(e.first+' '+e.last)}</div>
+          <div><div class="cname">${e.first} ${e.last}</div><div class="crole">${e.role}</div></div>
+        </div>
+        <div class="cmeta">
+          <div class="cmr"><i class="ti ti-map-pin"></i>${e.loc||'—'}</div>
+          <div class="cmr"><i class="ti ti-mail"></i>${e.email||'—'}</div>
+          <div class="cmr"><i class="ti ti-calendar"></i>${e.start||'—'}</div>
+        </div>
+        ${deptBadge(e.dept)}
+        ${e.status&&e.status!=='Active'?`<span class="dept-badge" style="background:var(--amber-lt);color:var(--amber);margin-left:4px">${e.status}</span>`:''}
+      </div>`).join('')}</div>`;
+  } else {
+    el.innerHTML=`<div class="tbl-wrap"><table>
+      <thead><tr>
+        ${[['last','Name'],['role','Role'],['dept','Department'],['loc','Location'],['start','Start date'],['','']].map(([col,lbl])=>
+          col?`<th onclick="sortBy('${col}')" class="${sortCol===col?'sorted':''}">${lbl} <i class="ti ti-chevron-${sortCol===col&&sortDir<0?'up':'down'} sort-icon"></i></th>`
+          :`<th></th>`
+        ).join('')}
+      </tr></thead>
+      <tbody>${list.map(e=>`<tr onclick="openPanel('${e.id}')">
+        <td><div style="display:flex;align-items:center;gap:8px"><div class="tav" style="${avStyle(e.dept,28,10)}">${initials(e.first+' '+e.last)}</div>${e.first} ${e.last}</div></td>
+        <td style="color:var(--text2)">${e.role||'—'}</td>
+        <td>${deptBadge(e.dept)}</td>
+        <td style="color:var(--text2)">${e.loc||'—'}</td>
+        <td style="color:var(--text2)">${e.start||'—'}</td>
+        <td><button class="btn" style="padding:4px 8px;font-size:12px" onclick="event.stopPropagation();openEdit('${e.id}')"><i class="ti ti-edit"></i></button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+}
+
+function sortBy(col){if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1}render()}
+function setDept(el,d){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');activeDept=d;render()}
+function setView(v){activeView=v;document.getElementById('vb-grid').classList.toggle('active',v==='grid');document.getElementById('vb-table').classList.toggle('active',v==='table');render()}
+
+// ── PANEL ────────────────────────────────────────────────────────────────────
+function openPanel(id){
+  const e=employees.find(x=>x.id===id);if(!e)return;
+  document.getElementById('p-av').style.cssText=avStyle(e.dept,52,18);
+  document.getElementById('p-av').textContent=initials(e.first+' '+e.last);
+  document.getElementById('p-name').textContent=e.first+' '+e.last;
+  document.getElementById('p-role').textContent=e.role;
+  document.getElementById('pb').innerHTML=`
+    <div class="section-title">Contact</div>
+    <div class="drow"><i class="ti ti-mail"></i><span class="dk">Email</span><span class="dv" style="color:var(--info)">${e.email||'—'}</span></div>
+    <div class="drow"><i class="ti ti-phone"></i><span class="dk">Phone</span><span class="dv">${e.phone||'—'}</span></div>
+    <div style="margin-top:16px" class="section-title">Details</div>
+    <div class="drow"><i class="ti ti-briefcase"></i><span class="dk">Department</span><span class="dv">${deptBadge(e.dept)}</span></div>
+    <div class="drow"><i class="ti ti-map-pin"></i><span class="dk">Location</span><span class="dv">${e.loc||'—'}</span></div>
+    <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Start date</span><span class="dv">${e.start||'—'}</span></div>
+    <div class="drow"><i class="ti ti-clock"></i><span class="dk">Tenure</span><span class="dv">${e.start?tenure(e.start)+' yrs':'—'}</span></div>
+    <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${e.status||'Active'}</span></div>
+    <div class="drow"><i class="ti ti-id"></i><span class="dk">ID</span><span class="dv" style="font-size:11px;color:var(--text3)">${e.id}</span></div>
+    <div class="panel-actions">
+      <button class="btn" style="flex:1" onclick="openEdit('${e.id}')"><i class="ti ti-edit"></i> Edit</button>
+      <button class="btn danger" style="flex:1" onclick="deleteEmp('${e.id}')"><i class="ti ti-trash"></i> Remove</button>
+    </div>`;
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('panel').classList.add('on');
+}
+function closePanel(){document.getElementById('overlay').classList.remove('on');document.getElementById('panel').classList.remove('on')}
+
+// ── MODAL ────────────────────────────────────────────────────────────────────
+function openAdd(){
+  editId=null;document.getElementById('modal-title').textContent='Add employee';
+  ['f-first','f-last','f-role','f-loc','f-email','f-phone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-date').value='';
+  document.getElementById('emp-modal').classList.add('on');
+}
+function openEdit(id){
+  const e=employees.find(x=>x.id===id);if(!e)return;
+  editId=id;closePanel();document.getElementById('modal-title').textContent='Edit employee';
+  document.getElementById('f-first').value=e.first||'';
+  document.getElementById('f-last').value=e.last||'';
+  document.getElementById('f-role').value=e.role||'';
+  document.getElementById('f-dept').value=e.dept||'Engineering';
+  document.getElementById('f-loc').value=e.loc||'';
+  document.getElementById('f-email').value=e.email||'';
+  document.getElementById('f-phone').value=e.phone||'';
+  document.getElementById('f-date').value=e.start||'';
+  document.getElementById('f-status').value=e.status||'Active';
+  document.getElementById('emp-modal').classList.add('on');
+}
+function closeModal(id){document.getElementById(id).classList.remove('on')}
+
+async function saveEmployee(){
+  const first=document.getElementById('f-first').value.trim();
+  const last=document.getElementById('f-last').value.trim();
+  if(!first||!last){toast('First and last name are required');return}
+  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value};
+  if(editId){Object.assign(employees.find(e=>e.id===editId),data)}
+  else{employees.push({id:crypto.randomUUID(),...data})}
+  closeModal('emp-modal');render();
+  await saveToGitHub(editId?`Update ${first} ${last}`:`Add ${first} ${last}`);
+}
+
+async function deleteEmp(id){
+  const e=employees.find(x=>x.id===id);if(!e)return;
+  if(!confirm(`Remove ${e.first} ${e.last}?`))return;
+  employees=employees.filter(x=>x.id!==id);closePanel();render();
+  await saveToGitHub(`Remove ${e.first} ${e.last}`);
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function exportCSV(){
+  const cols=['first','last','role','dept','loc','email','phone','start','status','id'];
+  const rows=[cols.join(','),...employees.map(e=>cols.map(c=>`"${(e[c]||'').replace(/"/g,'""')}"`).join(','))];
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));
+  a.download='employees.csv';a.click();
+}
+
+// ── UTILS ────────────────────────────────────────────────────────────────────
+function setSyncBadge(type,text){
+  const el=document.getElementById('sync-badge');
+  el.className='sync-badge '+type;
+  el.innerHTML=(type==='loading'?'<i class="ti ti-loader spin"></i> ':type==='ok'?'<i class="ti ti-check"></i> ':'<i class="ti ti-alert-circle"></i> ')+text;
+}
+let toastTimer;
+function toast(msg){
+  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closePanel();closeModal('emp-modal');closeModal('settings-modal')}
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.getElementById('search').focus()}
+});
+
+init();
+</script>
+</body>
+</html>
