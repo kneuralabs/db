@@ -38,7 +38,7 @@
   --shadow-lg:0 4px 24px rgba(13,46,90,.14);
 }
 @media(prefers-color-scheme:dark){
-  :root{
+  :root:not([data-theme="light"]){
     --bg:#0b0f1a; --surface:#111827; --surface2:#1a2133;
     --border:rgba(255,255,255,.1); --border-strong:rgba(255,255,255,.2);
     --text:#F0F2F5; --text2:#8A95A5; --text3:#5A6475;
@@ -46,6 +46,22 @@
     --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
     --shadow-lg:0 4px 24px rgba(0,0,0,.4);
   }
+}
+[data-theme="dark"]{
+  --bg:#0b0f1a; --surface:#111827; --surface2:#1a2133;
+  --border:rgba(255,255,255,.1); --border-strong:rgba(255,255,255,.2);
+  --text:#F0F2F5; --text2:#8A95A5; --text3:#5A6475;
+  --blue-lt:#0a1f3d; --red-lt:#2a0b08; --amber-lt:#2a1500;
+  --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  --shadow-lg:0 4px 24px rgba(0,0,0,.4);
+}
+[data-theme="light"]{
+  --bg:#F7F8FA; --surface:#fff; --surface2:#F7F8FA;
+  --border:#E0E4EA; --border-strong:#C5CDD8;
+  --text:#1A1D23; --text2:#6B7280; --text3:#9BA3AE;
+  --blue-lt:#E6F1FB; --red-lt:#FBEAEA; --amber-lt:#FAEEDA;
+  --shadow:0 1px 3px rgba(13,46,90,.06),0 4px 16px rgba(13,46,90,.08);
+  --shadow-lg:0 4px 24px rgba(13,46,90,.14);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -79,6 +95,15 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 .btn.danger:hover{background:var(--red-lt)}
 .btn.icon{padding:7px;width:34px;justify-content:center}
 .btn:focus-visible{outline:3px solid var(--blue-sky);outline-offset:2px}
+
+/* ── THEME TOGGLE ─────────────────────────────────────────────────────────── */
+.theme-btn{position:fixed;bottom:24px;right:24px;z-index:500;width:40px;height:40px;border-radius:50%;border:1px solid var(--border-strong);background:var(--surface);color:var(--text2);cursor:pointer;display:grid;place-items:center;font-size:18px;box-shadow:var(--shadow-lg);transition:background .2s,color .2s,border-color .2s,transform .15s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.theme-btn:hover{background:var(--surface2);color:var(--text);transform:scale(1.1)}
+
+/* ── PHONE + ISD ──────────────────────────────────────────────────────────── */
+.phone-wrap{display:flex;gap:6px;align-items:stretch}
+.phone-wrap input{flex:1;min-width:0;width:auto!important}
+.isd-badge{padding:9px 10px;border:1px solid var(--border-strong);border-radius:var(--r);background:var(--surface2);font-size:12px;color:var(--text2);white-space:nowrap;flex-shrink:0;font-weight:600;letter-spacing:.02em;display:flex;align-items:center}
 
 /* ── SECTION TABS ─────────────────────────────────────────────────────────── */
 .section-tabs{background:var(--blue-dk);border-bottom:1px solid rgba(255,255,255,.1);padding:0 24px;display:flex;position:sticky;top:56px;z-index:45}
@@ -266,6 +291,7 @@ tbody tr:hover td{background:var(--blue-lt)}
 @media(min-width:1280px) and (max-width:1439px){.content{padding:24px 64px}}
 @media(min-width:1440px){.content{max-width:1400px}}
 </style>
+<script>(function(){var s=localStorage.getItem('kn_theme'),h=new Date().getHours();document.documentElement.setAttribute('data-theme',s||(h>=6&&h<18?'light':'dark'))})()</script>
 </head>
 <body>
 
@@ -427,7 +453,11 @@ tbody tr:hover td{background:var(--blue-lt)}
     </div>
     <div class="f2">
       <div class="frow"><label class="flbl">Email</label><input id="f-email" type="email" placeholder="alex@kneuralabs.com"></div>
-      <div class="frow"><label class="flbl">Phone</label><input id="f-phone" type="tel" placeholder="+1 555 000 0000"></div>
+      <div class="frow"><label class="flbl">Phone</label><div class="phone-wrap"><span class="isd-badge" id="f-isd">—</span><input id="f-phone" type="tel" placeholder="555 000 0000"></div></div>
+    </div>
+    <div class="f2">
+      <div class="frow"><label class="flbl">Premise / Unit no.</label><input id="f-premise" placeholder="Flat 4B / Shop 12"></div>
+      <div class="frow"><label class="flbl">Country</label><select id="f-country" onchange="onEmpCountryChange()"><option value="">— Select country —</option></select></div>
     </div>
     <div class="frow"><label class="flbl">Address</label><input id="f-address" placeholder="Street / Building / Area"></div>
     <div class="f2">
@@ -437,7 +467,7 @@ tbody tr:hover td{background:var(--blue-lt)}
     <div class="f2">
       <div class="frow">
         <label class="flbl">ID Proof type</label>
-        <select id="f-idtype"><option value="">— Select —</option><option>Aadhaar</option><option>PAN</option><option>Passport</option><option>Voter ID</option><option>Driving License</option><option>Other</option></select>
+        <select id="f-idtype"><option value="">— Select —</option><option>Aadhaar</option><option>PAN</option><option>Passport</option><option>Voter ID</option><option>Driving License</option><option>SSO</option><option>Other</option></select>
       </div>
       <div class="frow"><label class="flbl">ID Proof number</label><input id="f-idnum" placeholder="XXXX-XXXX-XXXX"></div>
     </div>
@@ -477,7 +507,7 @@ tbody tr:hover td{background:var(--blue-lt)}
       <div class="frow"><label class="flbl">Contact email</label><input id="v-email" type="email" placeholder="jane@acme.com"></div>
     </div>
     <div class="f2">
-      <div class="frow"><label class="flbl">Contact phone</label><input id="v-phone" type="tel" placeholder="+1 555 000 0000"></div>
+      <div class="frow"><label class="flbl">Contact phone</label><div class="phone-wrap"><span class="isd-badge" id="v-isd">—</span><input id="v-phone" type="tel" placeholder="555 000 0000"></div></div>
       <div class="frow">
         <label class="flbl">Category</label>
         <select id="v-cat"><option>Software</option><option>Hardware</option><option>Consulting</option><option>Legal</option><option>Finance</option><option>Facilities</option><option>Marketing</option><option>HR Services</option><option>Other</option></select>
@@ -489,6 +519,10 @@ tbody tr:hover td{background:var(--blue-lt)}
         <select id="v-status"><option value="Active">Active</option><option value="Inactive">Inactive</option><option value="Under Review">Under Review</option></select>
       </div>
       <div class="frow"><label class="flbl">Contract start</label><input id="v-start" type="date"></div>
+    </div>
+    <div class="f2">
+      <div class="frow"><label class="flbl">Premise / Unit no.</label><input id="v-premise" placeholder="Office 7A / Floor 3"></div>
+      <div class="frow"><label class="flbl">Country</label><select id="v-country" onchange="onVndCountryChange()"><option value="">— Select country —</option></select></div>
     </div>
     <div class="frow"><label class="flbl">Address</label><input id="v-address" placeholder="Street / Building / Area"></div>
     <div class="f2">
@@ -533,6 +567,8 @@ tbody tr:hover td{background:var(--blue-lt)}
   </div>
 </div>
 
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme"></button>
+
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────────────
 const CFG_KEY = 'kn_config';
@@ -574,6 +610,19 @@ const SC = {
   Inactive:{bg:'#F0F0F0',c:'#555'}, 'Under Review':{bg:'#FAEEDA',c:'#633806'},
   _:{bg:'#F0F0F0',c:'#555'}
 };
+
+// ── COUNTRIES + ISD ──────────────────────────────────────────────────────────
+const COUNTRY_ISD={Afghanistan:'+93',Albania:'+355',Algeria:'+213',Argentina:'+54',Armenia:'+374',Australia:'+61',Austria:'+43',Azerbaijan:'+994',Bahrain:'+973',Bangladesh:'+880',Belarus:'+375',Belgium:'+32',Bolivia:'+591',Brazil:'+55',Bulgaria:'+359',Cambodia:'+855',Canada:'+1',Chile:'+56',China:'+86',Colombia:'+57',Croatia:'+385',Cyprus:'+357','Czech Republic':'+420',Denmark:'+45',Ecuador:'+593',Egypt:'+20',Estonia:'+372',Ethiopia:'+251',Finland:'+358',France:'+33',Georgia:'+995',Germany:'+49',Ghana:'+233',Greece:'+30','Hong Kong':'+852',Hungary:'+36',Iceland:'+354',India:'+91',Indonesia:'+62',Iran:'+98',Iraq:'+964',Ireland:'+353',Israel:'+972',Italy:'+39',Japan:'+81',Jordan:'+962',Kazakhstan:'+7',Kenya:'+254',Kuwait:'+965',Latvia:'+371',Lebanon:'+961',Lithuania:'+370',Luxembourg:'+352',Malaysia:'+60',Malta:'+356',Mexico:'+52',Morocco:'+212',Nepal:'+977',Netherlands:'+31','New Zealand':'+64',Nigeria:'+234',Norway:'+47',Oman:'+968',Pakistan:'+92',Palestine:'+970',Peru:'+51',Philippines:'+63',Poland:'+48',Portugal:'+351',Qatar:'+974',Romania:'+40',Russia:'+7','Saudi Arabia':'+966',Serbia:'+381',Singapore:'+65',Slovakia:'+421',Slovenia:'+386','South Africa':'+27','South Korea':'+82',Spain:'+34','Sri Lanka':'+94',Sweden:'+46',Switzerland:'+41',Taiwan:'+886',Thailand:'+66',Turkey:'+90',Ukraine:'+380','United Arab Emirates':'+971','United Kingdom':'+44','United States':'+1',Uruguay:'+598',Uzbekistan:'+998',Venezuela:'+58',Vietnam:'+84',Yemen:'+967',Zimbabwe:'+263'};
+function buildCountryOpts(sel=''){return '<option value="">— Select country —</option>'+Object.keys(COUNTRY_ISD).sort().map(c=>`<option value="${c}"${c===sel?' selected':''}>${c} (${COUNTRY_ISD[c]})</option>`).join('')}
+function populateCountrySelects(){document.getElementById('f-country').innerHTML=buildCountryOpts();document.getElementById('v-country').innerHTML=buildCountryOpts()}
+function onEmpCountryChange(){const c=document.getElementById('f-country').value;document.getElementById('f-isd').textContent=COUNTRY_ISD[c]||'—'}
+function onVndCountryChange(){const c=document.getElementById('v-country').value;document.getElementById('v-isd').textContent=COUNTRY_ISD[c]||'—'}
+
+// ── THEME ─────────────────────────────────────────────────────────────────────
+const THEME_KEY='kn_theme';
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const b=document.getElementById('theme-btn');if(b){b.innerHTML=t==='dark'?'<i class="ti ti-sun"></i>':'<i class="ti ti-moon"></i>';b.title=t==='dark'?'Switch to light':'Switch to dark'}}
+function toggleTheme(){const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';localStorage.setItem(THEME_KEY,t);applyTheme(t)}
+function initTheme(){const s=localStorage.getItem(THEME_KEY),h=new Date().getHours();applyTheme(s||(h>=6&&h<18?'light':'dark'))}
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 const initials = n => n.trim().split(/\s+/).map(x=>x[0]||'').join('').slice(0,2).toUpperCase();
@@ -930,8 +979,10 @@ function openEmpPanel(id) {
     <div class="slbl">Details</div>
     <div class="drow"><i class="ti ti-briefcase"></i><span class="dk">Department</span><span class="dv">${dBadge(e.dept)}</span></div>
     <div class="drow"><i class="ti ti-map-pin"></i><span class="dk">Location</span><span class="dv">${e.loc||'—'}</span></div>
+    ${e.premise?`<div class="drow"><i class="ti ti-door"></i><span class="dk">Premise</span><span class="dv">${e.premise}</span></div>`:''}
     ${e.address?`<div class="drow"><i class="ti ti-home"></i><span class="dk">Address</span><span class="dv">${e.address}</span></div>`:''}
     ${(e.city||e.pin)?`<div class="drow"><i class="ti ti-building-community"></i><span class="dk">City / PIN</span><span class="dv">${[e.city,e.pin].filter(Boolean).join(' — ')}</span></div>`:''}
+    ${e.country?`<div class="drow"><i class="ti ti-world"></i><span class="dk">Country</span><span class="dv">${e.country}${COUNTRY_ISD[e.country]?' ('+COUNTRY_ISD[e.country]+')':''}</span></div>`:''}
     ${e.idProofType?`<div class="drow"><i class="ti ti-id-badge"></i><span class="dk">ID Proof</span><span class="dv">${e.idProofType}${e.idProofNum?' · '+e.idProofNum:''}</span></div>`:''}
     <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Start date</span><span class="dv">${e.start||'—'}</span></div>
     <div class="drow"><i class="ti ti-clock"></i><span class="dk">Tenure</span><span class="dv">${e.start?tenure(e.start)+' yrs':'—'}</span></div>
@@ -972,8 +1023,10 @@ function openVndPanel(id) {
     <div class="drow"><i class="ti ti-tag"></i><span class="dk">Category</span><span class="dv">${cBadge(v.category)}</span></div>
     <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${sBadge(v.status)}</span></div>
     <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Since</span><span class="dv">${v.contractStart||'—'}</span></div>
+    ${v.premise?`<div class="drow"><i class="ti ti-door"></i><span class="dk">Premise</span><span class="dv">${v.premise}</span></div>`:''}
     ${v.address?`<div class="drow"><i class="ti ti-home"></i><span class="dk">Address</span><span class="dv">${v.address}</span></div>`:''}
     ${(v.city||v.pin)?`<div class="drow"><i class="ti ti-building-community"></i><span class="dk">City / PIN</span><span class="dv">${[v.city,v.pin].filter(Boolean).join(' — ')}</span></div>`:''}
+    ${v.country?`<div class="drow"><i class="ti ti-world"></i><span class="dk">Country</span><span class="dv">${v.country}${COUNTRY_ISD[v.country]?' ('+COUNTRY_ISD[v.country]+')':''}</span></div>`:''}
     <div class="drow"><i class="ti ti-id"></i><span class="dk">Vendor ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${v.id}</span></div>
     ${v.notes?`<div class="slbl">Notes</div><div style="font-size:13px;color:var(--text2);line-height:1.65;padding:8px 0">${v.notes}</div>`:''}
     <div class="slbl">Documents (${docs.length})</div>
@@ -1026,8 +1079,8 @@ function openAdd(){activeSection==='employees'?openEmpAdd():openVndAdd()}
 function openEmpAdd(){
   editEmpId=null; pendingPhoto=null; docsPending=[]; docsToDelete=[];
   document.getElementById('emp-modal-title').textContent='Add employee';
-  ['f-first','f-last','f-role','f-loc','f-email','f-phone','f-address','f-city','f-pin','f-idnum'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-date').value=''; document.getElementById('f-status').value='Active'; document.getElementById('f-dept').value='Engineering'; document.getElementById('f-idtype').value='';
+  ['f-first','f-last','f-role','f-loc','f-email','f-phone','f-address','f-city','f-pin','f-idnum','f-premise'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-date').value=''; document.getElementById('f-status').value='Active'; document.getElementById('f-dept').value='Engineering'; document.getElementById('f-idtype').value=''; document.getElementById('f-country').value=''; document.getElementById('f-isd').textContent='—';
   resetPhotoUI(); renderModalDocs('emp');
   document.getElementById('emp-modal').classList.add('on');
 }
@@ -1042,7 +1095,8 @@ function openEmpEdit(id){
   document.getElementById('f-status').value=e.status||'Active';
   document.getElementById('f-address').value=e.address||''; document.getElementById('f-city').value=e.city||'';
   document.getElementById('f-pin').value=e.pin||''; document.getElementById('f-idtype').value=e.idProofType||'';
-  document.getElementById('f-idnum').value=e.idProofNum||'';
+  document.getElementById('f-idnum').value=e.idProofNum||''; document.getElementById('f-premise').value=e.premise||'';
+  document.getElementById('f-country').value=e.country||''; document.getElementById('f-isd').textContent=e.country?(COUNTRY_ISD[e.country]||'—'):'—';
   if(e.photo){document.getElementById('photo-preview').innerHTML=`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover">`;document.getElementById('photo-lbl-text').textContent='Photo on file — click to change'}
   else resetPhotoUI();
   document.getElementById('f-photo').value='';
@@ -1060,7 +1114,7 @@ async function saveEmp(){
   // Upload pending docs
   const newDocs=[];
   for(const f of docsPending){try{newDocs.push(await uploadDoc('emp',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
-  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,address:document.getElementById('f-address').value.trim(),city:document.getElementById('f-city').value.trim(),pin:document.getElementById('f-pin').value.trim(),idProofType:document.getElementById('f-idtype').value,idProofNum:document.getElementById('f-idnum').value.trim(),photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
+  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,premise:document.getElementById('f-premise').value.trim(),address:document.getElementById('f-address').value.trim(),city:document.getElementById('f-city').value.trim(),pin:document.getElementById('f-pin').value.trim(),country:document.getElementById('f-country').value,idProofType:document.getElementById('f-idtype').value,idProofNum:document.getElementById('f-idnum').value.trim(),photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
   if(editEmpId) Object.assign(employees.find(e=>e.id===editEmpId),data);
   else employees.push({id,...data});
   closeModal('emp-modal'); render();
@@ -1078,8 +1132,8 @@ async function deleteEmp(id){
 function openVndAdd(){
   editVndId=null; docsPending=[]; docsToDelete=[];
   document.getElementById('vnd-modal-title').textContent='Add vendor';
-  ['v-company','v-contact','v-email','v-phone','v-notes','v-address','v-city','v-pin'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('v-start').value=''; document.getElementById('v-status').value='Active'; document.getElementById('v-cat').value='Software';
+  ['v-company','v-contact','v-email','v-phone','v-notes','v-address','v-city','v-pin','v-premise'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('v-start').value=''; document.getElementById('v-status').value='Active'; document.getElementById('v-cat').value='Software'; document.getElementById('v-country').value=''; document.getElementById('v-isd').textContent='—';
   renderModalDocs('vnd');
   document.getElementById('vnd-modal').classList.add('on');
 }
@@ -1091,6 +1145,7 @@ function openVndEdit(id){
   document.getElementById('v-email').value=v.email||''; document.getElementById('v-phone').value=v.phone||'';
   document.getElementById('v-cat').value=v.category||'Software'; document.getElementById('v-status').value=v.status||'Active';
   document.getElementById('v-start').value=v.contractStart||''; document.getElementById('v-notes').value=v.notes||'';
+  document.getElementById('v-premise').value=v.premise||''; document.getElementById('v-country').value=v.country||''; document.getElementById('v-isd').textContent=v.country?(COUNTRY_ISD[v.country]||'—'):'—';
   document.getElementById('v-address').value=v.address||''; document.getElementById('v-city').value=v.city||''; document.getElementById('v-pin').value=v.pin||'';
   renderModalDocs('vnd');
   document.getElementById('vnd-modal').classList.add('on');
@@ -1102,7 +1157,7 @@ async function saveVendor(){
   const existingDocs=(editVndId?(vendors.find(v=>v.id===editVndId)?.docs||[]):[]).filter(d=>!docsToDelete.find(r=>r.path===d.path));
   const newDocs=[];
   for(const f of docsPending){try{newDocs.push(await uploadDoc('vnd',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
-  const data={company,contact:document.getElementById('v-contact').value.trim(),email:document.getElementById('v-email').value.trim(),phone:document.getElementById('v-phone').value.trim(),category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,contractStart:document.getElementById('v-start').value||new Date().toISOString().slice(0,10),address:document.getElementById('v-address').value.trim(),city:document.getElementById('v-city').value.trim(),pin:document.getElementById('v-pin').value.trim(),notes:document.getElementById('v-notes').value.trim(),docs:[...existingDocs,...newDocs]};
+  const data={company,contact:document.getElementById('v-contact').value.trim(),email:document.getElementById('v-email').value.trim(),phone:document.getElementById('v-phone').value.trim(),category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,contractStart:document.getElementById('v-start').value||new Date().toISOString().slice(0,10),premise:document.getElementById('v-premise').value.trim(),country:document.getElementById('v-country').value,address:document.getElementById('v-address').value.trim(),city:document.getElementById('v-city').value.trim(),pin:document.getElementById('v-pin').value.trim(),notes:document.getElementById('v-notes').value.trim(),docs:[...existingDocs,...newDocs]};
   if(editVndId) Object.assign(vendors.find(v=>v.id===editVndId),data);
   else vendors.push({id,...data});
   closeModal('vnd-modal'); render();
@@ -1120,10 +1175,10 @@ const closeModal=id=>document.getElementById(id).classList.remove('on');
 // ── EXPORT ────────────────────────────────────────────────────────────────────
 function exportCSV(){
   if(activeSection==='employees'){
-    const cols=['id','first','last','role','dept','loc','address','city','pin','idProofType','idProofNum','email','phone','start','status'];
+    const cols=['id','first','last','role','dept','loc','premise','address','city','pin','country','idProofType','idProofNum','email','phone','start','status'];
     dlCSV([cols.join(','),...employees.map(e=>cols.map(c=>`"${(e[c]||'').replace(/"/g,'""')}"`).join(','))],'kn-employees.csv');
   } else {
-    const cols=['id','company','contact','email','phone','category','status','contractStart','address','city','pin','notes'];
+    const cols=['id','company','contact','email','phone','category','status','contractStart','premise','address','city','pin','country','notes'];
     dlCSV([cols.join(','),...vendors.map(v=>cols.map(c=>`"${(v[c]||'').replace(/"/g,'""')}"`).join(','))],'kn-vendors.csv');
   }
 }
@@ -1146,6 +1201,7 @@ document.addEventListener('keydown',e=>{
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
 function init(){
+  initTheme(); populateCountrySelects();
   if(!cfg.owner||!cfg.repo||!cfg.token) document.getElementById('setup-screen').style.display='';
   else{document.getElementById('app').style.display='';loadData()}
 }
