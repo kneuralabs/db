@@ -351,7 +351,7 @@ html{overflow-x:hidden}
   td:nth-child(5),th:nth-child(5),td:nth-child(6),th:nth-child(6){display:none}
   .modal{padding:20px 18px}
   .f2{grid-template-columns:1fr 1fr}
-  .theme-btn{right:auto;left:50%;transform:translateX(-50%)}
+  .theme-btn{bottom:max(20px,env(safe-area-inset-bottom,0px));right:auto;left:50%;transform:translateX(-50%)}
   .theme-btn:hover{transform:translateX(-50%) scale(1.1)}
 }
 
@@ -427,6 +427,8 @@ html{overflow-x:hidden}
   .content{padding:8px max(16px,env(safe-area-inset-left,0px))}
   .modal{max-height:96vh;padding:14px 20px}
   .panel{top:44px;height:calc(100vh - 44px);border-radius:0}
+  .theme-btn{right:auto;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom,0px))}
+  .theme-btn:hover{transform:translateX(-50%) scale(1.1)}
   .empty{padding:24px}
   .setup{margin:12px auto}
   .login-screen,.token-prompt{padding:8px 16px}
@@ -454,7 +456,7 @@ html{overflow-x:hidden}
 .login-spinner{display:none;justify-content:center;padding:24px}
 
 /* ── ID CARD OVERLAY ─────────────────────────────────────────────────────── */
-.idcard-overlay{position:fixed;inset:0;background:rgba(10,15,30,.93);z-index:400;overflow:hidden;overscroll-behavior:none;touch-action:none;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:max(20px,env(safe-area-inset-top,20px)) max(20px,env(safe-area-inset-right,20px)) max(20px,env(safe-area-inset-bottom,20px)) max(20px,env(safe-area-inset-left,20px));opacity:0;pointer-events:none;transition:opacity .22s ease}
+.idcard-overlay{position:fixed;inset:0;background:rgba(10,15,30,.93);z-index:400;overflow:hidden;overscroll-behavior:none;touch-action:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:max(28px,env(safe-area-inset-top,28px)) max(28px,env(safe-area-inset-right,28px)) max(28px,env(safe-area-inset-bottom,28px)) max(28px,env(safe-area-inset-left,28px));opacity:0;pointer-events:none;transition:opacity .22s ease}
 .idcard-overlay.on{opacity:1;pointer-events:all}
 .idcard-scene{perspective:1200px;cursor:pointer;flex-shrink:0;touch-action:manipulation;position:relative;transition:transform .28s cubic-bezier(.34,1.2,.64,1),opacity .22s}
 .idcard-overlay:not(.on) .idcard-scene{transform:scale(.94) translateY(10px);opacity:0}
@@ -462,10 +464,10 @@ html{overflow-x:hidden}
 .idcard-scene:focus{outline:none}
 /* Card always fits viewport: min of max-size, width-based, height-based */
 /* 100vh fallback (iOS Safari uses max-viewport height, so budget is larger) */
-.idcard-card{position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);width:min(340px,calc(100vw - 56px),calc((100vh - 160px) * 340 / 520));height:calc(min(340px,calc(100vw - 56px),calc((100vh - 160px) * 340 / 520)) * 520 / 340)}
+.idcard-card{position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);width:min(340px,calc(100vw - 56px),calc((100vh - 180px) * 340 / 520));height:calc(min(340px,calc(100vw - 56px),calc((100vh - 180px) * 340 / 520)) * 520 / 340)}
 /* 100svh = small viewport height (respects browser chrome) — iOS 15.4+, Chrome 108+ */
 @supports (height:100svh){
-  .idcard-card{width:min(340px,calc(100vw - 56px),calc((100svh - 120px) * 340 / 520));height:calc(min(340px,calc(100vw - 56px),calc((100svh - 120px) * 340 / 520)) * 520 / 340)}
+  .idcard-card{width:min(340px,calc(100vw - 56px),calc((100svh - 148px) * 340 / 520));height:calc(min(340px,calc(100vw - 56px),calc((100svh - 148px) * 340 / 520)) * 520 / 340)}
 }
 .idcard-scene.flipped .idcard-card{transform:rotateY(180deg)}
 .idcard-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(10,15,30,.7),0 4px 16px rgba(10,15,30,.4)}
