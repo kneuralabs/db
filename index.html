@@ -156,7 +156,7 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 .tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;animation:up .2s var(--ease)}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
 th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border);background:var(--surface2);cursor:pointer;user-select:none;white-space:nowrap}
-th:hover{color:var(--text)}
+th:hover{color:var(--text);background:var(--surface2)}
 th .si{opacity:.4;font-size:11px;vertical-align:-1px}
 th.sorted .si{opacity:1;color:var(--blue)}
 td{padding:11px 16px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -479,6 +479,11 @@ tbody tr:hover td{background:var(--blue-lt)}
       </div>
     </div>
 
+    <div class="f2">
+      <div class="frow"><label class="flbl">Cost to Company (CTC)</label><input id="f-ctc" placeholder="₹ 12,00,000 p.a."></div>
+      <div class="frow"><label class="flbl">Contract tenure</label><input id="f-tenure" placeholder="1 Year"></div>
+    </div>
+
     <div class="frow">
       <label class="flbl">Documents <span style="color:var(--text3);font-weight:400">— attach any number of files (max 10 MB each)</span></label>
       <div class="docs-section">
@@ -567,6 +572,27 @@ tbody tr:hover td{background:var(--blue-lt)}
   </div>
 </div>
 
+<!-- CONTRACT DETAILS MODAL ──────────────────────────────────────────────── -->
+<div class="modal-bg" id="contract-modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-file-text"></i> Job Contract Details</div>
+    <input type="hidden" id="contract-emp-id">
+    <div class="f2">
+      <div class="frow"><label class="flbl">Cost to Company (CTC)</label><input id="contract-ctc" placeholder="₹ 12,00,000 per annum"></div>
+      <div class="frow"><label class="flbl">Tenure</label><input id="contract-tenure" value="1 Year"></div>
+    </div>
+    <div class="f2">
+      <div class="frow"><label class="flbl">Start date</label><input id="contract-start" type="date"></div>
+      <div class="frow"><label class="flbl">End date</label><input id="contract-end" type="date"></div>
+    </div>
+    <div class="hint" style="margin-bottom:4px">End date defaults to 1 year from start. Edit either date as needed.</div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('contract-modal')">Cancel</button>
+      <button class="btn primary" onclick="saveContractAndPrint()"><i class="ti ti-printer"></i> Save &amp; Generate PDF</button>
+    </div>
+  </div>
+</div>
+
 <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme"></button>
 
 <script>
@@ -608,6 +634,7 @@ const SC = {
   Active:{bg:'#E3F5EE',c:'#085041'}, 'On leave':{bg:'#FAEEDA',c:'#633806'},
   Remote:{bg:'#E6F1FB',c:'#0C447C'}, Contractor:{bg:'#EEEDFE',c:'#3C3489'},
   Inactive:{bg:'#F0F0F0',c:'#555'}, 'Under Review':{bg:'#FAEEDA',c:'#633806'},
+  Revoked:{bg:'#FBEAEA',c:'#7A1C1C'},
   _:{bg:'#F0F0F0',c:'#555'}
 };
 
@@ -972,7 +999,9 @@ function openEmpPanel(id) {
   document.getElementById('p-role').textContent=e.role||'—';
   document.getElementById('p-id').textContent=e.id||'';
   const docs=e.docs||[];
+  const revoked=e.status==='Revoked';
   document.getElementById('pb').innerHTML=`
+    ${revoked?`<div style="background:var(--red-lt);border:1px solid rgba(200,40,30,.2);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--red)"><i class="ti ti-ban" style="font-size:18px;flex-shrink:0"></i><div><b>Employment Revoked</b>${e.revokedAt?`<div style="font-size:11px;margin-top:1px;opacity:.75">on ${e.revokedAt}</div>`:''}</div></div>`:''}
     <div class="slbl">Contact</div>
     <div class="drow"><i class="ti ti-mail"></i><span class="dk">Email</span><span class="dv" style="color:var(--blue)">${e.email||'—'}</span></div>
     <div class="drow"><i class="ti ti-phone"></i><span class="dk">Phone</span><span class="dv">${e.phone||'—'}</span></div>
@@ -988,6 +1017,11 @@ function openEmpPanel(id) {
     <div class="drow"><i class="ti ti-clock"></i><span class="dk">Tenure</span><span class="dv">${e.start?tenure(e.start)+' yrs':'—'}</span></div>
     <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${sBadge(e.status||'Active')}</span></div>
     <div class="drow"><i class="ti ti-id"></i><span class="dk">Employee ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${e.id}</span></div>
+    ${e.ctc||e.tenure||e.contractEnd?`<div class="slbl">Contract</div>
+    ${e.ctc?`<div class="drow"><i class="ti ti-currency-rupee"></i><span class="dk">CTC</span><span class="dv">${e.ctc}</span></div>`:''}
+    ${e.tenure?`<div class="drow"><i class="ti ti-hourglass"></i><span class="dk">Duration</span><span class="dv">${e.tenure}</span></div>`:''}
+    ${e.contractEnd?`<div class="drow"><i class="ti ti-calendar-due"></i><span class="dk">Contract end</span><span class="dv">${e.contractEnd}</span></div>`:''}
+    ${e.idCardGenerated?`<div class="drow"><i class="ti ti-id-badge-2" style="color:var(--blue)"></i><span class="dk">ID Card</span><span class="dv" style="color:var(--blue);font-size:12px">Generated${e.idCardGeneratedAt?' · '+e.idCardGeneratedAt:''}</span></div>`:''}`:''}
     <div class="slbl">Documents (${docs.length})</div>
     ${docs.length?`<div class="docs-section">${docs.map((d,i)=>`
       <div class="pdoc" style="padding:9px 12px;border-bottom:${i<docs.length-1?'1px solid var(--border)':'none'}">
@@ -997,9 +1031,15 @@ function openEmpPanel(id) {
         <button class="doc-btn dl" onclick="downloadDoc(${JSON.stringify(d).replace(/'/g,'\\x27')})" title="Download"><i class="ti ti-download"></i></button>
         <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
       </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}
-    <div class="panel-actions">
-      <button class="btn" style="flex:1" onclick="openEmpEdit('${e.id}')"><i class="ti ti-edit"></i> Edit</button>
-      <button class="btn danger" style="flex:1" onclick="deleteEmp('${e.id}')"><i class="ti ti-trash"></i> Remove</button>
+    <div class="panel-actions" style="flex-wrap:wrap;gap:6px">
+      <button class="btn" style="flex:1;min-width:120px" onclick="openEmpEdit('${e.id}')"${revoked?' disabled style="flex:1;min-width:120px;opacity:.4"':''}>
+        <i class="ti ti-edit"></i> Edit</button>
+      <button class="btn" style="flex:1;min-width:120px" onclick="genContract('${e.id}')"><i class="ti ti-file-text"></i> Job Contract</button>
+      <button class="btn" style="flex:1;min-width:120px" onclick="genIdCard('${e.id}')"><i class="ti ti-id-badge-2"></i> ID Card</button>
+      ${revoked
+        ?`<button class="btn" style="flex:1;min-width:120px;opacity:.4;color:var(--red)" disabled><i class="ti ti-ban"></i> Revoked</button>`
+        :`<button class="btn danger" style="flex:1;min-width:120px" onclick="revokeEmp('${e.id}')"><i class="ti ti-ban"></i> Revoke</button>`}
+      <button class="btn danger" style="flex:1;min-width:120px" onclick="deleteEmp('${e.id}')"><i class="ti ti-trash"></i> Remove</button>
     </div>`;
   showPanel();
 }
@@ -1079,13 +1119,14 @@ function openAdd(){activeSection==='employees'?openEmpAdd():openVndAdd()}
 function openEmpAdd(){
   editEmpId=null; pendingPhoto=null; docsPending=[]; docsToDelete=[];
   document.getElementById('emp-modal-title').textContent='Add employee';
-  ['f-first','f-last','f-role','f-loc','f-email','f-phone','f-address','f-city','f-pin','f-idnum','f-premise'].forEach(id=>document.getElementById(id).value='');
+  ['f-first','f-last','f-role','f-loc','f-email','f-phone','f-address','f-city','f-pin','f-idnum','f-premise','f-ctc','f-tenure'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-date').value=''; document.getElementById('f-status').value='Active'; document.getElementById('f-dept').value='Engineering'; document.getElementById('f-idtype').value=''; document.getElementById('f-country').value=''; document.getElementById('f-isd').textContent='—';
   resetPhotoUI(); renderModalDocs('emp');
   document.getElementById('emp-modal').classList.add('on');
 }
 function openEmpEdit(id){
   const e=employees.find(x=>x.id===id); if(!e) return;
+  if(e.status==='Revoked'){toast('Cannot edit a revoked employee — data is locked');return}
   editEmpId=id; pendingPhoto=e.photo||null; docsPending=[]; docsToDelete=[]; closePanel();
   document.getElementById('emp-modal-title').textContent='Edit employee';
   document.getElementById('f-first').value=e.first||''; document.getElementById('f-last').value=e.last||'';
@@ -1097,6 +1138,7 @@ function openEmpEdit(id){
   document.getElementById('f-pin').value=e.pin||''; document.getElementById('f-idtype').value=e.idProofType||'';
   document.getElementById('f-idnum').value=e.idProofNum||''; document.getElementById('f-premise').value=e.premise||'';
   document.getElementById('f-country').value=e.country||''; document.getElementById('f-isd').textContent=e.country?(COUNTRY_ISD[e.country]||'—'):'—';
+  document.getElementById('f-ctc').value=e.ctc||''; document.getElementById('f-tenure').value=e.tenure||'';
   if(e.photo){document.getElementById('photo-preview').innerHTML=`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover">`;document.getElementById('photo-lbl-text').textContent='Photo on file — click to change'}
   else resetPhotoUI();
   document.getElementById('f-photo').value='';
@@ -1114,7 +1156,8 @@ async function saveEmp(){
   // Upload pending docs
   const newDocs=[];
   for(const f of docsPending){try{newDocs.push(await uploadDoc('emp',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
-  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,premise:document.getElementById('f-premise').value.trim(),address:document.getElementById('f-address').value.trim(),city:document.getElementById('f-city').value.trim(),pin:document.getElementById('f-pin').value.trim(),country:document.getElementById('f-country').value,idProofType:document.getElementById('f-idtype').value,idProofNum:document.getElementById('f-idnum').value.trim(),photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
+  const prev=editEmpId?employees.find(e=>e.id===editEmpId):{};
+  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,premise:document.getElementById('f-premise').value.trim(),address:document.getElementById('f-address').value.trim(),city:document.getElementById('f-city').value.trim(),pin:document.getElementById('f-pin').value.trim(),country:document.getElementById('f-country').value,idProofType:document.getElementById('f-idtype').value,idProofNum:document.getElementById('f-idnum').value.trim(),ctc:document.getElementById('f-ctc').value.trim(),tenure:document.getElementById('f-tenure').value.trim(),contractEnd:prev.contractEnd||'',revokedAt:prev.revokedAt||'',idCardGenerated:prev.idCardGenerated||false,idCardGeneratedAt:prev.idCardGeneratedAt||'',photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
   if(editEmpId) Object.assign(employees.find(e=>e.id===editEmpId),data);
   else employees.push({id,...data});
   closeModal('emp-modal'); render();
@@ -1172,10 +1215,162 @@ async function deleteVnd(id){
 
 const closeModal=id=>document.getElementById(id).classList.remove('on');
 
+// ── JOB CONTRACT ──────────────────────────────────────────────────────────────
+function genContract(id) {
+  const e=employees.find(x=>x.id===id); if(!e) return;
+  const start=e.start||new Date().toISOString().slice(0,10);
+  const defaultEnd=(()=>{const d=new Date(start);d.setFullYear(d.getFullYear()+1);return d.toISOString().slice(0,10)})();
+  document.getElementById('contract-emp-id').value=id;
+  document.getElementById('contract-ctc').value=e.ctc||'';
+  document.getElementById('contract-tenure').value=e.tenure||'1 Year';
+  document.getElementById('contract-start').value=start;
+  document.getElementById('contract-end').value=e.contractEnd||defaultEnd;
+  document.getElementById('contract-modal').classList.add('on');
+}
+async function saveContractAndPrint() {
+  const id=document.getElementById('contract-emp-id').value;
+  const e=employees.find(x=>x.id===id); if(!e) return;
+  e.ctc=document.getElementById('contract-ctc').value.trim();
+  e.tenure=document.getElementById('contract-tenure').value.trim();
+  e.contractEnd=document.getElementById('contract-end').value;
+  closeModal('contract-modal');
+  await saveEmps(`Contract details for ${e.first} ${e.last}`);
+  printContract(e);
+}
+function printContract(e) {
+  const start=e.start||new Date().toISOString().slice(0,10);
+  const end=e.contractEnd||(()=>{const d=new Date(start);d.setFullYear(d.getFullYear()+1);return d.toISOString().slice(0,10)})();
+  const addr=[e.premise,e.address,e.city,e.country].filter(Boolean).join(', ')||e.loc||'—';
+  const w=window.open('','_blank','width=900,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><title>Employment Contract — ${e.first} ${e.last}</title>
+<style>
+body{font-family:'Georgia',serif;max-width:780px;margin:0 auto;padding:60px 48px;color:#1a1d23;line-height:1.75;font-size:13px}
+.hdr{text-align:center;padding-bottom:24px;border-bottom:2px solid #1C5CAA;margin-bottom:36px}
+.co{font-size:22px;font-weight:700;color:#1C5CAA;letter-spacing:2px;text-transform:uppercase;font-family:'Helvetica',sans-serif}
+.ttl{font-size:15px;font-weight:600;margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px;font-family:'Helvetica',sans-serif}
+.ref{font-size:10px;color:#888;font-family:'Courier New',monospace}
+.sec{margin:28px 0 0}
+.slbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#1C5CAA;border-bottom:1px solid #dde4ec;padding-bottom:4px;margin-bottom:10px;font-family:'Helvetica',sans-serif}
+table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:13px}
+td{padding:5px 8px;vertical-align:top}td:first-child{width:160px;font-weight:600;color:#444;font-family:'Helvetica',sans-serif;font-size:12px}
+.clause{margin:10px 0;font-size:13px}.cn{font-weight:600}
+.sigs{display:flex;justify-content:space-between;margin-top:64px}
+.sb{width:220px;border-top:1px solid #888;padding-top:8px;font-size:12px;font-family:'Helvetica',sans-serif}
+.sbn{font-weight:700;font-size:11px;margin-bottom:32px;text-transform:uppercase;letter-spacing:.06em}
+.foot{text-align:center;margin-top:48px;font-size:10px;color:#aaa;font-family:'Helvetica',sans-serif}
+@media print{body{padding:40px 32px}}
+</style></head><body>
+<div class="hdr">
+  <div class="co">KneuralLabs</div>
+  <div class="ttl">Employment Contract</div>
+  <div class="ref">Ref: ${e.id} &nbsp;·&nbsp; Generated: ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
+</div>
+<div class="sec"><div class="slbl">Employee Information</div>
+<table>
+  <tr><td>Full Name</td><td>${e.first} ${e.last}</td></tr>
+  <tr><td>Employee ID</td><td><code>${e.id}</code></td></tr>
+  <tr><td>Designation</td><td>${e.role||'—'}</td></tr>
+  <tr><td>Department</td><td>${e.dept||'—'}</td></tr>
+  <tr><td>Address</td><td>${addr}</td></tr>
+  ${e.email?`<tr><td>Email</td><td>${e.email}</td></tr>`:''}
+  ${e.idProofType?`<tr><td>ID Proof</td><td>${e.idProofType}${e.idProofNum?' · '+e.idProofNum:''}</td></tr>`:''}
+</table></div>
+<div class="sec"><div class="slbl">Contract Terms</div>
+<table>
+  <tr><td>Contract Type</td><td>Fixed Term Employment</td></tr>
+  <tr><td>Start Date</td><td>${start}</td></tr>
+  <tr><td>End Date</td><td>${end}</td></tr>
+  <tr><td>Duration</td><td>${e.tenure||'1 Year'}</td></tr>
+  <tr><td>Cost to Company</td><td><strong>${e.ctc||'As per offer letter'}</strong></td></tr>
+</table></div>
+<div class="sec"><div class="slbl">Terms &amp; Conditions</div>
+<div class="clause"><span class="cn">1. Position and Duties.</span> The Employee agrees to serve as ${e.role||'[Role]'} within the ${e.dept||'[Department]'} department and perform all duties reasonably assigned from time to time.</div>
+<div class="clause"><span class="cn">2. Compensation.</span> The Employee shall receive a total Cost to Company (CTC) of ${e.ctc||'[as per offer letter]'} per annum, inclusive of all allowances and deductions as per the compensation structure provided separately.</div>
+<div class="clause"><span class="cn">3. Working Hours.</span> Standard working hours are 9 hours per day, 5 days per week, with flexibility as required by operational needs.</div>
+<div class="clause"><span class="cn">4. Probation Period.</span> The first 90 days shall constitute a probation period; either party may terminate with 7 days' written notice during this period.</div>
+<div class="clause"><span class="cn">5. Confidentiality.</span> The Employee shall not disclose any proprietary, confidential, or trade-secret information of KneuralLabs to any third party during or after employment.</div>
+<div class="clause"><span class="cn">6. Intellectual Property.</span> All work product and intellectual property created during the course of employment shall be the exclusive property of KneuralLabs.</div>
+<div class="clause"><span class="cn">7. Non-Competition.</span> During employment and for 12 months post-termination, the Employee shall not engage with any direct competitor in a similar capacity.</div>
+<div class="clause"><span class="cn">8. Termination.</span> Either party may terminate this contract with 30 days' written notice. KneuralLabs reserves the right to make payment in lieu of notice.</div>
+<div class="clause"><span class="cn">9. Governing Law.</span> This contract is governed by the laws of India; disputes are subject to the exclusive jurisdiction of courts in ${e.city||'[City]'}.</div>
+</div>
+<div class="sigs">
+  <div class="sb"><div class="sbn">Employee</div>${e.first} ${e.last}<br><small style="color:#999">Date: _______________</small></div>
+  <div class="sb"><div class="sbn">Authorised Signatory</div>KneuralLabs<br><small style="color:#999">Date: _______________</small></div>
+</div>
+<div class="foot">CONFIDENTIAL &nbsp;·&nbsp; KneuralLabs Internal Document &nbsp;·&nbsp; ${e.id}</div>
+<script>window.onload=()=>{window.focus();window.print()}<\/script>
+</body></html>`);
+  w.document.close();
+}
+
+// ── ID CARD ───────────────────────────────────────────────────────────────────
+function genIdCard(id) {
+  const e=employees.find(x=>x.id===id); if(!e) return;
+  const ini=(e.first[0]||'')+(e.last[0]||'');
+  const photoHtml=e.photo?`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover" alt="${e.first}">`:`<span style="font-size:26px;font-weight:700;color:rgba(255,255,255,.9)">${ini}</span>`;
+  const w=window.open('','_blank','width=480,height=380');
+  w.document.write(`<!DOCTYPE html><html><head><title>ID Card — ${e.first} ${e.last}</title>
+<style>
+body{margin:0;padding:32px;background:#e8edf4;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Inter',system-ui,sans-serif}
+.card{width:340px;background:linear-gradient(135deg,#0D2E5A 0%,#1C5CAA 58%,#4A8BC8 100%);border-radius:16px;overflow:hidden;box-shadow:0 12px 40px rgba(13,46,90,.4);position:relative;color:#fff}
+.card::before{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06)}
+.card::after{content:'';position:absolute;right:60px;bottom:-50px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.04)}
+.ct{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;position:relative;z-index:1}
+.co{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.9}
+.type{font-size:8px;opacity:.5;text-align:right;text-transform:uppercase;letter-spacing:.1em;line-height:1.5}
+.cb{padding:12px 18px;display:flex;gap:14px;align-items:center;position:relative;z-index:1}
+.ph{width:68px;height:68px;border-radius:50%;border:3px solid rgba(255,255,255,.35);overflow:hidden;flex-shrink:0;background:rgba(255,255,255,.15);display:grid;place-items:center}
+.nm{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl{font-size:11px;opacity:.7;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dp{font-size:10px;opacity:.5;margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.div{height:1px;background:rgba(255,255,255,.12);margin:0 18px}
+.cf{display:flex;justify-content:space-between;padding:10px 18px 16px;position:relative;z-index:1}
+.lbl{font-size:8px;opacity:.5;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
+.val{font-size:12px;font-weight:700;font-family:'Courier New',monospace;letter-spacing:.04em}
+.act{text-align:center;margin-top:20px}
+.pbtn{padding:10px 28px;background:#1C5CAA;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit}
+.pbtn:hover{background:#0D2E5A}
+@media print{body{background:#fff;padding:10px}.act{display:none}}
+</style></head><body>
+<div class="card">
+  <div class="ct"><div class="co">KneuralLabs</div><div class="type">Employee<br>Identity Card</div></div>
+  <div class="cb">
+    <div class="ph">${photoHtml}</div>
+    <div style="min-width:0">
+      <div class="nm">${e.first} ${e.last}</div>
+      <div class="rl">${e.role||'—'}</div>
+      <div class="dp">${e.dept||'—'}</div>
+    </div>
+  </div>
+  <div class="div"></div>
+  <div class="cf">
+    <div><div class="lbl">Employee ID</div><div class="val">${e.id}</div></div>
+    <div style="text-align:right"><div class="lbl">Joined</div><div class="val" style="font-size:11px">${e.start||'—'}</div></div>
+  </div>
+</div>
+<div class="act"><button class="pbtn" onclick="window.print()">Print / Save as PDF</button></div>
+</body></html>`);
+  w.document.close();
+  // Mark generated
+  e.idCardGenerated=true; e.idCardGeneratedAt=new Date().toISOString().slice(0,10);
+  saveEmps(`ID card generated for ${e.first} ${e.last}`);
+}
+
+// ── REVOKE EMPLOYMENT ─────────────────────────────────────────────────────────
+async function revokeEmp(id) {
+  const e=employees.find(x=>x.id===id);
+  if(!e||!confirm(`Revoke employment for ${e.first} ${e.last}?\n\nThe record will be locked and uneditable.`)) return;
+  e.status='Revoked'; e.revokedAt=new Date().toISOString().slice(0,10);
+  closePanel(); render();
+  await saveEmps(`Revoke employment: ${e.first} ${e.last}`);
+  toast('Employment revoked — record is now locked');
+}
+
 // ── EXPORT ────────────────────────────────────────────────────────────────────
 function exportCSV(){
   if(activeSection==='employees'){
-    const cols=['id','first','last','role','dept','loc','premise','address','city','pin','country','idProofType','idProofNum','email','phone','start','status'];
+    const cols=['id','first','last','role','dept','loc','premise','address','city','pin','country','idProofType','idProofNum','email','phone','start','status','ctc','tenure','contractEnd','revokedAt'];
     dlCSV([cols.join(','),...employees.map(e=>cols.map(c=>`"${(e[c]||'').replace(/"/g,'""')}"`).join(','))],'kn-employees.csv');
   } else {
     const cols=['id','company','contact','email','phone','category','status','contractStart','premise','address','city','pin','country','notes'];
