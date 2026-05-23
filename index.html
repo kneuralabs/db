@@ -340,6 +340,8 @@ html{overflow-x:hidden}
   td:nth-child(5),th:nth-child(5),td:nth-child(6),th:nth-child(6){display:none}
   .modal{padding:20px 18px}
   .f2{grid-template-columns:1fr 1fr}
+  .theme-btn{right:auto;left:50%;transform:translateX(-50%)}
+  .theme-btn:hover{transform:translateX(-50%) scale(1.1)}
 }
 
 /* ── ≤479px Mobile portrait ── */
@@ -375,7 +377,8 @@ html{overflow-x:hidden}
   .setup-card{padding:20px 16px}
   #add-btn-lbl{display:none}
   .toast{bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 28px);white-space:normal;text-align:center}
-  .theme-btn{bottom:calc(16px + env(safe-area-inset-bottom,0px));right:14px;width:44px;height:44px}
+  .theme-btn{bottom:calc(16px + env(safe-area-inset-bottom,0px));right:auto;left:50%;transform:translateX(-50%);width:44px;height:44px}
+  .theme-btn:hover{transform:translateX(-50%) scale(1.1)}
   .login-card{padding:24px 18px}
   .login-logo{margin-bottom:20px}
 }
