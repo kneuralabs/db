@@ -50,7 +50,11 @@
     "premise": "15113",
     "country": "United States",
     "idCardGenerated": true,
-    "idCardGeneratedAt": "2026-05-23"
+    "idCardGeneratedAt": "2026-05-23",
+    "ctc": "Equity",
+    "tenure": "",
+    "contractEnd": "",
+    "revokedAt": ""
   },
   {
     "id": "KN-2026-003",
