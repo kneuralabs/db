@@ -69,7 +69,7 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 
 /* ── TOPBAR ───────────────────────────────────────────────────────────────── */
 .topbar{background:var(--blue-dk);padding:0 24px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
-.logo-mark{width:34px;height:34px;flex-shrink:0}
+.logo-mark{width:34px;height:34px;flex-shrink:0;border-radius:8px}
 .app-name{font-weight:700;font-size:15px;letter-spacing:-.3px;color:#fff;white-space:nowrap}
 .app-tagline{font-size:11px;color:rgba(255,255,255,.45);white-space:nowrap}
 .sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;transition:all .2s;white-space:nowrap}
@@ -424,12 +424,30 @@ tbody tr:hover td{background:var(--blue-lt)}
 .idcard-tap-hint{font-size:11px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:6px;letter-spacing:.02em}
 .idcard-close-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 28px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;backdrop-filter:blur(4px)}
 .idcard-close-btn:hover{background:rgba(255,255,255,.2)}
-@media(max-width:379px){
-  .idcard-card{width:calc(100vw - 32px);height:calc((100vw - 32px) * 520 / 340)}
+/* Mobile portrait — scale card to fit viewport with room for controls */
+@media(max-width:767px){
+  .idcard-overlay{padding:12px;overflow-y:auto;justify-content:flex-start;padding-top:max(16px,env(safe-area-inset-top,0px))}
+  .idcard-wrap{gap:12px;padding-bottom:max(16px,env(safe-area-inset-bottom,0px));min-height:min-content}
+  .idcard-card{width:min(300px,calc(100vw - 24px));height:calc(min(300px,calc(100vw - 24px)) * 520 / 340)}
+  .idcard-close-btn{min-width:min(300px,calc(100vw - 24px));padding:13px 28px}
 }
-@media(max-height:640px){
-  .idcard-card{width:260px;height:calc(260 * 520 / 340 * 1px)}
-  .idcard-card{height:398px}
+@media(max-width:379px){
+  .idcard-card{width:calc(100vw - 24px);height:calc((100vw - 24px) * 520 / 340)}
+}
+/* Short viewport portrait (small phones with address bar) */
+@media(max-height:640px) and (orientation:portrait){
+  .idcard-overlay{overflow-y:auto;justify-content:flex-start;padding-top:8px}
+  .idcard-wrap{gap:8px}
+  .idcard-card{width:min(240px,calc(100vw - 24px));height:calc(min(240px,calc(100vw - 24px)) * 520 / 340)}
+}
+/* Landscape phones — horizontal layout */
+@media(max-height:500px) and (orientation:landscape){
+  .idcard-overlay{flex-direction:row;align-items:center;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));gap:16px;justify-content:center;overflow-x:auto}
+  .idcard-wrap{flex-direction:row;align-items:center;gap:16px;max-height:100%;width:auto;flex-shrink:0}
+  .idcard-scene{flex-shrink:0}
+  .idcard-card{width:auto;height:calc(100vh - 24px);aspect-ratio:340/520}
+  .idcard-tap-hint{writing-mode:vertical-rl;font-size:10px}
+  .idcard-close-btn{flex-direction:column;padding:12px 14px;min-width:0}
 }
 
 /* ── ID CARD FACES ───────────────────────────────────────────────────────── */
