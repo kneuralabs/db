@@ -589,7 +589,7 @@ html{overflow-x:hidden}
         <input id="search" type="search" placeholder="Search…" oninput="render()" aria-label="Search">
       </div>
       <button class="btn btn-top icon" onclick="syncNow()" title="Sync" aria-label="Sync"><i class="ti ti-refresh"></i></button>
-      <button class="btn btn-top icon" onclick="exportCSV()" title="Export CSV" aria-label="Export CSV"><i class="ti ti-download"></i></button>
+
       <button class="btn primary icon" onclick="openAdd()" id="add-btn" title="Add" aria-label="Add"><i class="ti ti-plus"></i><span id="add-btn-lbl" style="margin-left:4px">Add</span></button>
       <button class="btn btn-top icon" onclick="showGhSettings()" title="Settings" aria-label="Settings" id="admin-settings-btn"><i class="ti ti-settings"></i></button>
     </div>
@@ -1845,17 +1845,6 @@ async function revokeEmp(id) {
   toast('Employment revoked — record is now locked');
 }
 
-// ── EXPORT ────────────────────────────────────────────────────────────────────
-function exportCSV(){
-  if(activeSection==='employees'){
-    const cols=['id','first','last','role','dept','loc','premise','address','city','pin','country','idProofType','idProofNum','email','phone','start','status','ctc','tenure','contractEnd','revokedAt'];
-    dlCSV([cols.join(','),...employees.map(e=>cols.map(c=>`"${(e[c]||'').replace(/"/g,'""')}"`).join(','))],'kn-employees.csv');
-  } else {
-    const cols=['id','company','contact','email','phone','category','status','contractStart','premise','address','city','pin','country','notes'];
-    dlCSV([cols.join(','),...vendors.map(v=>cols.map(c=>`"${(v[c]||'').replace(/"/g,'""')}"`).join(','))],'kn-vendors.csv');
-  }
-}
-function dlCSV(rows,fn){const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download=fn;a.click()}
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
 function setSyncBadge(type,text){
