@@ -429,6 +429,18 @@ tbody tr:hover td{background:var(--blue-lt)}
       <div class="frow"><label class="flbl">Email</label><input id="f-email" type="email" placeholder="alex@kneuralabs.com"></div>
       <div class="frow"><label class="flbl">Phone</label><input id="f-phone" type="tel" placeholder="+1 555 000 0000"></div>
     </div>
+    <div class="frow"><label class="flbl">Address</label><input id="f-address" placeholder="Street / Building / Area"></div>
+    <div class="f2">
+      <div class="frow"><label class="flbl">City</label><input id="f-city" placeholder="Mumbai"></div>
+      <div class="frow"><label class="flbl">PIN / ZIP</label><input id="f-pin" placeholder="400001"></div>
+    </div>
+    <div class="f2">
+      <div class="frow">
+        <label class="flbl">ID Proof type</label>
+        <select id="f-idtype"><option value="">— Select —</option><option>Aadhaar</option><option>PAN</option><option>Passport</option><option>Voter ID</option><option>Driving License</option><option>Other</option></select>
+      </div>
+      <div class="frow"><label class="flbl">ID Proof number</label><input id="f-idnum" placeholder="XXXX-XXXX-XXXX"></div>
+    </div>
     <div class="f2">
       <div class="frow"><label class="flbl">Start date</label><input id="f-date" type="date"></div>
       <div class="frow">
@@ -477,6 +489,11 @@ tbody tr:hover td{background:var(--blue-lt)}
         <select id="v-status"><option value="Active">Active</option><option value="Inactive">Inactive</option><option value="Under Review">Under Review</option></select>
       </div>
       <div class="frow"><label class="flbl">Contract start</label><input id="v-start" type="date"></div>
+    </div>
+    <div class="frow"><label class="flbl">Address</label><input id="v-address" placeholder="Street / Building / Area"></div>
+    <div class="f2">
+      <div class="frow"><label class="flbl">City</label><input id="v-city" placeholder="Mumbai"></div>
+      <div class="frow"><label class="flbl">PIN / ZIP</label><input id="v-pin" placeholder="400001"></div>
     </div>
     <div class="frow"><label class="flbl">Notes</label><textarea id="v-notes" placeholder="Service description, contract terms, key notes…"></textarea></div>
 
@@ -698,7 +715,7 @@ function switchSection(sec) {
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function filteredEmps() {
   const q=document.getElementById('search').value.toLowerCase();
-  return employees.filter(e=>(activeDept==='All'||e.dept===activeDept)&&(!q||(e.first+' '+e.last+e.role+e.dept+e.loc+(e.id||'')).toLowerCase().includes(q))).sort((a,b)=>{const av=a[eSortCol]||'',bv=b[eSortCol]||'';return av<bv?-eSortDir:av>bv?eSortDir:0});
+  return employees.filter(e=>(activeDept==='All'||e.dept===activeDept)&&(!q||(e.first+' '+e.last+e.role+e.dept+e.loc+(e.city||'')+(e.id||'')).toLowerCase().includes(q))).sort((a,b)=>{const av=a[eSortCol]||'',bv=b[eSortCol]||'';return av<bv?-eSortDir:av>bv?eSortDir:0});
 }
 function filteredVnds() {
   const q=document.getElementById('search').value.toLowerCase();
@@ -913,6 +930,9 @@ function openEmpPanel(id) {
     <div class="slbl">Details</div>
     <div class="drow"><i class="ti ti-briefcase"></i><span class="dk">Department</span><span class="dv">${dBadge(e.dept)}</span></div>
     <div class="drow"><i class="ti ti-map-pin"></i><span class="dk">Location</span><span class="dv">${e.loc||'—'}</span></div>
+    ${e.address?`<div class="drow"><i class="ti ti-home"></i><span class="dk">Address</span><span class="dv">${e.address}</span></div>`:''}
+    ${(e.city||e.pin)?`<div class="drow"><i class="ti ti-building-community"></i><span class="dk">City / PIN</span><span class="dv">${[e.city,e.pin].filter(Boolean).join(' — ')}</span></div>`:''}
+    ${e.idProofType?`<div class="drow"><i class="ti ti-id-badge"></i><span class="dk">ID Proof</span><span class="dv">${e.idProofType}${e.idProofNum?' · '+e.idProofNum:''}</span></div>`:''}
     <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Start date</span><span class="dv">${e.start||'—'}</span></div>
     <div class="drow"><i class="ti ti-clock"></i><span class="dk">Tenure</span><span class="dv">${e.start?tenure(e.start)+' yrs':'—'}</span></div>
     <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${sBadge(e.status||'Active')}</span></div>
@@ -952,6 +972,8 @@ function openVndPanel(id) {
     <div class="drow"><i class="ti ti-tag"></i><span class="dk">Category</span><span class="dv">${cBadge(v.category)}</span></div>
     <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${sBadge(v.status)}</span></div>
     <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Since</span><span class="dv">${v.contractStart||'—'}</span></div>
+    ${v.address?`<div class="drow"><i class="ti ti-home"></i><span class="dk">Address</span><span class="dv">${v.address}</span></div>`:''}
+    ${(v.city||v.pin)?`<div class="drow"><i class="ti ti-building-community"></i><span class="dk">City / PIN</span><span class="dv">${[v.city,v.pin].filter(Boolean).join(' — ')}</span></div>`:''}
     <div class="drow"><i class="ti ti-id"></i><span class="dk">Vendor ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${v.id}</span></div>
     ${v.notes?`<div class="slbl">Notes</div><div style="font-size:13px;color:var(--text2);line-height:1.65;padding:8px 0">${v.notes}</div>`:''}
     <div class="slbl">Documents (${docs.length})</div>
@@ -1004,8 +1026,8 @@ function openAdd(){activeSection==='employees'?openEmpAdd():openVndAdd()}
 function openEmpAdd(){
   editEmpId=null; pendingPhoto=null; docsPending=[]; docsToDelete=[];
   document.getElementById('emp-modal-title').textContent='Add employee';
-  ['f-first','f-last','f-role','f-loc','f-email','f-phone'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-date').value=''; document.getElementById('f-status').value='Active'; document.getElementById('f-dept').value='Engineering';
+  ['f-first','f-last','f-role','f-loc','f-email','f-phone','f-address','f-city','f-pin','f-idnum'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-date').value=''; document.getElementById('f-status').value='Active'; document.getElementById('f-dept').value='Engineering'; document.getElementById('f-idtype').value='';
   resetPhotoUI(); renderModalDocs('emp');
   document.getElementById('emp-modal').classList.add('on');
 }
@@ -1018,6 +1040,9 @@ function openEmpEdit(id){
   document.getElementById('f-loc').value=e.loc||''; document.getElementById('f-email').value=e.email||'';
   document.getElementById('f-phone').value=e.phone||''; document.getElementById('f-date').value=e.start||'';
   document.getElementById('f-status').value=e.status||'Active';
+  document.getElementById('f-address').value=e.address||''; document.getElementById('f-city').value=e.city||'';
+  document.getElementById('f-pin').value=e.pin||''; document.getElementById('f-idtype').value=e.idProofType||'';
+  document.getElementById('f-idnum').value=e.idProofNum||'';
   if(e.photo){document.getElementById('photo-preview').innerHTML=`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover">`;document.getElementById('photo-lbl-text').textContent='Photo on file — click to change'}
   else resetPhotoUI();
   document.getElementById('f-photo').value='';
@@ -1035,7 +1060,7 @@ async function saveEmp(){
   // Upload pending docs
   const newDocs=[];
   for(const f of docsPending){try{newDocs.push(await uploadDoc('emp',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
-  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
+  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,address:document.getElementById('f-address').value.trim(),city:document.getElementById('f-city').value.trim(),pin:document.getElementById('f-pin').value.trim(),idProofType:document.getElementById('f-idtype').value,idProofNum:document.getElementById('f-idnum').value.trim(),photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
   if(editEmpId) Object.assign(employees.find(e=>e.id===editEmpId),data);
   else employees.push({id,...data});
   closeModal('emp-modal'); render();
@@ -1053,7 +1078,7 @@ async function deleteEmp(id){
 function openVndAdd(){
   editVndId=null; docsPending=[]; docsToDelete=[];
   document.getElementById('vnd-modal-title').textContent='Add vendor';
-  ['v-company','v-contact','v-email','v-phone','v-notes'].forEach(id=>document.getElementById(id).value='');
+  ['v-company','v-contact','v-email','v-phone','v-notes','v-address','v-city','v-pin'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('v-start').value=''; document.getElementById('v-status').value='Active'; document.getElementById('v-cat').value='Software';
   renderModalDocs('vnd');
   document.getElementById('vnd-modal').classList.add('on');
@@ -1066,6 +1091,7 @@ function openVndEdit(id){
   document.getElementById('v-email').value=v.email||''; document.getElementById('v-phone').value=v.phone||'';
   document.getElementById('v-cat').value=v.category||'Software'; document.getElementById('v-status').value=v.status||'Active';
   document.getElementById('v-start').value=v.contractStart||''; document.getElementById('v-notes').value=v.notes||'';
+  document.getElementById('v-address').value=v.address||''; document.getElementById('v-city').value=v.city||''; document.getElementById('v-pin').value=v.pin||'';
   renderModalDocs('vnd');
   document.getElementById('vnd-modal').classList.add('on');
 }
@@ -1076,7 +1102,7 @@ async function saveVendor(){
   const existingDocs=(editVndId?(vendors.find(v=>v.id===editVndId)?.docs||[]):[]).filter(d=>!docsToDelete.find(r=>r.path===d.path));
   const newDocs=[];
   for(const f of docsPending){try{newDocs.push(await uploadDoc('vnd',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
-  const data={company,contact:document.getElementById('v-contact').value.trim(),email:document.getElementById('v-email').value.trim(),phone:document.getElementById('v-phone').value.trim(),category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,contractStart:document.getElementById('v-start').value||new Date().toISOString().slice(0,10),notes:document.getElementById('v-notes').value.trim(),docs:[...existingDocs,...newDocs]};
+  const data={company,contact:document.getElementById('v-contact').value.trim(),email:document.getElementById('v-email').value.trim(),phone:document.getElementById('v-phone').value.trim(),category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,contractStart:document.getElementById('v-start').value||new Date().toISOString().slice(0,10),address:document.getElementById('v-address').value.trim(),city:document.getElementById('v-city').value.trim(),pin:document.getElementById('v-pin').value.trim(),notes:document.getElementById('v-notes').value.trim(),docs:[...existingDocs,...newDocs]};
   if(editVndId) Object.assign(vendors.find(v=>v.id===editVndId),data);
   else vendors.push({id,...data});
   closeModal('vnd-modal'); render();
@@ -1094,10 +1120,10 @@ const closeModal=id=>document.getElementById(id).classList.remove('on');
 // ── EXPORT ────────────────────────────────────────────────────────────────────
 function exportCSV(){
   if(activeSection==='employees'){
-    const cols=['id','first','last','role','dept','loc','email','phone','start','status'];
+    const cols=['id','first','last','role','dept','loc','address','city','pin','idProofType','idProofNum','email','phone','start','status'];
     dlCSV([cols.join(','),...employees.map(e=>cols.map(c=>`"${(e[c]||'').replace(/"/g,'""')}"`).join(','))],'kn-employees.csv');
   } else {
-    const cols=['id','company','contact','email','phone','category','status','contractStart','notes'];
+    const cols=['id','company','contact','email','phone','category','status','contractStart','address','city','pin','notes'];
     dlCSV([cols.join(','),...vendors.map(v=>cols.map(c=>`"${(v[c]||'').replace(/"/g,'""')}"`).join(','))],'kn-vendors.csv');
   }
 }
