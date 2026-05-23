@@ -27,7 +27,13 @@
       }
     ],
     "premise": "12/1J",
-    "country": "India"
+    "country": "India",
+    "ctc": "Equity",
+    "tenure": "",
+    "contractEnd": "",
+    "revokedAt": "",
+    "idCardGenerated": false,
+    "idCardGeneratedAt": ""
   },
   {
     "id": "KN-2026-002",
