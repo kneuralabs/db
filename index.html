@@ -1807,12 +1807,13 @@ function showIdCardOverlay(e) {
   // Reset flip state and show overlay
   document.getElementById('idcard-scene').classList.remove('flipped');
   document.getElementById('idcard-overlay').classList.add('on');
-  // Prevent body scroll
+  document.getElementById('theme-btn').style.display='none';
   document.body.style.overflow='hidden';
 }
 
 function closeIdCard(){
   document.getElementById('idcard-overlay').classList.remove('on');
+  document.getElementById('theme-btn').style.display='';
   document.body.style.overflow='';
   // If came from login (not admin), go back to login
   if(!authedAdmin){
