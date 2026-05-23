@@ -14,7 +14,6 @@
 <meta property="og:url" content="https://db.kneuralabs.com">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="KN PeopleBase · KneuralLabs">
-<meta name="twitter:description" content="Internal employee and vendor registry for KneuralLabs.">
 <meta name="twitter:image" content="https://db.kneuralabs.com/og.svg">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,8 +26,7 @@
   --blue:#1C5CAA; --blue-dk:#0D2E5A; --blue-lt:#E6F1FB; --blue-sky:#4A8BC8;
   --red:#C8281E; --red-dk:#8B1A12; --red-lt:#FBEAEA;
   --silver:#D0D2D6; --canvas:#F7F8FA; --frost:#E0E4EA;
-  --ink:#1A1D23; --slate:#6B7280;
-  --amber:#BA7517; --amber-lt:#FAEEDA;
+  --ink:#1A1D23; --slate:#6B7280; --amber:#BA7517; --amber-lt:#FAEEDA;
 
   --bg:var(--canvas); --surface:#fff; --surface2:var(--canvas);
   --border:var(--frost); --border-strong:#C5CDD8;
@@ -58,10 +56,9 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 .logo-mark{width:34px;height:34px;flex-shrink:0}
 .app-name{font-weight:700;font-size:15px;letter-spacing:-.3px;color:#fff;white-space:nowrap}
 .app-tagline{font-size:11px;color:rgba(255,255,255,.45);white-space:nowrap}
-.sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;letter-spacing:.02em;transition:all .2s;white-space:nowrap}
+.sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;transition:all .2s;white-space:nowrap}
 .sync-badge.ok{background:rgba(28,92,170,.3);color:#7BB8F0}
 .sync-badge.err{background:rgba(200,40,30,.25);color:#F08080}
-.sync-badge.warn{background:rgba(186,117,23,.25);color:#F0C070}
 .sync-badge.loading{background:rgba(255,255,255,.1);color:rgba(255,255,255,.45)}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
 
@@ -84,8 +81,8 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 .btn:focus-visible{outline:3px solid var(--blue-sky);outline-offset:2px}
 
 /* ── SECTION TABS ─────────────────────────────────────────────────────────── */
-.section-tabs{background:var(--blue-dk);border-bottom:1px solid rgba(255,255,255,.1);padding:0 24px;display:flex;gap:0;position:sticky;top:56px;z-index:45}
-.stab{padding:10px 16px;font-size:13px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:7px;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;letter-spacing:.01em;white-space:nowrap}
+.section-tabs{background:var(--blue-dk);border-bottom:1px solid rgba(255,255,255,.1);padding:0 24px;display:flex;position:sticky;top:56px;z-index:45}
+.stab{padding:10px 16px;font-size:13px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:7px;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;white-space:nowrap}
 .stab:hover{color:rgba(255,255,255,.8)}
 .stab.active{color:#fff;border-bottom-color:var(--blue-sky)}
 .stab-count{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;min-width:22px;text-align:center}
@@ -93,7 +90,7 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 
 /* ── TOOLBAR ──────────────────────────────────────────────────────────────── */
 .toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:98px;z-index:40}
-.chip{padding:5px 12px;border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text2);cursor:pointer;background:transparent;transition:all .15s;font-weight:600;display:inline-flex;align-items:center;gap:4px;font-family:inherit;letter-spacing:.01em;white-space:nowrap}
+.chip{padding:5px 12px;border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text2);cursor:pointer;background:transparent;transition:all .15s;font-weight:600;display:inline-flex;align-items:center;gap:4px;font-family:inherit;white-space:nowrap}
 .chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 .chip:hover:not(.active){background:var(--surface2);color:var(--text)}
 .chip-n{font-size:10px;opacity:.7}
@@ -120,7 +117,7 @@ body{font-family:'Inter','Aptos Display',sans-serif;background:var(--bg);color:v
 .ctop{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0;overflow:hidden;background:var(--blue-lt);color:var(--blue)}
 .av img{width:100%;height:100%;object-fit:cover}
-.cname{font-weight:600;font-size:14px;line-height:1.25;color:var(--text)}
+.cname{font-weight:600;font-size:14px;line-height:1.25}
 .crole{font-size:12px;color:var(--text2);margin-top:2px}
 .emp-id{font-size:10px;color:var(--blue);font-weight:700;letter-spacing:.04em;margin-top:3px;font-family:'Courier New',monospace}
 .cmeta{display:flex;flex-direction:column;gap:5px}
@@ -147,13 +144,12 @@ tbody tr:hover td{background:var(--blue-lt)}
 /* ── PANEL ────────────────────────────────────────────────────────────────── */
 .overlay{position:fixed;inset:0;background:rgba(13,46,90,.45);z-index:100;opacity:0;pointer-events:none;transition:opacity .22s;backdrop-filter:blur(2px)}
 .overlay.on{opacity:1;pointer-events:all}
-.panel{position:fixed;right:0;top:0;bottom:0;width:400px;max-width:100vw;background:var(--surface);border-left:1px solid var(--border);z-index:101;transform:translateX(100%);transition:transform .26s var(--ease);display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+.panel{position:fixed;right:0;top:0;bottom:0;width:420px;max-width:100vw;background:var(--surface);border-left:1px solid var(--border);z-index:101;transform:translateX(100%);transition:transform .26s var(--ease);display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
 .panel.on{transform:none}
-.ph{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-shrink:0;background:var(--surface)}
+.ph{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-shrink:0}
 .ph-av{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:700;flex-shrink:0;overflow:hidden;background:var(--blue-lt);color:var(--blue)}
 .ph-av img{width:100%;height:100%;object-fit:cover}
-.ph-info{min-width:0}
-.ph-name{font-size:17px;font-weight:700;color:var(--text)}
+.ph-name{font-size:17px;font-weight:700}
 .ph-role{font-size:13px;color:var(--text2);margin-top:2px}
 .ph-id{font-size:11px;color:var(--blue);font-weight:700;font-family:'Courier New',monospace;margin-top:3px}
 .close-btn{margin-left:auto;background:none;border:1px solid var(--border);width:32px;height:32px;border-radius:var(--r);cursor:pointer;display:grid;place-items:center;color:var(--text2);font-size:16px;transition:all .15s;flex-shrink:0}
@@ -162,16 +158,16 @@ tbody tr:hover td{background:var(--blue-lt)}
 .slbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;margin-top:20px}
 .slbl:first-child{margin-top:0}
 .drow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
-.drow:last-child{border-bottom:none}
+.drow:last-of-type{border-bottom:none}
 .drow i{font-size:15px;color:var(--text3);width:18px;flex-shrink:0}
 .dk{color:var(--text2);min-width:88px;font-size:12px;flex-shrink:0}
-.dv{margin-left:auto;text-align:right;color:var(--text);word-break:break-all}
+.dv{margin-left:auto;text-align:right;word-break:break-all}
 .panel-actions{display:flex;gap:8px;padding-top:20px;border-top:1px solid var(--border);margin-top:20px}
 
 /* ── MODAL ────────────────────────────────────────────────────────────────── */
 .modal-bg{position:fixed;inset:0;background:rgba(13,46,90,.5);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px;backdrop-filter:blur(4px)}
 .modal-bg.on{opacity:1;pointer-events:all}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;transform:scale(.96) translateY(12px);transition:transform .22s var(--ease);box-shadow:var(--shadow-lg)}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;transform:scale(.96) translateY(12px);transition:transform .22s var(--ease);box-shadow:var(--shadow-lg)}
 .modal-bg.on .modal{transform:none}
 .modal-title{font-size:17px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:9px;color:var(--blue)}
 .frow{margin-bottom:14px}
@@ -190,6 +186,28 @@ tbody tr:hover td{background:var(--blue-lt)}
 #photo-preview img{width:100%;height:100%;object-fit:cover}
 .photo-text b{display:block;font-size:13px;color:var(--text);margin-bottom:2px}
 .photo-text span{font-size:11px;color:var(--text3)}
+
+/* ── DOCUMENTS ────────────────────────────────────────────────────────────── */
+.docs-section{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.doc-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid var(--border);background:var(--surface);transition:background .1s}
+.doc-item:last-child{border-bottom:none}
+.doc-item.pending{background:var(--blue-lt)}
+.doc-icon{font-size:16px;color:var(--blue);flex-shrink:0;width:18px}
+.doc-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500}
+.doc-meta{font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0}
+.doc-btn{width:28px;height:28px;border:none;background:none;cursor:pointer;border-radius:6px;display:grid;place-items:center;font-size:14px;color:var(--text3);transition:all .15s;flex-shrink:0}
+.doc-btn:hover{background:var(--surface2);color:var(--text)}
+.doc-btn.del:hover{background:var(--red-lt);color:var(--red)}
+.doc-btn.dl:hover{background:var(--blue-lt);color:var(--blue)}
+.doc-empty{padding:14px 12px;font-size:12px;color:var(--text3);text-align:center}
+.doc-attach-btn{display:flex;align-items:center;gap:7px;padding:9px 12px;border-top:1px solid var(--border);font-size:12px;font-weight:600;color:var(--blue);cursor:pointer;background:var(--surface2);transition:background .15s;width:100%}
+.doc-attach-btn:hover{background:var(--blue-lt)}
+.doc-attach-btn i{font-size:15px}
+/* panel doc rows */
+.pdoc{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.pdoc:last-child{border-bottom:none}
+.pdoc-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pdoc-meta{font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0}
 
 /* ── SETUP ────────────────────────────────────────────────────────────────── */
 .setup{max-width:500px;margin:64px auto;padding:20px}
@@ -212,71 +230,41 @@ tbody tr:hover td{background:var(--blue-lt)}
 .progress{height:2px;background:var(--blue-sky);position:fixed;top:0;left:0;z-index:400;transition:width .3s var(--ease);width:0}
 
 /* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
-
-/* Tablet landscape / small laptop: 1024–1279px */
-@media(min-width:1024px) and (max-width:1279px){
-  .content{padding:20px 48px}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
-}
-
-/* Tablet portrait: 768–1023px */
+@media(min-width:1024px) and (max-width:1279px){.content{padding:20px 48px}}
 @media(min-width:768px) and (max-width:1023px){
   .content{padding:20px 32px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
-  .section-tabs{top:56px}
-  .toolbar{top:98px}
   td:nth-child(5),th:nth-child(5){display:none}
 }
-
-/* Mobile landscape: 480–767px */
 @media(min-width:480px) and (max-width:767px){
   .topbar{position:relative;height:auto;padding:10px 16px;flex-wrap:wrap;gap:8px}
   .search-wrap{flex:1;min-width:0;order:3;width:100%}
-  #search{width:100%}
-  #search:focus{width:100%}
+  #search,#search:focus{width:100%}
   .app-tagline{display:none}
-  .section-tabs{position:relative;top:auto;padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .section-tabs::-webkit-scrollbar{display:none}
-  .toolbar{position:relative;top:auto;padding:8px 16px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
-  .toolbar::-webkit-scrollbar{display:none}
+  .section-tabs,.toolbar{position:relative;top:auto;padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .toolbar{padding:8px 16px;flex-wrap:nowrap}
+  .section-tabs::-webkit-scrollbar,.toolbar::-webkit-scrollbar{display:none}
   .content{padding:16px 20px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
   td:nth-child(3),th:nth-child(3),td:nth-child(5),th:nth-child(5){display:none}
 }
-
-/* Mobile portrait: <480px */
 @media(max-width:479px){
   .topbar{position:relative;height:auto;padding:10px 16px;flex-wrap:wrap;gap:8px}
   .search-wrap{flex:1;min-width:0;order:3;width:100%}
-  #search{width:100%}
-  #search:focus{width:100%}
-  .app-tagline{display:none}
-  .section-tabs{position:relative;top:auto;padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .section-tabs::-webkit-scrollbar{display:none}
-  .toolbar{position:relative;top:auto;padding:8px 16px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
-  .toolbar::-webkit-scrollbar{display:none}
-  .vt{display:none}
+  #search,#search:focus{width:100%}
+  .app-tagline,.vt{display:none}
+  .section-tabs,.toolbar{position:relative;top:auto;padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .toolbar{padding:8px 16px;flex-wrap:nowrap}
+  .section-tabs::-webkit-scrollbar,.toolbar::-webkit-scrollbar{display:none}
   .content{padding:12px 16px}
   .grid{grid-template-columns:1fr}
   .f2{grid-template-columns:1fr}
   .panel{width:100%}
   .stats-row{grid-template-columns:1fr 1fr}
   td:nth-child(3),th:nth-child(3),td:nth-child(4),th:nth-child(4),td:nth-child(5),th:nth-child(5){display:none}
-  .sync-badge span{display:none}
-  #search{width:100%}
 }
-
-/* Laptop: 1280–1439px */
-@media(min-width:1280px) and (max-width:1439px){
-  .content{padding:24px 64px}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
-}
-
-/* Desktop: 1440px+ */
-@media(min-width:1440px){
-  .content{padding:32px auto}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
-}
+@media(min-width:1280px) and (max-width:1439px){.content{padding:24px 64px}}
+@media(min-width:1440px){.content{max-width:1400px}}
 </style>
 </head>
 <body>
@@ -284,7 +272,7 @@ tbody tr:hover td{background:var(--blue-lt)}
 <div id="progress-bar" class="progress"></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<!-- SETUP SCREEN ─────────────────────────────────────────────────────────── -->
+<!-- SETUP ───────────────────────────────────────────────────────────────────── -->
 <div id="setup-screen" class="setup" style="display:none">
   <div class="setup-card">
     <div class="setup-header">
@@ -306,14 +294,8 @@ tbody tr:hover td{background:var(--blue-lt)}
       <b>3.</b> Generate a <b>PAT</b>: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained → <i>Contents: read &amp; write</i><br>
       <b>4.</b> Fill in the fields below and click Connect
     </div>
-    <div class="frow">
-      <label class="flbl">GitHub owner / organisation</label>
-      <input id="cfg-owner" type="text" placeholder="kneuralabs" autocomplete="username">
-    </div>
-    <div class="frow">
-      <label class="flbl">Repository name</label>
-      <input id="cfg-repo" type="text" placeholder="db">
-    </div>
+    <div class="frow"><label class="flbl">GitHub owner / organisation</label><input id="cfg-owner" type="text" placeholder="kneuralabs"></div>
+    <div class="frow"><label class="flbl">Repository name</label><input id="cfg-repo" type="text" placeholder="db"></div>
     <div class="frow">
       <label class="flbl">Personal Access Token <span style="color:var(--text3);font-weight:400">— stored locally only</span></label>
       <input id="cfg-token" type="password" placeholder="github_pat_…">
@@ -343,7 +325,7 @@ tbody tr:hover td{background:var(--blue-lt)}
         <i class="ti ti-search"></i>
         <input id="search" type="search" placeholder="Search…" oninput="render()" aria-label="Search">
       </div>
-      <button class="btn btn-top" onclick="syncNow()" title="Sync with GitHub" aria-label="Sync"><i class="ti ti-refresh"></i></button>
+      <button class="btn btn-top" onclick="syncNow()" title="Sync" aria-label="Sync"><i class="ti ti-refresh"></i></button>
       <button class="btn btn-top" onclick="exportCSV()" title="Export CSV" aria-label="Export CSV"><i class="ti ti-download"></i></button>
       <button class="btn primary" onclick="openAdd()" id="add-btn"><i class="ti ti-plus"></i><span id="add-btn-lbl">Add employee</span></button>
       <button class="btn btn-top icon" onclick="showSettings()" title="Settings" aria-label="Settings"><i class="ti ti-settings"></i></button>
@@ -359,7 +341,7 @@ tbody tr:hover td{background:var(--blue-lt)}
     </button>
   </nav>
 
-  <!-- EMPLOYEES SECTION ──────────────────────────────────────────────────── -->
+  <!-- EMPLOYEES ──────────────────────────────────────────────────────────── -->
   <div id="section-employees">
     <div class="toolbar" id="emp-toolbar" role="toolbar" aria-label="Filter employees">
       <button class="chip active" onclick="setDept(this,'All')">All <span class="chip-n" id="n-All">0</span></button>
@@ -371,8 +353,8 @@ tbody tr:hover td{background:var(--blue-lt)}
       <button class="chip" onclick="setDept(this,'HR')">HR <span class="chip-n" id="n-HR">0</span></button>
       <button class="chip" onclick="setDept(this,'Finance')">Finance <span class="chip-n" id="n-Finance">0</span></button>
       <div class="vt">
-        <button class="vtb active" id="vb-grid" onclick="setView('grid')" title="Grid" aria-label="Grid view"><i class="ti ti-layout-grid"></i></button>
-        <button class="vtb" id="vb-table" onclick="setView('table')" title="Table" aria-label="Table view"><i class="ti ti-table"></i></button>
+        <button class="vtb active" id="vb-grid" onclick="setView('grid')" title="Grid"><i class="ti ti-layout-grid"></i></button>
+        <button class="vtb" id="vb-table" onclick="setView('table')" title="Table"><i class="ti ti-table"></i></button>
       </div>
     </div>
     <main class="content">
@@ -386,7 +368,7 @@ tbody tr:hover td{background:var(--blue-lt)}
     </main>
   </div>
 
-  <!-- VENDORS SECTION ────────────────────────────────────────────────────── -->
+  <!-- VENDORS ────────────────────────────────────────────────────────────── -->
   <div id="section-vendors" style="display:none">
     <div class="toolbar" id="vnd-toolbar" role="toolbar" aria-label="Filter vendors">
       <button class="chip active" onclick="setVStatus(this,'All')">All <span class="chip-n" id="vn-All">0</span></button>
@@ -394,8 +376,8 @@ tbody tr:hover td{background:var(--blue-lt)}
       <button class="chip" onclick="setVStatus(this,'Inactive')">Inactive <span class="chip-n" id="vn-Inactive">0</span></button>
       <button class="chip" onclick="setVStatus(this,'Under Review')">Under Review <span class="chip-n" id="vn-Under Review">0</span></button>
       <div class="vt">
-        <button class="vtb active" id="vvb-grid" onclick="setVView('grid')" title="Grid" aria-label="Grid view"><i class="ti ti-layout-grid"></i></button>
-        <button class="vtb" id="vvb-table" onclick="setVView('table')" title="Table" aria-label="Table view"><i class="ti ti-table"></i></button>
+        <button class="vtb active" id="vvb-grid" onclick="setVView('grid')" title="Grid"><i class="ti ti-layout-grid"></i></button>
+        <button class="vtb" id="vvb-table" onclick="setVView('table')" title="Table"><i class="ti ti-table"></i></button>
       </div>
     </div>
     <main class="content">
@@ -410,12 +392,12 @@ tbody tr:hover td{background:var(--blue-lt)}
   </div>
 </div>
 
-<!-- DETAIL PANEL ──────────────────────────────────────────────────────────── -->
+<!-- PANEL ────────────────────────────────────────────────────────────────── -->
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
 <aside class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Record details">
   <div class="ph">
     <div class="ph-av" id="p-av"></div>
-    <div class="ph-info">
+    <div style="min-width:0">
       <div class="ph-name" id="p-name"></div>
       <div class="ph-role" id="p-role"></div>
       <div class="ph-id" id="p-id"></div>
@@ -425,8 +407,8 @@ tbody tr:hover td{background:var(--blue-lt)}
   <div class="pb" id="pb"></div>
 </aside>
 
-<!-- EMPLOYEE MODAL ────────────────────────────────────────────────────────── -->
-<div class="modal-bg" id="emp-modal" role="dialog" aria-modal="true" aria-labelledby="emp-modal-title">
+<!-- EMPLOYEE MODAL ───────────────────────────────────────────────────────── -->
+<div class="modal-bg" id="emp-modal" role="dialog" aria-modal="true">
   <div class="modal">
     <div class="modal-title"><i class="ti ti-user-plus"></i><span id="emp-modal-title">Add employee</span></div>
 
@@ -434,10 +416,7 @@ tbody tr:hover td{background:var(--blue-lt)}
       <label class="flbl">Profile photo</label>
       <label class="photo-upload-area" for="f-photo">
         <div id="photo-preview" class="av" style="width:48px;height:48px;flex-shrink:0"><i class="ti ti-user" style="font-size:20px"></i></div>
-        <div class="photo-text">
-          <b id="photo-lbl-text">Upload a photo</b>
-          <span>JPEG or PNG · max 2 MB</span>
-        </div>
+        <div class="photo-text"><b id="photo-lbl-text">Upload a photo</b><span>JPEG or PNG · max 2 MB</span></div>
       </label>
       <input id="f-photo" type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handlePhoto(event)">
     </div>
@@ -450,10 +429,7 @@ tbody tr:hover td{background:var(--blue-lt)}
     <div class="f2">
       <div class="frow">
         <label class="flbl">Department</label>
-        <select id="f-dept">
-          <option>Engineering</option><option>Design</option><option>Marketing</option>
-          <option>Sales</option><option>Operations</option><option>HR</option><option>Finance</option>
-        </select>
+        <select id="f-dept"><option>Engineering</option><option>Design</option><option>Marketing</option><option>Sales</option><option>Operations</option><option>HR</option><option>Finance</option></select>
       </div>
       <div class="frow"><label class="flbl">Location</label><input id="f-loc" placeholder="Remote / City"></div>
     </div>
@@ -465,14 +441,21 @@ tbody tr:hover td{background:var(--blue-lt)}
       <div class="frow"><label class="flbl">Start date</label><input id="f-date" type="date"></div>
       <div class="frow">
         <label class="flbl">Status</label>
-        <select id="f-status">
-          <option value="Active">Active</option>
-          <option value="On leave">On leave</option>
-          <option value="Remote">Remote</option>
-          <option value="Contractor">Contractor</option>
-        </select>
+        <select id="f-status"><option value="Active">Active</option><option value="On leave">On leave</option><option value="Remote">Remote</option><option value="Contractor">Contractor</option></select>
       </div>
     </div>
+
+    <div class="frow">
+      <label class="flbl">Documents <span style="color:var(--text3);font-weight:400">— attach any number of files (max 10 MB each)</span></label>
+      <div class="docs-section">
+        <div id="emp-docs-list"></div>
+        <label class="doc-attach-btn" for="f-docs">
+          <i class="ti ti-paperclip"></i> Attach files…
+          <input id="f-docs" type="file" multiple style="display:none" onchange="handleDocs(event,'emp')">
+        </label>
+      </div>
+    </div>
+
     <div class="modal-foot">
       <button class="btn" onclick="closeModal('emp-modal')">Cancel</button>
       <button class="btn primary" onclick="saveEmp()"><i class="ti ti-check"></i> Save</button>
@@ -480,8 +463,8 @@ tbody tr:hover td{background:var(--blue-lt)}
   </div>
 </div>
 
-<!-- VENDOR MODAL ─────────────────────────────────────────────────────────── -->
-<div class="modal-bg" id="vnd-modal" role="dialog" aria-modal="true" aria-labelledby="vnd-modal-title">
+<!-- VENDOR MODAL ────────────────────────────────────────────────────────── -->
+<div class="modal-bg" id="vnd-modal" role="dialog" aria-modal="true">
   <div class="modal">
     <div class="modal-title"><i class="ti ti-building-store"></i><span id="vnd-modal-title">Add vendor</span></div>
     <div class="frow"><label class="flbl">Company name *</label><input id="v-company" placeholder="Acme Corp"></div>
@@ -493,28 +476,29 @@ tbody tr:hover td{background:var(--blue-lt)}
       <div class="frow"><label class="flbl">Contact phone</label><input id="v-phone" type="tel" placeholder="+1 555 000 0000"></div>
       <div class="frow">
         <label class="flbl">Category</label>
-        <select id="v-cat">
-          <option>Software</option><option>Hardware</option><option>Consulting</option>
-          <option>Legal</option><option>Finance</option><option>Facilities</option>
-          <option>Marketing</option><option>HR Services</option><option>Other</option>
-        </select>
+        <select id="v-cat"><option>Software</option><option>Hardware</option><option>Consulting</option><option>Legal</option><option>Finance</option><option>Facilities</option><option>Marketing</option><option>HR Services</option><option>Other</option></select>
       </div>
     </div>
     <div class="f2">
       <div class="frow">
         <label class="flbl">Status</label>
-        <select id="v-status">
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-          <option value="Under Review">Under Review</option>
-        </select>
+        <select id="v-status"><option value="Active">Active</option><option value="Inactive">Inactive</option><option value="Under Review">Under Review</option></select>
       </div>
       <div class="frow"><label class="flbl">Contract start</label><input id="v-start" type="date"></div>
     </div>
+    <div class="frow"><label class="flbl">Notes</label><textarea id="v-notes" placeholder="Service description, contract terms, key notes…"></textarea></div>
+
     <div class="frow">
-      <label class="flbl">Notes</label>
-      <textarea id="v-notes" placeholder="Service description, contract terms, key notes…"></textarea>
+      <label class="flbl">Documents <span style="color:var(--text3);font-weight:400">— attach any number of files (max 10 MB each)</span></label>
+      <div class="docs-section">
+        <div id="vnd-docs-list"></div>
+        <label class="doc-attach-btn" for="v-docs">
+          <i class="ti ti-paperclip"></i> Attach files…
+          <input id="v-docs" type="file" multiple style="display:none" onchange="handleDocs(event,'vnd')">
+        </label>
+      </div>
     </div>
+
     <div class="modal-foot">
       <button class="btn" onclick="closeModal('vnd-modal')">Cancel</button>
       <button class="btn primary" onclick="saveVendor()"><i class="ti ti-check"></i> Save</button>
@@ -522,7 +506,7 @@ tbody tr:hover td{background:var(--blue-lt)}
   </div>
 </div>
 
-<!-- SETTINGS MODAL ────────────────────────────────────────────────────────── -->
+<!-- SETTINGS MODAL ──────────────────────────────────────────────────────── -->
 <div class="modal-bg" id="settings-modal" role="dialog" aria-modal="true">
   <div class="modal">
     <div class="modal-title"><i class="ti ti-settings"></i> GitHub settings</div>
@@ -548,6 +532,11 @@ let employees = [], vendors = [];
 let empSha = '', vndSha = '';
 let editEmpId = null, editVndId = null;
 let pendingPhoto = null;
+// Document state
+let docsPending = [];   // File objects queued for upload
+let docsToDelete = [];  // {path,sha,name} already saved, marked for removal
+let panelType = null, panelId = null;
+
 let activeDept = 'All', activeVStatus = 'All';
 let activeView = 'grid', activeVView = 'grid';
 let activeSection = 'employees';
@@ -558,273 +547,236 @@ const EMP_PATH = 'data/employees.json';
 const VND_PATH = 'data/vendors.json';
 
 const DC = {
-  Engineering:{bg:'#E6F1FB',c:'#0C447C'},
-  Design:{bg:'#EEEDFE',c:'#3C3489'},
-  Marketing:{bg:'#FDE8E8',c:'#7A1C1C'},
-  Sales:{bg:'#E3F5EE',c:'#085041'},
-  Operations:{bg:'#FAEEDA',c:'#633806'},
-  HR:{bg:'#FDE8F3',c:'#7A1C54'},
-  Finance:{bg:'#E8F5E9',c:'#1B5E20'},
-  _default:{bg:'#E6F1FB',c:'#0C447C'}
+  Engineering:{bg:'#E6F1FB',c:'#0C447C'}, Design:{bg:'#EEEDFE',c:'#3C3489'},
+  Marketing:{bg:'#FDE8E8',c:'#7A1C1C'}, Sales:{bg:'#E3F5EE',c:'#085041'},
+  Operations:{bg:'#FAEEDA',c:'#633806'}, HR:{bg:'#FDE8F3',c:'#7A1C54'},
+  Finance:{bg:'#E8F5E9',c:'#1B5E20'}, _:{bg:'#E6F1FB',c:'#0C447C'}
 };
 const VC = {
-  Software:{bg:'#E6F1FB',c:'#0C447C'},Hardware:{bg:'#FAEEDA',c:'#633806'},
-  Consulting:{bg:'#EEEDFE',c:'#3C3489'},Legal:{bg:'#FDE8E8',c:'#7A1C1C'},
-  Finance:{bg:'#E8F5E9',c:'#1B5E20'},Facilities:{bg:'#E3F5EE',c:'#085041'},
-  Marketing:{bg:'#FDE8F3',c:'#7A1C54'},'HR Services':{bg:'#FCF3E8',c:'#7A3C0E'},
-  Other:{bg:'#F0F0F0',c:'#555'},_default:{bg:'#F0F0F0',c:'#555'}
+  Software:{bg:'#E6F1FB',c:'#0C447C'}, Hardware:{bg:'#FAEEDA',c:'#633806'},
+  Consulting:{bg:'#EEEDFE',c:'#3C3489'}, Legal:{bg:'#FDE8E8',c:'#7A1C1C'},
+  Finance:{bg:'#E8F5E9',c:'#1B5E20'}, Facilities:{bg:'#E3F5EE',c:'#085041'},
+  Marketing:{bg:'#FDE8F3',c:'#7A1C54'}, 'HR Services':{bg:'#FCF3E8',c:'#7A3C0E'},
+  Other:{bg:'#F0F0F0',c:'#555'}, _:{bg:'#F0F0F0',c:'#555'}
 };
 const SC = {
-  Active:{bg:'#E3F5EE',c:'#085041'},'On leave':{bg:'#FAEEDA',c:'#633806'},
-  Remote:{bg:'#E6F1FB',c:'#0C447C'},Contractor:{bg:'#EEEDFE',c:'#3C3489'},
-  Inactive:{bg:'#F0F0F0',c:'#555'},'Under Review':{bg:'#FAEEDA',c:'#633806'},
-  _default:{bg:'#F0F0F0',c:'#555'}
+  Active:{bg:'#E3F5EE',c:'#085041'}, 'On leave':{bg:'#FAEEDA',c:'#633806'},
+  Remote:{bg:'#E6F1FB',c:'#0C447C'}, Contractor:{bg:'#EEEDFE',c:'#3C3489'},
+  Inactive:{bg:'#F0F0F0',c:'#555'}, 'Under Review':{bg:'#FAEEDA',c:'#633806'},
+  _:{bg:'#F0F0F0',c:'#555'}
 };
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-const initials = n => n.trim().split(/\s+/).map(x => x[0]||'').join('').slice(0,2).toUpperCase();
+const initials = n => n.trim().split(/\s+/).map(x=>x[0]||'').join('').slice(0,2).toUpperCase();
 const tenure = s => { const y=(Date.now()-new Date(s))/(1000*60*60*24*365.25); return y<1?'<1':y.toFixed(1) };
-const badge = (txt, map) => { const c=map[txt]||map._default; return `<span class="badge" style="background:${c.bg};color:${c.c}">${txt}</span>` };
-const dBadge = d => badge(d, DC);
-const cBadge = c => badge(c, VC);
-const sBadge = (s, map=SC) => badge(s, map);
+const badge = (txt,map) => { const c=map[txt]||map._; return `<span class="badge" style="background:${c.bg};color:${c.c}">${txt}</span>` };
+const dBadge = d => badge(d,DC);
+const cBadge = c => badge(c,VC);
+const sBadge = s => badge(s,SC);
+const dc = d => DC[d]||DC._;
 
-const dc = d => DC[d]||DC._default;
-const avHtml = (e, sz=46, fs=13) => {
+const fmtSize = b => b<1024?b+'B':b<1048576?(b/1024).toFixed(1)+'KB':(b/1048576).toFixed(1)+'MB';
+
+function fileIcon(name) {
+  const ext = (name||'').split('.').pop().toLowerCase();
+  if (ext==='pdf') return 'ti-file-type-pdf';
+  if (['doc','docx'].includes(ext)) return 'ti-file-description';
+  if (['xls','xlsx','csv'].includes(ext)) return 'ti-table';
+  if (['jpg','jpeg','png','gif','webp','svg'].includes(ext)) return 'ti-photo';
+  if (['zip','rar','7z','tar','gz'].includes(ext)) return 'ti-archive';
+  if (['txt','md','rtf'].includes(ext)) return 'ti-file-text';
+  if (['ppt','pptx'].includes(ext)) return 'ti-presentation';
+  if (['mp4','mov','avi','mkv'].includes(ext)) return 'ti-video';
+  if (['mp3','wav','aac'].includes(ext)) return 'ti-music';
+  return 'ti-file';
+}
+
+function fileToBase64(file) {
+  return new Promise((res,rej) => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+const avHtml = (e,sz=46,fs=13) => {
   const c=dc(e.dept);
   const s=`width:${sz}px;height:${sz}px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:${fs}px;overflow:hidden;flex-shrink:0;background:${c.bg};color:${c.c}`;
-  return e.photo ? `<div style="${s}"><img src="${e.photo}" style="width:100%;height:100%;object-fit:cover" alt="${e.first} ${e.last}"></div>`
-                 : `<div style="${s}">${initials(e.first+' '+e.last)}</div>`;
+  return e.photo?`<div style="${s}"><img src="${e.photo}" style="width:100%;height:100%;object-fit:cover" alt="${e.first} ${e.last}"></div>`:`<div style="${s}">${initials(e.first+' '+e.last)}</div>`;
 };
 
 // ── ID GENERATION ─────────────────────────────────────────────────────────────
 function genEmpId() {
-  const yr = new Date().getFullYear();
-  const nums = employees.map(e=>e.id).filter(id=>id&&id.startsWith(`KN-${yr}-`)).map(id=>parseInt(id.split('-')[2],10)).filter(n=>!isNaN(n));
+  const yr=new Date().getFullYear();
+  const nums=employees.map(e=>e.id).filter(id=>id&&id.startsWith(`KN-${yr}-`)).map(id=>parseInt(id.split('-')[2],10)).filter(n=>!isNaN(n));
   return `KN-${yr}-${String(nums.length?Math.max(...nums)+1:1).padStart(3,'0')}`;
 }
 function genVndId() {
-  const yr = new Date().getFullYear();
-  const nums = vendors.map(v=>v.id).filter(id=>id&&id.startsWith(`VN-${yr}-`)).map(id=>parseInt(id.split('-')[2],10)).filter(n=>!isNaN(n));
+  const yr=new Date().getFullYear();
+  const nums=vendors.map(v=>v.id).filter(id=>id&&id.startsWith(`VN-${yr}-`)).map(id=>parseInt(id.split('-')[2],10)).filter(n=>!isNaN(n));
   return `VN-${yr}-${String(nums.length?Math.max(...nums)+1:1).padStart(3,'0')}`;
 }
 
 // ── GITHUB API ────────────────────────────────────────────────────────────────
 const apiUrl = p => `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${p}`;
 const ghHdrs = () => ({'Authorization':'token '+cfg.token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'});
-
 const setProgress = w => { document.getElementById('progress-bar').style.width=w+'%' };
 
 async function fetchFile(path) {
-  const r = await fetch(apiUrl(path), {headers:ghHdrs()});
+  const r = await fetch(apiUrl(path),{headers:ghHdrs()});
   if (r.status===404) return {data:[],sha:''};
   if (!r.ok) throw new Error('HTTP '+r.status);
   const d = await r.json();
   return {data:JSON.parse(atob(d.content.replace(/\n/g,''))), sha:d.sha};
 }
-
-async function writeFile(path, sha, data, msg) {
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
-  const body = {message:msg, content};
-  if (sha) body.sha = sha;
-  const r = await fetch(apiUrl(path), {method:'PUT', headers:ghHdrs(), body:JSON.stringify(body)});
-  if (!r.ok) { const e=await r.json(); throw new Error(e.message||'HTTP '+r.status) }
+async function writeFile(path,sha,data,msg) {
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  const body={message:msg,content}; if(sha) body.sha=sha;
+  const r=await fetch(apiUrl(path),{method:'PUT',headers:ghHdrs(),body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json();throw new Error(e.message||'HTTP '+r.status)}
   return (await r.json()).content.sha;
 }
 
 async function loadData() {
-  setSyncBadge('loading','Loading…');
-  setProgress(20);
+  setSyncBadge('loading','Loading…'); setProgress(20);
   try {
-    const [er, vr] = await Promise.all([fetchFile(EMP_PATH), fetchFile(VND_PATH)]);
-    employees=er.data; empSha=er.sha;
-    vendors=vr.data; vndSha=vr.sha;
-    if (!empSha) empSha = await writeFile(EMP_PATH,'','[]','Initialise employee database');
-    if (!vndSha) vndSha = await writeFile(VND_PATH,'','[]','Initialise vendor database');
-    const t = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    document.getElementById('s-sync').textContent = t;
-    document.getElementById('vs-sync').textContent = t;
+    const [er,vr] = await Promise.all([fetchFile(EMP_PATH),fetchFile(VND_PATH)]);
+    employees=er.data; empSha=er.sha; vendors=vr.data; vndSha=vr.sha;
+    if(!empSha) empSha=await writeFile(EMP_PATH,'','[]','Initialise employee database');
+    if(!vndSha) vndSha=await writeFile(VND_PATH,'','[]','Initialise vendor database');
+    const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('s-sync').textContent=t; document.getElementById('vs-sync').textContent=t;
     setSyncBadge('ok','Synced');
-  } catch(e) {
-    setSyncBadge('err','Error');
-    toast('⚠ Could not load: '+e.message);
-  }
+  } catch(e) { setSyncBadge('err','Error'); toast('⚠ Could not load: '+e.message) }
   setProgress(100); setTimeout(()=>setProgress(0),600);
   render(); updateTabCounts();
 }
-
 async function saveEmps(msg='Update employees') {
   setProgress(30); setSyncBadge('loading','Saving…');
   try {
-    empSha = await writeFile(EMP_PATH, empSha, employees, msg);
-    document.getElementById('s-sync').textContent = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    empSha=await writeFile(EMP_PATH,empSha,employees,msg);
+    document.getElementById('s-sync').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     setSyncBadge('ok','Synced'); toast('✓ Saved to GitHub');
   } catch(e) { setSyncBadge('err','Save failed'); toast('✗ Save failed: '+e.message) }
   setProgress(100); setTimeout(()=>setProgress(0),600);
 }
-
 async function saveVnds(msg='Update vendors') {
   setProgress(30); setSyncBadge('loading','Saving…');
   try {
-    vndSha = await writeFile(VND_PATH, vndSha, vendors, msg);
-    document.getElementById('vs-sync').textContent = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    vndSha=await writeFile(VND_PATH,vndSha,vendors,msg);
+    document.getElementById('vs-sync').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     setSyncBadge('ok','Synced'); toast('✓ Saved to GitHub');
   } catch(e) { setSyncBadge('err','Save failed'); toast('✗ Save failed: '+e.message) }
   setProgress(100); setTimeout(()=>setProgress(0),600);
 }
-
 const syncNow = () => loadData();
 
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 function saveConfig() {
-  const o=document.getElementById('cfg-owner').value.trim();
-  const r=document.getElementById('cfg-repo').value.trim();
-  const t=document.getElementById('cfg-token').value.trim();
-  if (!o||!r||!t) { toast('Please fill all fields'); return }
-  cfg={owner:o,repo:r,token:t};
-  localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
-  document.getElementById('setup-screen').style.display='none';
-  document.getElementById('app').style.display='';
-  loadData();
+  const o=document.getElementById('cfg-owner').value.trim(), r=document.getElementById('cfg-repo').value.trim(), t=document.getElementById('cfg-token').value.trim();
+  if(!o||!r||!t){toast('Please fill all fields');return}
+  cfg={owner:o,repo:r,token:t}; localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+  document.getElementById('setup-screen').style.display='none'; document.getElementById('app').style.display=''; loadData();
 }
 function showSettings() {
-  document.getElementById('s-owner').value=cfg.owner||'';
-  document.getElementById('s-repo').value=cfg.repo||'';
-  document.getElementById('s-token').value=cfg.token||'';
+  document.getElementById('s-owner').value=cfg.owner||''; document.getElementById('s-repo').value=cfg.repo||''; document.getElementById('s-token').value=cfg.token||'';
   document.getElementById('settings-modal').classList.add('on');
 }
 function updateConfig() {
-  const o=document.getElementById('s-owner').value.trim();
-  const r=document.getElementById('s-repo').value.trim();
-  const t=document.getElementById('s-token').value.trim();
-  if (!o||!r||!t) { toast('Please fill all fields'); return }
-  cfg={owner:o,repo:r,token:t};
-  localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
-  closeModal('settings-modal'); loadData();
+  const o=document.getElementById('s-owner').value.trim(), r=document.getElementById('s-repo').value.trim(), t=document.getElementById('s-token').value.trim();
+  if(!o||!r||!t){toast('Please fill all fields');return}
+  cfg={owner:o,repo:r,token:t}; localStorage.setItem(CFG_KEY,JSON.stringify(cfg)); closeModal('settings-modal'); loadData();
 }
 
 // ── SECTION SWITCH ────────────────────────────────────────────────────────────
 function switchSection(sec) {
-  activeSection = sec;
-  document.getElementById('section-employees').style.display = sec==='employees'?'':'none';
-  document.getElementById('section-vendors').style.display = sec==='vendors'?'':'none';
+  activeSection=sec;
+  document.getElementById('section-employees').style.display=sec==='employees'?'':'none';
+  document.getElementById('section-vendors').style.display=sec==='vendors'?'':'none';
   document.getElementById('tab-employees').classList.toggle('active',sec==='employees');
   document.getElementById('tab-vendors').classList.toggle('active',sec==='vendors');
   document.getElementById('tab-employees').setAttribute('aria-selected',sec==='employees');
   document.getElementById('tab-vendors').setAttribute('aria-selected',sec==='vendors');
-  document.getElementById('add-btn-lbl').textContent = sec==='employees'?'Add employee':'Add vendor';
-  document.getElementById('search').placeholder = sec==='employees'?'Search employees…':'Search vendors…';
+  document.getElementById('add-btn-lbl').textContent=sec==='employees'?'Add employee':'Add vendor';
+  document.getElementById('search').placeholder=sec==='employees'?'Search employees…':'Search vendors…';
   render();
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function filteredEmps() {
-  const q = document.getElementById('search').value.toLowerCase();
-  return employees
-    .filter(e=>(activeDept==='All'||e.dept===activeDept)&&(!q||(e.first+' '+e.last+e.role+e.dept+e.loc+(e.id||'')).toLowerCase().includes(q)))
-    .sort((a,b)=>{ const av=a[eSortCol]||'',bv=b[eSortCol]||''; return av<bv?-eSortDir:av>bv?eSortDir:0 });
+  const q=document.getElementById('search').value.toLowerCase();
+  return employees.filter(e=>(activeDept==='All'||e.dept===activeDept)&&(!q||(e.first+' '+e.last+e.role+e.dept+e.loc+(e.id||'')).toLowerCase().includes(q))).sort((a,b)=>{const av=a[eSortCol]||'',bv=b[eSortCol]||'';return av<bv?-eSortDir:av>bv?eSortDir:0});
 }
 function filteredVnds() {
-  const q = document.getElementById('search').value.toLowerCase();
-  return vendors
-    .filter(v=>(activeVStatus==='All'||v.status===activeVStatus)&&(!q||(v.company+' '+(v.contact||'')+v.category+(v.id||'')).toLowerCase().includes(q)))
-    .sort((a,b)=>{ const av=a[vSortCol]||'',bv=b[vSortCol]||''; return av<bv?-vSortDir:av>bv?vSortDir:0 });
+  const q=document.getElementById('search').value.toLowerCase();
+  return vendors.filter(v=>(activeVStatus==='All'||v.status===activeVStatus)&&(!q||(v.company+' '+(v.contact||'')+v.category+(v.id||'')).toLowerCase().includes(q))).sort((a,b)=>{const av=a[vSortCol]||'',bv=b[vSortCol]||'';return av<bv?-vSortDir:av>bv?vSortDir:0});
 }
-
 function renderEmpStats() {
-  document.getElementById('s-total').textContent = employees.length;
-  document.getElementById('s-depts').textContent = new Set(employees.map(e=>e.dept)).size;
-  const avg = employees.length ? employees.reduce((s,e)=>s+(Date.now()-new Date(e.start))/(1000*60*60*24*365.25),0)/employees.length : 0;
-  document.getElementById('s-tenure').textContent = employees.length ? avg.toFixed(1) : '—';
-  ['All','Engineering','Design','Marketing','Sales','Operations','HR','Finance'].forEach(d=>{
-    const el=document.getElementById('n-'+d); if(el) el.textContent=d==='All'?employees.length:employees.filter(e=>e.dept===d).length;
-  });
+  document.getElementById('s-total').textContent=employees.length;
+  document.getElementById('s-depts').textContent=new Set(employees.map(e=>e.dept)).size;
+  const avg=employees.length?employees.reduce((s,e)=>s+(Date.now()-new Date(e.start))/(1000*60*60*24*365.25),0)/employees.length:0;
+  document.getElementById('s-tenure').textContent=employees.length?avg.toFixed(1):'—';
+  ['All','Engineering','Design','Marketing','Sales','Operations','HR','Finance'].forEach(d=>{const el=document.getElementById('n-'+d);if(el)el.textContent=d==='All'?employees.length:employees.filter(e=>e.dept===d).length});
 }
 function renderVndStats() {
-  document.getElementById('vs-total').textContent = vendors.length;
-  document.getElementById('vs-active').textContent = vendors.filter(v=>v.status==='Active').length;
-  document.getElementById('vs-cats').textContent = new Set(vendors.map(v=>v.category)).size;
-  ['All','Active','Inactive','Under Review'].forEach(s=>{
-    const el=document.getElementById('vn-'+s); if(el) el.textContent=s==='All'?vendors.length:vendors.filter(v=>v.status===s).length;
-  });
+  document.getElementById('vs-total').textContent=vendors.length;
+  document.getElementById('vs-active').textContent=vendors.filter(v=>v.status==='Active').length;
+  document.getElementById('vs-cats').textContent=new Set(vendors.map(v=>v.category)).size;
+  ['All','Active','Inactive','Under Review'].forEach(s=>{const el=document.getElementById('vn-'+s);if(el)el.textContent=s==='All'?vendors.length:vendors.filter(v=>v.status===s).length});
 }
 function updateTabCounts() {
-  document.getElementById('tc-employees').textContent = employees.length;
-  document.getElementById('tc-vendors').textContent = vendors.length;
+  document.getElementById('tc-employees').textContent=employees.length;
+  document.getElementById('tc-vendors').textContent=vendors.length;
 }
+function render() { activeSection==='employees'?renderEmps():renderVnds(); updateTabCounts() }
 
-function render() {
-  if (activeSection==='employees') renderEmps();
-  else renderVnds();
-  updateTabCounts();
+function docCountBadge(docs) {
+  if (!docs||!docs.length) return '';
+  return `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--text3);margin-top:6px"><i class="ti ti-paperclip" style="font-size:11px"></i>${docs.length} doc${docs.length>1?'s':''}</span>`;
 }
 
 function renderEmps() {
   renderEmpStats();
-  const list = filteredEmps();
-  const el = document.getElementById('emp-list');
-  if (!list.length) {
-    el.innerHTML=`<div class="empty"><i class="ti ti-users-off"></i><p>No employees found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add employee</button></div>`;
-    return;
-  }
-  if (activeView==='grid') {
+  const list=filteredEmps(); const el=document.getElementById('emp-list');
+  if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-users-off"></i><p>No employees found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add employee</button></div>`;return}
+  if(activeView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((e,i)=>`
-      <div class="ecard" style="animation-delay:${Math.min(i*.025,.3)}s" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${e.first} ${e.last}, ${e.role||''}">
-        <div class="ctop">
-          ${avHtml(e)}
-          <div style="min-width:0">
-            <div class="cname">${e.first} ${e.last}</div>
-            <div class="crole">${e.role||'—'}</div>
-            <div class="emp-id">${e.id||''}</div>
-          </div>
-        </div>
+      <div class="ecard" style="animation-delay:${Math.min(i*.025,.3)}s" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${e.first} ${e.last}">
+        <div class="ctop">${avHtml(e)}<div style="min-width:0"><div class="cname">${e.first} ${e.last}</div><div class="crole">${e.role||'—'}</div><div class="emp-id">${e.id||''}</div></div></div>
         <div class="cmeta">
           <div class="cmr"><i class="ti ti-map-pin"></i><span>${e.loc||'—'}</span></div>
           <div class="cmr"><i class="ti ti-mail"></i><span>${e.email||'—'}</span></div>
           <div class="cmr"><i class="ti ti-calendar"></i><span>${e.start||'—'}</span></div>
         </div>
         <div class="badges">${dBadge(e.dept)}${e.status&&e.status!=='Active'?sBadge(e.status):''}</div>
+        ${docCountBadge(e.docs)}
       </div>`).join('')}</div>`;
   } else {
-    el.innerHTML=`<div class="tbl-wrap"><table>
-      <thead><tr>
-        ${[['last','Name'],['id','ID'],['role','Role'],['dept','Department'],['loc','Location'],['start','Start'],['','']].map(([col,lbl])=>
-          col?`<th onclick="sortE('${col}')" class="${eSortCol===col?'sorted':''}">${lbl} <i class="ti ti-chevron-${eSortCol===col&&eSortDir<0?'up':'down'} si"></i></th>`
-             :`<th style="width:60px"></th>`).join('')}
-      </tr></thead>
-      <tbody>${list.map(e=>`<tr onclick="openEmpPanel('${e.id}')">
-        <td><div style="display:flex;align-items:center;gap:9px">${avHtml(e,30,10)}${e.first} ${e.last}</div></td>
-        <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${e.id||'—'}</td>
-        <td style="color:var(--text2)">${e.role||'—'}</td>
-        <td>${dBadge(e.dept)}</td>
-        <td style="color:var(--text2)">${e.loc||'—'}</td>
-        <td style="color:var(--text2)">${e.start||'—'}</td>
-        <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openEmpEdit('${e.id}')"><i class="ti ti-edit"></i></button></td>
-      </tr>`).join('')}</tbody>
-    </table></div>`;
+    el.innerHTML=`<div class="tbl-wrap"><table><thead><tr>
+      ${[['last','Name'],['id','ID'],['role','Role'],['dept','Department'],['loc','Location'],['start','Start'],['','']].map(([col,lbl])=>col?`<th onclick="sortE('${col}')" class="${eSortCol===col?'sorted':''}">${lbl} <i class="ti ti-chevron-${eSortCol===col&&eSortDir<0?'up':'down'} si"></i></th>`:`<th style="width:60px"></th>`).join('')}
+    </tr></thead><tbody>${list.map(e=>`<tr onclick="openEmpPanel('${e.id}')">
+      <td><div style="display:flex;align-items:center;gap:9px">${avHtml(e,30,10)}${e.first} ${e.last}${e.docs&&e.docs.length?` <i class="ti ti-paperclip" style="font-size:11px;color:var(--text3)" title="${e.docs.length} document(s)"></i>`:''}</div></td>
+      <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${e.id||'—'}</td>
+      <td style="color:var(--text2)">${e.role||'—'}</td>
+      <td>${dBadge(e.dept)}</td>
+      <td style="color:var(--text2)">${e.loc||'—'}</td>
+      <td style="color:var(--text2)">${e.start||'—'}</td>
+      <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openEmpEdit('${e.id}')"><i class="ti ti-edit"></i></button></td>
+    </tr>`).join('')}</tbody></table></div>`;
   }
 }
 
 function renderVnds() {
   renderVndStats();
-  const list = filteredVnds();
-  const el = document.getElementById('vnd-list');
-  if (!list.length) {
-    el.innerHTML=`<div class="empty"><i class="ti ti-building-off"></i><p>No vendors found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add vendor</button></div>`;
-    return;
-  }
-  if (activeVView==='grid') {
+  const list=filteredVnds(); const el=document.getElementById('vnd-list');
+  if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-building-off"></i><p>No vendors found</p><button class="btn primary" onclick="openAdd()"><i class="ti ti-plus"></i> Add vendor</button></div>`;return}
+  if(activeVView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((v,i)=>`
       <div class="ecard" style="animation-delay:${Math.min(i*.025,.3)}s" onclick="openVndPanel('${v.id}')" tabindex="0" role="button">
         <div class="ctop">
-          <div style="width:46px;height:46px;border-radius:10px;background:var(--blue-lt);display:grid;place-items:center;flex-shrink:0">
-            <i class="ti ti-building-store" style="font-size:20px;color:var(--blue)"></i>
-          </div>
-          <div style="min-width:0">
-            <div class="cname">${v.company}</div>
-            <div class="crole">${v.contact||'—'}</div>
-            <div class="emp-id">${v.id||''}</div>
-          </div>
+          <div style="width:46px;height:46px;border-radius:10px;background:var(--blue-lt);display:grid;place-items:center;flex-shrink:0"><i class="ti ti-building-store" style="font-size:20px;color:var(--blue)"></i></div>
+          <div style="min-width:0"><div class="cname">${v.company}</div><div class="crole">${v.contact||'—'}</div><div class="emp-id">${v.id||''}</div></div>
         </div>
         <div class="cmeta">
           <div class="cmr"><i class="ti ti-mail"></i><span>${v.email||'—'}</span></div>
@@ -832,45 +784,137 @@ function renderVnds() {
           <div class="cmr"><i class="ti ti-calendar"></i><span>${v.contractStart||'—'}</span></div>
         </div>
         <div class="badges">${cBadge(v.category)}${sBadge(v.status)}</div>
+        ${docCountBadge(v.docs)}
       </div>`).join('')}</div>`;
   } else {
-    el.innerHTML=`<div class="tbl-wrap"><table>
-      <thead><tr>
-        ${[['company','Company'],['id','ID'],['contact','Contact'],['category','Category'],['status','Status'],['contractStart','Since'],['','']].map(([col,lbl])=>
-          col?`<th onclick="sortV('${col}')" class="${vSortCol===col?'sorted':''}">${lbl} <i class="ti ti-chevron-${vSortCol===col&&vSortDir<0?'up':'down'} si"></i></th>`
-             :`<th style="width:60px"></th>`).join('')}
-      </tr></thead>
-      <tbody>${list.map(v=>`<tr onclick="openVndPanel('${v.id}')">
-        <td style="font-weight:600">${v.company}</td>
-        <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${v.id||'—'}</td>
-        <td style="color:var(--text2)">${v.contact||'—'}</td>
-        <td>${cBadge(v.category)}</td>
-        <td>${sBadge(v.status)}</td>
-        <td style="color:var(--text2)">${v.contractStart||'—'}</td>
-        <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openVndEdit('${v.id}')"><i class="ti ti-edit"></i></button></td>
-      </tr>`).join('')}</tbody>
-    </table></div>`;
+    el.innerHTML=`<div class="tbl-wrap"><table><thead><tr>
+      ${[['company','Company'],['id','ID'],['contact','Contact'],['category','Category'],['status','Status'],['contractStart','Since'],['','']].map(([col,lbl])=>col?`<th onclick="sortV('${col}')" class="${vSortCol===col?'sorted':''}">${lbl} <i class="ti ti-chevron-${vSortCol===col&&vSortDir<0?'up':'down'} si"></i></th>`:`<th style="width:60px"></th>`).join('')}
+    </tr></thead><tbody>${list.map(v=>`<tr onclick="openVndPanel('${v.id}')">
+      <td style="font-weight:600">${v.company}${v.docs&&v.docs.length?` <i class="ti ti-paperclip" style="font-size:11px;color:var(--text3)" title="${v.docs.length} document(s)"></i>`:''}</td>
+      <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${v.id||'—'}</td>
+      <td style="color:var(--text2)">${v.contact||'—'}</td>
+      <td>${cBadge(v.category)}</td>
+      <td>${sBadge(v.status)}</td>
+      <td style="color:var(--text2)">${v.contractStart||'—'}</td>
+      <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openVndEdit('${v.id}')"><i class="ti ti-edit"></i></button></td>
+    </tr>`).join('')}</tbody></table></div>`;
   }
 }
 
-function sortE(col) { if(eSortCol===col)eSortDir*=-1; else{eSortCol=col;eSortDir=1} renderEmps() }
-function sortV(col) { if(vSortCol===col)vSortDir*=-1; else{vSortCol=col;vSortDir=1} renderVnds() }
-function setDept(el,d) { document.querySelectorAll('#emp-toolbar .chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); activeDept=d; renderEmps() }
-function setVStatus(el,s) { document.querySelectorAll('#vnd-toolbar .chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); activeVStatus=s; renderVnds() }
-function setView(v) { activeView=v; document.getElementById('vb-grid').classList.toggle('active',v==='grid'); document.getElementById('vb-table').classList.toggle('active',v==='table'); renderEmps() }
-function setVView(v) { activeVView=v; document.getElementById('vvb-grid').classList.toggle('active',v==='grid'); document.getElementById('vvb-table').classList.toggle('active',v==='table'); renderVnds() }
+function sortE(col){if(eSortCol===col)eSortDir*=-1;else{eSortCol=col;eSortDir=1}renderEmps()}
+function sortV(col){if(vSortCol===col)vSortDir*=-1;else{vSortCol=col;vSortDir=1}renderVnds()}
+function setDept(el,d){document.querySelectorAll('#emp-toolbar .chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');activeDept=d;renderEmps()}
+function setVStatus(el,s){document.querySelectorAll('#vnd-toolbar .chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');activeVStatus=s;renderVnds()}
+function setView(v){activeView=v;document.getElementById('vb-grid').classList.toggle('active',v==='grid');document.getElementById('vb-table').classList.toggle('active',v==='table');renderEmps()}
+function setVView(v){activeVView=v;document.getElementById('vvb-grid').classList.toggle('active',v==='grid');document.getElementById('vvb-table').classList.toggle('active',v==='table');renderVnds()}
+
+// ── DOCUMENT MANAGEMENT ───────────────────────────────────────────────────────
+
+// Upload a file to GitHub; returns doc metadata
+async function uploadDoc(prefix, id, file) {
+  const safeName = Date.now()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const path = `data/attachments/${prefix}-${id}/${safeName}`;
+  const content = await fileToBase64(file);
+  const r = await fetch(apiUrl(path),{method:'PUT',headers:ghHdrs(),body:JSON.stringify({message:`Attach ${file.name}`,content})});
+  if(!r.ok){const e=await r.json();throw new Error(e.message||'HTTP '+r.status)}
+  const sha = (await r.json()).content.sha;
+  return {name:file.name, path, sha, size:file.size, mimeType:file.type, uploadedAt:new Date().toISOString().slice(0,10)};
+}
+
+// Delete a file from GitHub
+async function deleteDocFile(doc) {
+  if(!doc||!doc.path||!doc.sha) return;
+  const r = await fetch(apiUrl(doc.path),{method:'DELETE',headers:ghHdrs(),body:JSON.stringify({message:`Remove ${doc.name}`,sha:doc.sha})});
+  if(!r.ok&&r.status!==404){const e=await r.json();throw new Error(e.message||'HTTP '+r.status)}
+}
+
+// Download a doc via GitHub API → blob → save
+async function downloadDoc(doc) {
+  toast('Downloading '+doc.name+'…');
+  try {
+    const r=await fetch(apiUrl(doc.path),{headers:ghHdrs()});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const bytes=atob(d.content.replace(/\n/g,''));
+    const arr=new Uint8Array(bytes.length);
+    for(let i=0;i<bytes.length;i++) arr[i]=bytes.charCodeAt(i);
+    const blob=new Blob([arr],{type:doc.mimeType||'application/octet-stream'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=doc.name; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+  } catch(e){toast('✗ Download failed: '+e.message)}
+}
+
+// Delete a doc from the panel (modifies record in-place and saves)
+async function panelDeleteDoc(idx) {
+  const arr = panelType==='emp'?employees:vendors;
+  const rec = arr.find(r=>r.id===panelId); if(!rec||!rec.docs||!rec.docs[idx]) return;
+  const doc = rec.docs[idx];
+  if(!confirm(`Delete "${doc.name}"?`)) return;
+  toast('Deleting…');
+  try {
+    await deleteDocFile(doc);
+    rec.docs.splice(idx,1);
+    if(panelType==='emp'){await saveEmps(`Remove doc from ${rec.first} ${rec.last}`);openEmpPanel(panelId);}
+    else{await saveVnds(`Remove doc from ${rec.company}`);openVndPanel(panelId);}
+  } catch(e){toast('✗ Delete failed: '+e.message)}
+}
+
+// Modal doc list helpers
+function getModalDocs() {
+  const key = activeSection==='employees'?editEmpId:editVndId;
+  const arr = activeSection==='employees'?employees:vendors;
+  return key?(arr.find(r=>r.id===key)?.docs||[]):[];
+}
+
+function renderModalDocs(section) {
+  const listId = section==='emp'?'emp-docs-list':'vnd-docs-list';
+  const el = document.getElementById(listId); if(!el) return;
+  const existing = getModalDocs().filter(d=>!docsToDelete.find(r=>r.path===d.path));
+  const rows = [
+    ...existing.map((d,i)=>`<div class="doc-item"><i class="ti ${fileIcon(d.name)} doc-icon"></i><span class="doc-name" title="${d.name}">${d.name}</span><span class="doc-meta">${fmtSize(d.size)}</span><button class="doc-btn del" onclick="removeExistingDoc('${d.path}','${section}')" title="Remove"><i class="ti ti-x"></i></button></div>`),
+    ...docsPending.map((f,i)=>`<div class="doc-item pending"><i class="ti ${fileIcon(f.name)} doc-icon"></i><span class="doc-name" title="${f.name}">${f.name}</span><span class="doc-meta" style="color:var(--blue)">${fmtSize(f.size)} · pending</span><button class="doc-btn del" onclick="removePendingDoc(${i},'${section}')" title="Remove"><i class="ti ti-x"></i></button></div>`)
+  ];
+  el.innerHTML = rows.length ? rows.join('') : `<div class="doc-empty">No documents attached</div>`;
+}
+
+function handleDocs(e, section) {
+  const MAX = 10*1024*1024;
+  Array.from(e.target.files).forEach(f=>{
+    if(f.size>MAX){toast(`${f.name} exceeds 10 MB limit`);return}
+    docsPending.push(f);
+  });
+  e.target.value='';
+  renderModalDocs(section);
+}
+
+function removeExistingDoc(path, section) {
+  const arr=activeSection==='employees'?employees:vendors;
+  const key=activeSection==='employees'?editEmpId:editVndId;
+  const rec=arr.find(r=>r.id===key);
+  const doc=rec?.docs?.find(d=>d.path===path);
+  if(doc) docsToDelete.push(doc);
+  renderModalDocs(section);
+}
+
+function removePendingDoc(idx, section) {
+  docsPending.splice(idx,1);
+  renderModalDocs(section);
+}
 
 // ── PANEL ─────────────────────────────────────────────────────────────────────
 function openEmpPanel(id) {
-  const e = employees.find(x=>x.id===id); if(!e) return;
-  const c = dc(e.dept);
-  const av = document.getElementById('p-av');
-  av.style.cssText = `width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:700;background:${c.bg};color:${c.c};overflow:hidden;flex-shrink:0`;
-  av.innerHTML = e.photo ? `<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover" alt="${e.first} ${e.last}">` : initials(e.first+' '+e.last);
-  document.getElementById('p-name').textContent = e.first+' '+e.last;
-  document.getElementById('p-role').textContent = e.role||'—';
-  document.getElementById('p-id').textContent = e.id||'';
-  document.getElementById('pb').innerHTML = `
+  panelType='emp'; panelId=id;
+  const e=employees.find(x=>x.id===id); if(!e) return;
+  const c=dc(e.dept);
+  const av=document.getElementById('p-av');
+  av.style.cssText=`width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:700;background:${c.bg};color:${c.c};overflow:hidden;flex-shrink:0`;
+  av.innerHTML=e.photo?`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover" alt="${e.first} ${e.last}">`:initials(e.first+' '+e.last);
+  document.getElementById('p-name').textContent=e.first+' '+e.last;
+  document.getElementById('p-role').textContent=e.role||'—';
+  document.getElementById('p-id').textContent=e.id||'';
+  const docs=e.docs||[];
+  document.getElementById('pb').innerHTML=`
     <div class="slbl">Contact</div>
     <div class="drow"><i class="ti ti-mail"></i><span class="dk">Email</span><span class="dv" style="color:var(--blue)">${e.email||'—'}</span></div>
     <div class="drow"><i class="ti ti-phone"></i><span class="dk">Phone</span><span class="dv">${e.phone||'—'}</span></div>
@@ -881,6 +925,15 @@ function openEmpPanel(id) {
     <div class="drow"><i class="ti ti-clock"></i><span class="dk">Tenure</span><span class="dv">${e.start?tenure(e.start)+' yrs':'—'}</span></div>
     <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${sBadge(e.status||'Active')}</span></div>
     <div class="drow"><i class="ti ti-id"></i><span class="dk">Employee ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${e.id}</span></div>
+    <div class="slbl">Documents (${docs.length})</div>
+    ${docs.length?`<div class="docs-section">${docs.map((d,i)=>`
+      <div class="pdoc" style="padding:9px 12px;border-bottom:${i<docs.length-1?'1px solid var(--border)':'none'}">
+        <i class="ti ${fileIcon(d.name)} doc-icon" style="font-size:16px;color:var(--blue);flex-shrink:0"></i>
+        <span class="pdoc-name" title="${d.name}" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;margin:0 8px">${d.name}</span>
+        <span class="pdoc-meta" style="font-size:11px;color:var(--text3);margin-right:6px">${fmtSize(d.size)}</span>
+        <button class="doc-btn dl" onclick="downloadDoc(${JSON.stringify(d).replace(/'/g,'\\x27')})" title="Download"><i class="ti ti-download"></i></button>
+        <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
+      </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}
     <div class="panel-actions">
       <button class="btn" style="flex:1" onclick="openEmpEdit('${e.id}')"><i class="ti ti-edit"></i> Edit</button>
       <button class="btn danger" style="flex:1" onclick="deleteEmp('${e.id}')"><i class="ti ti-trash"></i> Remove</button>
@@ -889,14 +942,16 @@ function openEmpPanel(id) {
 }
 
 function openVndPanel(id) {
-  const v = vendors.find(x=>x.id===id); if(!v) return;
-  const av = document.getElementById('p-av');
-  av.style.cssText = 'width:56px;height:56px;border-radius:12px;display:grid;place-items:center;background:var(--blue-lt);color:var(--blue);overflow:hidden;flex-shrink:0;font-size:24px';
-  av.innerHTML = `<i class="ti ti-building-store"></i>`;
-  document.getElementById('p-name').textContent = v.company;
-  document.getElementById('p-role').textContent = v.category;
-  document.getElementById('p-id').textContent = v.id||'';
-  document.getElementById('pb').innerHTML = `
+  panelType='vnd'; panelId=id;
+  const v=vendors.find(x=>x.id===id); if(!v) return;
+  const av=document.getElementById('p-av');
+  av.style.cssText='width:56px;height:56px;border-radius:12px;display:grid;place-items:center;background:var(--blue-lt);color:var(--blue);overflow:hidden;flex-shrink:0;font-size:24px';
+  av.innerHTML=`<i class="ti ti-building-store"></i>`;
+  document.getElementById('p-name').textContent=v.company;
+  document.getElementById('p-role').textContent=v.category;
+  document.getElementById('p-id').textContent=v.id||'';
+  const docs=v.docs||[];
+  document.getElementById('pb').innerHTML=`
     <div class="slbl">Contact</div>
     <div class="drow"><i class="ti ti-user"></i><span class="dk">Name</span><span class="dv">${v.contact||'—'}</span></div>
     <div class="drow"><i class="ti ti-mail"></i><span class="dk">Email</span><span class="dv" style="color:var(--blue)">${v.email||'—'}</span></div>
@@ -906,7 +961,16 @@ function openVndPanel(id) {
     <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${sBadge(v.status)}</span></div>
     <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Since</span><span class="dv">${v.contractStart||'—'}</span></div>
     <div class="drow"><i class="ti ti-id"></i><span class="dk">Vendor ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${v.id}</span></div>
-    ${v.notes?`<div class="slbl">Notes</div><div style="font-size:13px;color:var(--text2);line-height:1.65;padding:10px 0">${v.notes}</div>`:''}
+    ${v.notes?`<div class="slbl">Notes</div><div style="font-size:13px;color:var(--text2);line-height:1.65;padding:8px 0">${v.notes}</div>`:''}
+    <div class="slbl">Documents (${docs.length})</div>
+    ${docs.length?`<div class="docs-section">${docs.map((d,i)=>`
+      <div class="pdoc" style="padding:9px 12px;border-bottom:${i<docs.length-1?'1px solid var(--border)':'none'}">
+        <i class="ti ${fileIcon(d.name)} doc-icon" style="font-size:16px;color:var(--blue);flex-shrink:0"></i>
+        <span class="pdoc-name" title="${d.name}" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;margin:0 8px">${d.name}</span>
+        <span class="pdoc-meta" style="font-size:11px;color:var(--text3);margin-right:6px">${fmtSize(d.size)}</span>
+        <button class="doc-btn dl" onclick="downloadDoc(${JSON.stringify(d).replace(/'/g,'\\x27')})" title="Download"><i class="ti ti-download"></i></button>
+        <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
+      </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}
     <div class="panel-actions">
       <button class="btn" style="flex:1" onclick="openVndEdit('${v.id}')"><i class="ti ti-edit"></i> Edit</button>
       <button class="btn danger" style="flex:1" onclick="deleteVnd('${v.id}')"><i class="ti ti-trash"></i> Remove</button>
@@ -914,171 +978,158 @@ function openVndPanel(id) {
   showPanel();
 }
 
-function showPanel() { document.getElementById('overlay').classList.add('on'); document.getElementById('panel').classList.add('on') }
-function closePanel() { document.getElementById('overlay').classList.remove('on'); document.getElementById('panel').classList.remove('on') }
+function showPanel(){document.getElementById('overlay').classList.add('on');document.getElementById('panel').classList.add('on')}
+function closePanel(){document.getElementById('overlay').classList.remove('on');document.getElementById('panel').classList.remove('on')}
 
 // ── PHOTO UPLOAD ──────────────────────────────────────────────────────────────
-function compressImage(dataUrl, maxPx=300, q=0.85) {
-  return new Promise(res => {
-    const img = new Image();
-    img.onload = () => {
-      const ratio = Math.min(maxPx/img.width, maxPx/img.height, 1);
-      const c = document.createElement('canvas');
-      c.width=img.width*ratio; c.height=img.height*ratio;
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      res(c.toDataURL('image/jpeg',q));
-    };
-    img.src = dataUrl;
+function compressImage(dataUrl,maxPx=300,q=0.85){
+  return new Promise(res=>{
+    const img=new Image(); img.onload=()=>{
+      const ratio=Math.min(maxPx/img.width,maxPx/img.height,1);
+      const c=document.createElement('canvas'); c.width=img.width*ratio; c.height=img.height*ratio;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',q));
+    }; img.src=dataUrl;
   });
 }
-
 function handlePhoto(e) {
-  const file = e.target.files[0]; if(!file) return;
-  if (file.size>2*1024*1024) { toast('Photo must be under 2 MB'); return }
-  const reader = new FileReader();
-  reader.onload = async ev => {
-    pendingPhoto = await compressImage(ev.target.result);
-    const prev = document.getElementById('photo-preview');
-    prev.innerHTML = `<img src="${pendingPhoto}" style="width:100%;height:100%;object-fit:cover">`;
-    document.getElementById('photo-lbl-text').textContent = file.name;
-  };
-  reader.readAsDataURL(file);
+  const file=e.target.files[0]; if(!file) return;
+  if(file.size>2*1024*1024){toast('Photo must be under 2 MB');return}
+  const r=new FileReader(); r.onload=async ev=>{
+    pendingPhoto=await compressImage(ev.target.result);
+    document.getElementById('photo-preview').innerHTML=`<img src="${pendingPhoto}" style="width:100%;height:100%;object-fit:cover">`;
+    document.getElementById('photo-lbl-text').textContent=file.name;
+  }; r.readAsDataURL(file);
 }
-
-function resetPhotoUI() {
-  const prev = document.getElementById('photo-preview');
-  prev.innerHTML = `<i class="ti ti-user" style="font-size:20px"></i>`;
-  document.getElementById('photo-lbl-text').textContent = 'Upload a photo';
-  document.getElementById('f-photo').value = '';
+function resetPhotoUI(){
+  document.getElementById('photo-preview').innerHTML=`<i class="ti ti-user" style="font-size:20px"></i>`;
+  document.getElementById('photo-lbl-text').textContent='Upload a photo';
+  document.getElementById('f-photo').value='';
 }
 
 // ── EMPLOYEE MODAL ────────────────────────────────────────────────────────────
-function openAdd() { activeSection==='employees' ? openEmpAdd() : openVndAdd() }
+function openAdd(){activeSection==='employees'?openEmpAdd():openVndAdd()}
 
-function openEmpAdd() {
-  editEmpId=null; pendingPhoto=null;
+function openEmpAdd(){
+  editEmpId=null; pendingPhoto=null; docsPending=[]; docsToDelete=[];
   document.getElementById('emp-modal-title').textContent='Add employee';
   ['f-first','f-last','f-role','f-loc','f-email','f-phone'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-date').value=''; document.getElementById('f-status').value='Active'; document.getElementById('f-dept').value='Engineering';
-  resetPhotoUI();
+  resetPhotoUI(); renderModalDocs('emp');
   document.getElementById('emp-modal').classList.add('on');
 }
-
-function openEmpEdit(id) {
+function openEmpEdit(id){
   const e=employees.find(x=>x.id===id); if(!e) return;
-  editEmpId=id; pendingPhoto=e.photo||null; closePanel();
+  editEmpId=id; pendingPhoto=e.photo||null; docsPending=[]; docsToDelete=[]; closePanel();
   document.getElementById('emp-modal-title').textContent='Edit employee';
-  document.getElementById('f-first').value=e.first||'';
-  document.getElementById('f-last').value=e.last||'';
-  document.getElementById('f-role').value=e.role||'';
-  document.getElementById('f-dept').value=e.dept||'Engineering';
-  document.getElementById('f-loc').value=e.loc||'';
-  document.getElementById('f-email').value=e.email||'';
-  document.getElementById('f-phone').value=e.phone||'';
-  document.getElementById('f-date').value=e.start||'';
+  document.getElementById('f-first').value=e.first||''; document.getElementById('f-last').value=e.last||'';
+  document.getElementById('f-role').value=e.role||''; document.getElementById('f-dept').value=e.dept||'Engineering';
+  document.getElementById('f-loc').value=e.loc||''; document.getElementById('f-email').value=e.email||'';
+  document.getElementById('f-phone').value=e.phone||''; document.getElementById('f-date').value=e.start||'';
   document.getElementById('f-status').value=e.status||'Active';
-  const prev=document.getElementById('photo-preview');
-  if (e.photo) { prev.innerHTML=`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover">`; document.getElementById('photo-lbl-text').textContent='Photo on file — click to change' }
+  if(e.photo){document.getElementById('photo-preview').innerHTML=`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover">`;document.getElementById('photo-lbl-text').textContent='Photo on file — click to change'}
   else resetPhotoUI();
   document.getElementById('f-photo').value='';
+  renderModalDocs('emp');
   document.getElementById('emp-modal').classList.add('on');
 }
-
-async function saveEmp() {
-  const first=document.getElementById('f-first').value.trim();
-  const last=document.getElementById('f-last').value.trim();
-  if (!first||!last) { toast('First and last name are required'); return }
-  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,photo:pendingPhoto||null};
-  if (editEmpId) Object.assign(employees.find(e=>e.id===editEmpId),data);
-  else employees.push({id:genEmpId(),...data});
+async function saveEmp(){
+  const first=document.getElementById('f-first').value.trim(), last=document.getElementById('f-last').value.trim();
+  if(!first||!last){toast('First and last name are required');return}
+  const id=editEmpId||genEmpId();
+  // Delete removed docs
+  for(const doc of docsToDelete){try{await deleteDocFile(doc)}catch(e){console.warn('Doc delete:',e)}}
+  // Keep existing docs minus removed
+  const existingDocs=(editEmpId?(employees.find(e=>e.id===editEmpId)?.docs||[]):[]).filter(d=>!docsToDelete.find(r=>r.path===d.path));
+  // Upload pending docs
+  const newDocs=[];
+  for(const f of docsPending){try{newDocs.push(await uploadDoc('emp',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
+  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
+  if(editEmpId) Object.assign(employees.find(e=>e.id===editEmpId),data);
+  else employees.push({id,...data});
   closeModal('emp-modal'); render();
   await saveEmps(editEmpId?`Update ${first} ${last}`:`Add ${first} ${last}`);
 }
-
-async function deleteEmp(id) {
+async function deleteEmp(id){
   const e=employees.find(x=>x.id===id); if(!e||!confirm(`Remove ${e.first} ${e.last}?`)) return;
+  // Delete all attached docs
+  for(const doc of(e.docs||[])){try{await deleteDocFile(doc)}catch(err){console.warn(err)}}
   employees=employees.filter(x=>x.id!==id); closePanel(); render();
   await saveEmps(`Remove ${e.first} ${e.last}`);
 }
 
 // ── VENDOR MODAL ──────────────────────────────────────────────────────────────
-function openVndAdd() {
-  editVndId=null;
+function openVndAdd(){
+  editVndId=null; docsPending=[]; docsToDelete=[];
   document.getElementById('vnd-modal-title').textContent='Add vendor';
   ['v-company','v-contact','v-email','v-phone','v-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('v-start').value=''; document.getElementById('v-status').value='Active'; document.getElementById('v-cat').value='Software';
+  renderModalDocs('vnd');
   document.getElementById('vnd-modal').classList.add('on');
 }
-
-function openVndEdit(id) {
+function openVndEdit(id){
   const v=vendors.find(x=>x.id===id); if(!v) return;
-  editVndId=id; closePanel();
+  editVndId=id; docsPending=[]; docsToDelete=[]; closePanel();
   document.getElementById('vnd-modal-title').textContent='Edit vendor';
-  document.getElementById('v-company').value=v.company||'';
-  document.getElementById('v-contact').value=v.contact||'';
-  document.getElementById('v-email').value=v.email||'';
-  document.getElementById('v-phone').value=v.phone||'';
-  document.getElementById('v-cat').value=v.category||'Software';
-  document.getElementById('v-status').value=v.status||'Active';
-  document.getElementById('v-start').value=v.contractStart||'';
-  document.getElementById('v-notes').value=v.notes||'';
+  document.getElementById('v-company').value=v.company||''; document.getElementById('v-contact').value=v.contact||'';
+  document.getElementById('v-email').value=v.email||''; document.getElementById('v-phone').value=v.phone||'';
+  document.getElementById('v-cat').value=v.category||'Software'; document.getElementById('v-status').value=v.status||'Active';
+  document.getElementById('v-start').value=v.contractStart||''; document.getElementById('v-notes').value=v.notes||'';
+  renderModalDocs('vnd');
   document.getElementById('vnd-modal').classList.add('on');
 }
-
-async function saveVendor() {
-  const company=document.getElementById('v-company').value.trim();
-  if (!company) { toast('Company name is required'); return }
-  const data={company,contact:document.getElementById('v-contact').value.trim(),email:document.getElementById('v-email').value.trim(),phone:document.getElementById('v-phone').value.trim(),category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,contractStart:document.getElementById('v-start').value||new Date().toISOString().slice(0,10),notes:document.getElementById('v-notes').value.trim()};
-  if (editVndId) Object.assign(vendors.find(v=>v.id===editVndId),data);
-  else vendors.push({id:genVndId(),...data});
+async function saveVendor(){
+  const company=document.getElementById('v-company').value.trim(); if(!company){toast('Company name is required');return}
+  const id=editVndId||genVndId();
+  for(const doc of docsToDelete){try{await deleteDocFile(doc)}catch(e){console.warn('Doc delete:',e)}}
+  const existingDocs=(editVndId?(vendors.find(v=>v.id===editVndId)?.docs||[]):[]).filter(d=>!docsToDelete.find(r=>r.path===d.path));
+  const newDocs=[];
+  for(const f of docsPending){try{newDocs.push(await uploadDoc('vnd',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
+  const data={company,contact:document.getElementById('v-contact').value.trim(),email:document.getElementById('v-email').value.trim(),phone:document.getElementById('v-phone').value.trim(),category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,contractStart:document.getElementById('v-start').value||new Date().toISOString().slice(0,10),notes:document.getElementById('v-notes').value.trim(),docs:[...existingDocs,...newDocs]};
+  if(editVndId) Object.assign(vendors.find(v=>v.id===editVndId),data);
+  else vendors.push({id,...data});
   closeModal('vnd-modal'); render();
   await saveVnds(editVndId?`Update vendor ${company}`:`Add vendor ${company}`);
 }
-
-async function deleteVnd(id) {
+async function deleteVnd(id){
   const v=vendors.find(x=>x.id===id); if(!v||!confirm(`Remove ${v.company}?`)) return;
+  for(const doc of(v.docs||[])){try{await deleteDocFile(doc)}catch(err){console.warn(err)}}
   vendors=vendors.filter(x=>x.id!==id); closePanel(); render();
   await saveVnds(`Remove vendor ${v.company}`);
 }
 
-const closeModal = id => document.getElementById(id).classList.remove('on');
+const closeModal=id=>document.getElementById(id).classList.remove('on');
 
 // ── EXPORT ────────────────────────────────────────────────────────────────────
-function exportCSV() {
-  if (activeSection==='employees') {
+function exportCSV(){
+  if(activeSection==='employees'){
     const cols=['id','first','last','role','dept','loc','email','phone','start','status'];
-    dlCSV([cols.join(','),...employees.map(e=>cols.map(c=>`"${(e[c]||'').replace(/"/g,'""')}"`).join(','))], 'kn-employees.csv');
+    dlCSV([cols.join(','),...employees.map(e=>cols.map(c=>`"${(e[c]||'').replace(/"/g,'""')}"`).join(','))],'kn-employees.csv');
   } else {
     const cols=['id','company','contact','email','phone','category','status','contractStart','notes'];
-    dlCSV([cols.join(','),...vendors.map(v=>cols.map(c=>`"${(v[c]||'').replace(/"/g,'""')}"`).join(','))], 'kn-vendors.csv');
+    dlCSV([cols.join(','),...vendors.map(v=>cols.map(c=>`"${(v[c]||'').replace(/"/g,'""')}"`).join(','))],'kn-vendors.csv');
   }
 }
-function dlCSV(rows, fn) { const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n')); a.download=fn; a.click() }
+function dlCSV(rows,fn){const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download=fn;a.click()}
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
-function setSyncBadge(type, text) {
-  const el=document.getElementById('sync-badge');
-  el.className='sync-badge '+type;
-  const icons={loading:'ti-loader spin',ok:'ti-check',err:'ti-alert-circle',warn:'ti-alert-triangle'};
+function setSyncBadge(type,text){
+  const el=document.getElementById('sync-badge'); el.className='sync-badge '+type;
+  const icons={loading:'ti-loader spin',ok:'ti-check',err:'ti-alert-circle'};
   el.innerHTML=`<i class="ti ${icons[type]||'ti-info-circle'}"></i> <span>${text}</span>`;
 }
-
 let toastT;
-function toast(msg) {
-  const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
-  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2800);
-}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3000)}
 
-document.addEventListener('keydown', e => {
-  if (e.key==='Escape') { closePanel(); closeModal('emp-modal'); closeModal('vnd-modal'); closeModal('settings-modal') }
-  if ((e.metaKey||e.ctrlKey)&&e.key==='k') { e.preventDefault(); document.getElementById('search').focus() }
-  if (e.key==='Enter'&&e.target.classList.contains('ecard')) e.target.click();
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closePanel();closeModal('emp-modal');closeModal('vnd-modal');closeModal('settings-modal')}
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.getElementById('search').focus()}
+  if(e.key==='Enter'&&e.target.classList.contains('ecard'))e.target.click();
 });
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
-function init() {
-  if (!cfg.owner||!cfg.repo||!cfg.token) document.getElementById('setup-screen').style.display='';
-  else { document.getElementById('app').style.display=''; loadData() }
+function init(){
+  if(!cfg.owner||!cfg.repo||!cfg.token) document.getElementById('setup-screen').style.display='';
+  else{document.getElementById('app').style.display='';loadData()}
 }
 init();
 </script>
