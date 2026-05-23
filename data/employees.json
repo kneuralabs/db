@@ -32,8 +32,8 @@
     "tenure": "1 Year",
     "contractEnd": "2027-02-19",
     "revokedAt": "",
-    "idCardGenerated": false,
-    "idCardGeneratedAt": ""
+    "idCardGenerated": true,
+    "idCardGeneratedAt": "2026-05-23"
   },
   {
     "id": "KN-2026-002",
