@@ -18,7 +18,9 @@
 <link rel="icon" type="image/png" href="LOGO.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" /></noscript>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.8.0/dist/tabler-icons.min.css">
 <style>
 /* ── BRAND TOKENS ─────────────────────────────────────────────────────────── */
@@ -1651,7 +1653,9 @@ function printContract(p) {
   const w=window.open('','_blank','width=900,height=720');
   w.document.write(`<!DOCTYPE html><html><head><title>Service Engagement Agreement — ${p.name}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" /></noscript>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Aptos Display','Aptos',Calibri,'Calibri Light',sans-serif;background:#fff;color:#1a1d23;font-size:12px;line-height:1.55;padding:32px 44px}
