@@ -88,7 +88,16 @@
     "pin": "06042",
     "idProofType": "SSO",
     "idProofNum": "",
-    "docs": [],
+    "docs": [
+      {
+        "name": "GAUTHAM DHAR KN-2026-003.pdf",
+        "path": "data/attachments/emp-KN-2026-003/1781386129650-GAUTHAM_DHAR_KN-2026-003.pdf",
+        "sha": "b4ca429fdb8caa68c89819b79370681fd723659c",
+        "size": 668306,
+        "mimeType": "application/pdf",
+        "uploadedAt": "2026-06-13"
+      }
+    ],
     "premise": "15113",
     "country": "United States",
     "ctc": "NA",
@@ -96,6 +105,7 @@
     "contractEnd": "2027-02-19",
     "revokedAt": "",
     "idCardGenerated": true,
-    "idCardGeneratedAt": "2026-06-13"
+    "idCardGeneratedAt": "2026-06-13",
+    "blood": ""
   }
 ]
