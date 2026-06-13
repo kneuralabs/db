@@ -61,7 +61,16 @@
     "pin": "06042",
     "idProofType": "SSO",
     "idProofNum": "",
-    "docs": [],
+    "docs": [
+      {
+        "name": "PIYALI DHAR KN-2026-002.pdf",
+        "path": "data/attachments/emp-KN-2026-002/1781386162611-PIYALI_DHAR_KN-2026-002.pdf",
+        "sha": "c45f45ed2573999b7bd3763e68cff26f3c4a610d",
+        "size": 667805,
+        "mimeType": "application/pdf",
+        "uploadedAt": "2026-06-13"
+      }
+    ],
     "premise": "15113",
     "country": "United States",
     "idCardGenerated": true,
@@ -69,7 +78,8 @@
     "ctc": "Equity",
     "tenure": "1 Year",
     "contractEnd": "2027-02-19",
-    "revokedAt": ""
+    "revokedAt": "",
+    "blood": ""
   },
   {
     "id": "KN-2026-003",
