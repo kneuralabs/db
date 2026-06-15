@@ -981,10 +981,34 @@ function genVndId() {
   return `VN-${yr}-${String(nums.length?Math.max(...nums)+1:1).padStart(3,'0')}`;
 }
 
-// ── GITHUB API ────────────────────────────────────────────────────────────────
+// ── GITHUB API (document attachments only) ────────────────────────────────────
 const apiUrl = p => `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${p}`;
 const ghHdrs = () => ({'Authorization':'token '+cfg.token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'});
 const setProgress = w => { document.getElementById('progress-bar').style.width=w+'%' };
+
+// ── SUPABASE (primary datastore for the employee / vendor registry) ───────────
+// Every create / update / delete is persisted to Supabase so the data survives.
+const SB_URL = 'https://brysartqcjylgqwmnjkk.supabase.co';
+const SB_KEY = 'sb_publishable_C5e5ViwIlW9dV14ZLi4O0A_ipIXhTB5';
+const sbHdrs = (extra={}) => ({'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json',...extra});
+async function sbLoad(table) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?select=data`,{headers:sbHdrs()});
+  if(!r.ok) throw new Error('Supabase '+r.status);
+  return (await r.json()).map(x=>x.data);
+}
+// Upsert every current record, then prune rows that no longer exist locally.
+async function sbSync(table, rows) {
+  if(rows.length){
+    const ru = await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',
+      headers:sbHdrs({'Prefer':'resolution=merge-duplicates,return=minimal'}),
+      body:JSON.stringify(rows.map(x=>({id:x.id,data:x,updated_at:new Date().toISOString()})))});
+    if(!ru.ok) throw new Error('Supabase save '+ru.status);
+  }
+  const ids = rows.map(x=>x.id);
+  const filter = ids.length ? `id=not.in.(${ids.map(i=>`"${i}"`).join(',')})` : 'id=not.is.null';
+  const rd = await fetch(`${SB_URL}/rest/v1/${table}?${filter}`,{method:'DELETE',headers:sbHdrs({'Prefer':'return=minimal'})});
+  if(!rd.ok) throw new Error('Supabase prune '+rd.status);
+}
 
 async function fetchFile(path) {
   const r = await fetch(apiUrl(path),{headers:ghHdrs()});
@@ -1005,10 +1029,8 @@ async function loadData() {
   initSticky();
   setSyncBadge('loading','Loading…'); setProgress(20);
   try {
-    const [er,vr] = await Promise.all([fetchFile(EMP_PATH),fetchFile(VND_PATH)]);
-    employees=er.data; empSha=er.sha; vendors=vr.data; vndSha=vr.sha;
-    if(!empSha) empSha=await writeFile(EMP_PATH,'','[]','Initialise employee database');
-    if(!vndSha) vndSha=await writeFile(VND_PATH,'','[]','Initialise vendor database');
+    const [emp,vnd] = await Promise.all([sbLoad('kn_employees'),sbLoad('kn_vendors')]);
+    employees=emp; vendors=vnd;
     const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     document.getElementById('s-sync').textContent=t; document.getElementById('vs-sync').textContent=t;
     setSyncBadge('ok','Synced');
@@ -1019,18 +1041,18 @@ async function loadData() {
 async function saveEmps(msg='Update employees') {
   setProgress(30); setSyncBadge('loading','Saving…');
   try {
-    empSha=await writeFile(EMP_PATH,empSha,employees,msg);
+    await sbSync('kn_employees',employees);
     document.getElementById('s-sync').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    setSyncBadge('ok','Synced'); toast('✓ Saved to GitHub');
+    setSyncBadge('ok','Synced'); toast('✓ Saved to database');
   } catch(e) { setSyncBadge('err','Save failed'); toast('✗ Save failed: '+e.message) }
   setProgress(100); setTimeout(()=>setProgress(0),600);
 }
 async function saveVnds(msg='Update vendors') {
   setProgress(30); setSyncBadge('loading','Saving…');
   try {
-    vndSha=await writeFile(VND_PATH,vndSha,vendors,msg);
+    await sbSync('kn_vendors',vendors);
     document.getElementById('vs-sync').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    setSyncBadge('ok','Synced'); toast('✓ Saved to GitHub');
+    setSyncBadge('ok','Synced'); toast('✓ Saved to database');
   } catch(e) { setSyncBadge('err','Save failed'); toast('✗ Save failed: '+e.message) }
   setProgress(100); setTimeout(()=>setProgress(0),600);
 }
@@ -1055,14 +1077,7 @@ function decodeAuth(s){
 async function showEmployeeCard(id){
   try{
     let data=null;
-    try{
-      const r=await fetch(`https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/main/data/employees.json`);
-      if(r.ok) data=await r.json();
-    }catch(e){}
-    if(!data&&cfg.token){
-      const r=await fetch(apiUrl(EMP_PATH),{headers:ghHdrs()});
-      if(r.ok){const d=await r.json();data=JSON.parse(atob(d.content.replace(/\n/g,'')))}
-    }
+    try{ data=await sbLoad('kn_employees'); }catch(e){}
     const emp=data&&data.find(e=>e.id&&e.id.toUpperCase()===String(id).toUpperCase());
     if(!emp){alert('Employee record not found.');gotoSSO();return}
     document.getElementById('theme-btn').style.display='';
@@ -1867,8 +1882,7 @@ function init(){
   if(auth.role==='admin'){
     authedAdmin=true;
     document.getElementById('theme-btn').style.display='';
-    if(!cfg.token){ document.getElementById('token-prompt').style.display=''; }
-    else { document.getElementById('app').style.display=''; loadData(); }
+    document.getElementById('app').style.display=''; loadData();
   } else {
     showEmployeeCard(auth.id);
   }
