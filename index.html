@@ -543,6 +543,45 @@ html{overflow-x:hidden}
   .panel-actions .btn{min-height:48px}
   .tbl-edit-lbl{display:none}
 }
+/* ── ACCESS MANAGER ─────────────────────────────────────────────────────────── */
+.acc-head{background:linear-gradient(135deg,var(--blue-dk),var(--blue));border-radius:var(--r-lg);padding:20px 22px;margin-bottom:22px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
+.acc-head::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% -20%,rgba(74,139,200,.55),transparent 60%);pointer-events:none}
+.acc-head h2{color:#fff;font-size:16px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.acc-head p{color:rgba(255,255,255,.6);font-size:12px;margin-bottom:14px}
+.acc-pick{position:relative;z-index:1}
+.acc-pick label{display:block;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.acc-pick select{width:100%;max-width:520px;padding:12px 14px;border-radius:var(--r);border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.95);color:var(--ink);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.access-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.app-box{position:relative;border-radius:var(--r-lg);padding:16px 12px 14px;background:var(--surface);border:1.5px solid var(--red);box-shadow:0 0 0 0 rgba(200,40,30,.0),var(--shadow);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;transition:transform .18s var(--ease),border-color .25s,background .25s,box-shadow .25s;overflow:hidden}
+.app-box::before{content:"";position:absolute;inset:0;opacity:.06;background:var(--red);transition:background .25s,opacity .25s;pointer-events:none}
+.app-box:hover{transform:translateY(-3px)}
+.app-box .app-ico{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:21px;background:var(--red-lt);color:var(--red);transition:all .25s;z-index:1}
+.app-box .app-nm{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.2;z-index:1}
+.app-box .app-st{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--red);min-height:13px;z-index:1;display:flex;align-items:center;gap:4px}
+.app-sw{position:relative;width:42px;height:23px;border-radius:13px;background:var(--frost);border:1px solid var(--border-strong);cursor:pointer;transition:background .25s;z-index:1;flex-shrink:0}
+.app-sw::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .22s var(--ease)}
+.app-box.on .app-sw{background:var(--blue-sky)}
+.app-box.on .app-sw::after{transform:translateX(19px)}
+.app-box.checking{border-color:var(--blue-sky);animation:accpulse 1s ease-in-out infinite}
+.app-box.checking::before{background:var(--blue-sky)}
+.app-box.checking .app-ico{background:var(--blue-lt);color:var(--blue)}
+.app-box.checking .app-st{color:var(--blue)}
+.app-box.granted{border-color:#1f9d55;background:linear-gradient(160deg,rgba(31,157,85,.10),transparent);box-shadow:0 0 0 3px rgba(31,157,85,.18),var(--shadow)}
+.app-box.granted::before{background:#1f9d55;opacity:.10}
+.app-box.granted .app-ico{background:rgba(31,157,85,.16);color:#1f9d55}
+.app-box.granted .app-st{color:#1f9d55}
+.app-box.granted .app-sw{background:#1f9d55}
+.app-box.denied{border-color:var(--amber);background:linear-gradient(160deg,var(--amber-lt),transparent)}
+.app-box.denied::before{background:var(--amber)}
+.app-box.denied .app-ico{background:var(--amber-lt);color:var(--amber)}
+.app-box.denied .app-st{color:var(--amber)}
+.app-box.denied .app-sw{background:var(--amber)}
+@keyframes accpulse{0%,100%{box-shadow:0 0 0 0 rgba(74,139,200,.4),var(--shadow)}50%{box-shadow:0 0 0 6px rgba(74,139,200,0),var(--shadow)}}
+.app-spin{width:11px;height:11px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;display:inline-block;animation:accspin .7s linear infinite}
+@keyframes accspin{to{transform:rotate(360deg)}}
+@media(max-width:1100px){.access-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:768px){.access-grid{grid-template-columns:repeat(3,1fr);gap:10px}}
+@media(max-width:480px){.access-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 <script>(function(){var s=localStorage.getItem('kn_theme'),h=new Date().getHours();document.documentElement.setAttribute('data-theme',s||(h>=6&&h<18?'light':'dark'))})()</script>
 </head>
@@ -616,6 +655,9 @@ html{overflow-x:hidden}
     <button class="stab" id="tab-vendors" onclick="switchSection('vendors')" aria-selected="false" title="Vendors">
       <i class="ti ti-building-store"></i> <span class="stab-count" id="tc-vendors">0</span>
     </button>
+    <button class="stab" id="tab-access" onclick="switchSection('access')" aria-selected="false" title="Access">
+      <i class="ti ti-shield-lock"></i> <span class="stab-count" id="tc-access">0</span>
+    </button>
   </nav>
 
   <!-- EMPLOYEES ──────────────────────────────────────────────────────────── -->
@@ -665,6 +707,21 @@ html{overflow-x:hidden}
         <div class="stat" style="animation-delay:180ms"><div class="stat-lbl">Last sync</div><div class="stat-val" id="vs-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
       </div>
       <div id="vnd-list"></div>
+    </main>
+  </div>
+
+  <!-- ACCESS ─────────────────────────────────────────────────────────────── -->
+  <div id="section-access" style="display:none">
+    <main class="content">
+      <div class="acc-head">
+        <h2><i class="ti ti-shield-lock"></i> Access Manager</h2>
+        <p>Pick a user, then toggle apps on to provision their access in real time.</p>
+        <div class="acc-pick">
+          <label for="acc-user">User</label>
+          <select id="acc-user" onchange="onAccUser()"><option value="">— Select a user —</option></select>
+        </div>
+      </div>
+      <div class="access-grid" id="acc-grid"></div>
     </main>
   </div>
 </div>
@@ -1092,12 +1149,11 @@ function updateConfig(){
 // ── SECTION SWITCH ────────────────────────────────────────────────────────────
 function switchSection(sec) {
   activeSection=sec;
-  document.getElementById('section-employees').style.display=sec==='employees'?'':'none';
-  document.getElementById('section-vendors').style.display=sec==='vendors'?'':'none';
-  document.getElementById('tab-employees').classList.toggle('active',sec==='employees');
-  document.getElementById('tab-vendors').classList.toggle('active',sec==='vendors');
-  document.getElementById('tab-employees').setAttribute('aria-selected',sec==='employees');
-  document.getElementById('tab-vendors').setAttribute('aria-selected',sec==='vendors');
+  ['employees','vendors','access'].forEach(s=>{
+    document.getElementById('section-'+s).style.display=sec===s?'':'none';
+    document.getElementById('tab-'+s).classList.toggle('active',sec===s);
+    document.getElementById('tab-'+s).setAttribute('aria-selected',sec===s);
+  });
   document.getElementById('add-btn').title=sec==='employees'?'Add employee':'Add vendor';
   document.getElementById('add-btn').setAttribute('aria-label',sec==='employees'?'Add employee':'Add vendor');
   document.getElementById('search').placeholder=sec==='employees'?'Search employees…':'Search vendors…';
@@ -1129,8 +1185,60 @@ function renderVndStats() {
 function updateTabCounts() {
   document.getElementById('tc-employees').textContent=employees.length;
   document.getElementById('tc-vendors').textContent=vendors.length;
+  document.getElementById('tc-access').textContent=Object.values(accGranted).filter(v=>v==='granted').length;
 }
-function render() { activeSection==='employees'?renderEmps():renderVnds(); updateTabCounts() }
+function render() { activeSection==='employees'?renderEmps():activeSection==='vendors'?renderVnds():renderAccess(); updateTabCounts() }
+
+// ── ACCESS MANAGER ────────────────────────────────────────────────────────────
+const ACCESS_APPS=[
+  ['GitHub','ti-brand-github'],['Slack','ti-brand-slack'],['Figma','ti-brand-figma'],['Notion','ti-brand-notion'],['Google Drive','ti-brand-google-drive'],['Gmail','ti-mail'],
+  ['Jira','ti-ticket'],['Confluence','ti-book-2'],['Zoom','ti-video'],['Salesforce','ti-cloud'],['Supabase','ti-database'],['Vercel','ti-triangle-inverted'],
+  ['Linear','ti-line-height'],['Sentry','ti-bug'],['Datadog','ti-paw'],['Stripe','ti-credit-card'],['HubSpot','ti-hexagon'],['Postman','ti-rocket'],
+  ['Docker','ti-brand-docker'],['Grafana','ti-chart-line'],['PagerDuty','ti-bell-ringing'],['Trello','ti-brand-trello'],['Asana','ti-checklist'],['1Password','ti-key']
+];
+let accGranted={}; // appIndex -> 'granted'|'denied'
+function accUsers(){
+  return employees.map(e=>{
+    const uname=(e.email||'').split('@')[0]||((e.first||'')+'.'+(e.last||'')).toLowerCase();
+    const active=e.status==='Active';
+    return {id:e.id,uname,name:`${e.first||''} ${e.last||''}`.trim(),active,label:`${uname} — ${e.first||''} ${e.last||''} — ${active?'Active':'Revoked'}`};
+  }).sort((a,b)=>a.uname.localeCompare(b.uname));
+}
+function renderAccess(){
+  const sel=document.getElementById('acc-user'); if(!sel)return;
+  const cur=sel.value, users=accUsers();
+  sel.innerHTML='<option value="">— Select a user —</option>'+users.map(u=>`<option value="${u.id}">${u.label}</option>`).join('');
+  if(users.some(u=>u.id===cur))sel.value=cur;
+  const grid=document.getElementById('acc-grid');
+  grid.innerHTML=ACCESS_APPS.map((a,i)=>`
+    <div class="app-box" id="app-${i}">
+      <div class="app-sw" onclick="toggleApp(${i})" role="switch" aria-label="${a[0]} access"></div>
+      <div class="app-ico"><i class="ti ${a[1]}"></i></div>
+      <div class="app-nm">${a[0]}</div>
+      <div class="app-st">No access</div>
+    </div>`).join('');
+}
+function onAccUser(){ accGranted={}; renderAccess(); updateTabCounts() }
+function toggleApp(i){
+  const box=document.getElementById('app-'+i); if(!box||box.classList.contains('checking'))return;
+  const st=box.querySelector('.app-st'), sw=box.querySelector('.app-sw');
+  if(box.classList.contains('on')){ // turn off
+    box.className='app-box'; delete accGranted[i]; st.textContent='No access'; updateTabCounts(); return;
+  }
+  const sel=document.getElementById('acc-user');
+  if(!sel.value){ toast('Select a user first'); return; }
+  const user=accUsers().find(u=>u.id===sel.value);
+  box.className='app-box on checking';
+  st.innerHTML='<span class="app-spin"></span> Giving access…';
+  setTimeout(()=>{
+    const ok=user&&user.active; // access only grantable to active users
+    box.className='app-box on '+(ok?'granted':'denied');
+    st.textContent=ok?'Access granted':'Cannot grant';
+    accGranted[i]=ok?'granted':'denied';
+    updateTabCounts();
+    toast(ok?`✓ ${ACCESS_APPS[i][0]} access granted to ${user.uname}`:`⚠ ${ACCESS_APPS[i][0]} blocked — ${user.uname} is revoked`);
+  },900);
+}
 
 function docCountBadge(docs) {
   if (!docs||!docs.length) return '';
