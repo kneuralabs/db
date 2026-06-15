@@ -1038,24 +1038,19 @@ async function loadData() {
   setProgress(100); setTimeout(()=>setProgress(0),600);
   render(); updateTabCounts();
 }
-async function saveEmps(msg='Update employees') {
+// Persist a registry to Supabase and reflect the sync state in the UI.
+// `syncElId` is the timestamp element for the relevant section.
+async function saveRegistry(table, rows, syncElId) {
   setProgress(30); setSyncBadge('loading','Saving…');
   try {
-    await sbSync('kn_employees',employees);
-    document.getElementById('s-sync').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    await sbSync(table,rows);
+    document.getElementById(syncElId).textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     setSyncBadge('ok','Synced'); toast('✓ Saved to database');
   } catch(e) { setSyncBadge('err','Save failed'); toast('✗ Save failed: '+e.message) }
   setProgress(100); setTimeout(()=>setProgress(0),600);
 }
-async function saveVnds(msg='Update vendors') {
-  setProgress(30); setSyncBadge('loading','Saving…');
-  try {
-    await sbSync('kn_vendors',vendors);
-    document.getElementById('vs-sync').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    setSyncBadge('ok','Synced'); toast('✓ Saved to database');
-  } catch(e) { setSyncBadge('err','Save failed'); toast('✗ Save failed: '+e.message) }
-  setProgress(100); setTimeout(()=>setProgress(0),600);
-}
+async function saveEmps() { return saveRegistry('kn_employees',employees,'s-sync'); }
+async function saveVnds() { return saveRegistry('kn_vendors',vendors,'vs-sync'); }
 const syncNow = () => loadData();
 
 // ── SSO AUTH ────────────────────────────────────────────────────────────────
@@ -1150,6 +1145,19 @@ function render() { activeSection==='employees'?renderEmps():renderVnds(); updat
 function docCountBadge(docs) {
   if (!docs||!docs.length) return '';
   return `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--text3);margin-top:6px"><i class="ti ti-paperclip" style="font-size:11px"></i>${docs.length} doc${docs.length>1?'s':''}</span>`;
+}
+
+// Documents section shared by the employee and vendor detail panels.
+function panelDocsSection(docs) {
+  return `<div class="slbl">Documents (${docs.length})</div>
+    ${docs.length?`<div class="docs-section">${docs.map((d,i)=>`
+      <div class="pdoc" style="padding:9px 12px;border-bottom:${i<docs.length-1?'1px solid var(--border)':'none'}">
+        <i class="ti ${fileIcon(d.name)} doc-icon" style="font-size:16px;color:var(--blue);flex-shrink:0"></i>
+        <span class="pdoc-name" title="${d.name}" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;margin:0 8px">${d.name}</span>
+        <span class="pdoc-meta" style="font-size:11px;color:var(--text3);margin-right:6px">${fmtSize(d.size)}</span>
+        <button class="doc-btn dl" onclick="downloadDoc(${JSON.stringify(d).replace(/'/g,'\\x27')})" title="Download"><i class="ti ti-download"></i></button>
+        <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
+      </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}`;
 }
 
 function renderEmps() {
@@ -1354,15 +1362,7 @@ function openEmpPanel(id) {
     ${e.tenure?`<div class="drow"><i class="ti ti-hourglass"></i><span class="dk">Duration</span><span class="dv">${e.tenure}</span></div>`:''}
     ${e.contractEnd?`<div class="drow"><i class="ti ti-calendar-due"></i><span class="dk">Contract end</span><span class="dv">${e.contractEnd}</span></div>`:''}
     ${e.idCardGenerated?`<div class="drow"><i class="ti ti-id-badge-2" style="color:var(--blue)"></i><span class="dk">ID Card</span><span class="dv" style="color:var(--blue);font-size:12px">Generated${e.idCardGeneratedAt?' · '+e.idCardGeneratedAt:''}</span></div>`:''}`:''}
-    <div class="slbl">Documents (${docs.length})</div>
-    ${docs.length?`<div class="docs-section">${docs.map((d,i)=>`
-      <div class="pdoc" style="padding:9px 12px;border-bottom:${i<docs.length-1?'1px solid var(--border)':'none'}">
-        <i class="ti ${fileIcon(d.name)} doc-icon" style="font-size:16px;color:var(--blue);flex-shrink:0"></i>
-        <span class="pdoc-name" title="${d.name}" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;margin:0 8px">${d.name}</span>
-        <span class="pdoc-meta" style="font-size:11px;color:var(--text3);margin-right:6px">${fmtSize(d.size)}</span>
-        <button class="doc-btn dl" onclick="downloadDoc(${JSON.stringify(d).replace(/'/g,'\\x27')})" title="Download"><i class="ti ti-download"></i></button>
-        <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
-      </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}
+    ${panelDocsSection(docs)}
     <div class="panel-actions">
       <button class="btn" onclick="openEmpEdit('${e.id}')" title="Edit"${revoked?' disabled style="opacity:.4"':''}><i class="ti ti-edit"></i></button>
       <button class="btn" onclick="genContract('${e.id}')" title="Job Contract"><i class="ti ti-file-text"></i></button>
@@ -1400,15 +1400,7 @@ function openVndPanel(id) {
     ${v.country?`<div class="drow"><i class="ti ti-world"></i><span class="dk">Country</span><span class="dv">${v.country}${COUNTRY_ISD[v.country]?' ('+COUNTRY_ISD[v.country]+')':''}</span></div>`:''}
     <div class="drow"><i class="ti ti-id"></i><span class="dk">Vendor ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${v.id}</span></div>
     ${v.notes?`<div class="slbl">Notes</div><div style="font-size:13px;color:var(--text2);line-height:1.65;padding:8px 0">${v.notes}</div>`:''}
-    <div class="slbl">Documents (${docs.length})</div>
-    ${docs.length?`<div class="docs-section">${docs.map((d,i)=>`
-      <div class="pdoc" style="padding:9px 12px;border-bottom:${i<docs.length-1?'1px solid var(--border)':'none'}">
-        <i class="ti ${fileIcon(d.name)} doc-icon" style="font-size:16px;color:var(--blue);flex-shrink:0"></i>
-        <span class="pdoc-name" title="${d.name}" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;margin:0 8px">${d.name}</span>
-        <span class="pdoc-meta" style="font-size:11px;color:var(--text3);margin-right:6px">${fmtSize(d.size)}</span>
-        <button class="doc-btn dl" onclick="downloadDoc(${JSON.stringify(d).replace(/'/g,'\\x27')})" title="Download"><i class="ti ti-download"></i></button>
-        <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
-      </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}
+    ${panelDocsSection(docs)}
     <div class="panel-actions">
       <button class="btn" onclick="openVndEdit('${v.id}')" title="Edit"><i class="ti ti-edit"></i></button>
       <button class="btn" onclick="genContract('VND:${v.id}')" title="Service Agreement"><i class="ti ti-file-text"></i></button>
