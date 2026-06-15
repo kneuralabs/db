@@ -551,30 +551,17 @@ html{overflow-x:hidden}
 <div id="progress-bar" class="progress"></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<!-- LOGIN SCREEN ────────────────────────────────────────────────────────────── -->
-<div id="login-screen" class="login-screen" style="display:none">
-  <div class="login-card">
-    <div class="login-logo">
+<!-- SSO redirect splash (shown while bouncing to sso.kneuralabs.com) ───────── -->
+<div id="sso-splash" class="login-screen" style="display:none">
+  <div class="login-card" style="text-align:center">
+    <div class="login-logo" style="justify-content:center">
       <img src="LOGO.png" alt="KN logo">
       <div>
         <div class="login-logo-text">KN PeopleBase</div>
-        <div class="login-logo-sub">Kneuralabs Internal Registry</div>
+        <div class="login-logo-sub">Redirecting to sign-in…</div>
       </div>
     </div>
-    <div id="login-step1">
-      <div class="login-title">Sign in</div>
-      <input id="login-id" class="login-input" type="text" placeholder="Enter admin or Employee ID (e.g. KN-2026-001)" autocomplete="username" onkeydown="if(event.key==='Enter')handleLoginId()">
-      <button class="login-btn" onclick="handleLoginId()" title="Continue"><i class="ti ti-arrow-right"></i></button>
-      <div class="login-hint">Employees: enter your ID · Admins: enter <b>admin</b></div>
-    </div>
-    <div id="login-step2" style="display:none">
-      <button class="login-back" onclick="backToStep1()" title="Back"><i class="ti ti-arrow-left"></i></button>
-      <div class="login-title">Admin Password</div>
-      <input id="login-pw" class="login-input" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleLoginPw()">
-      <button class="login-btn" onclick="handleLoginPw()" title="Login"><i class="ti ti-lock-open"></i></button>
-    </div>
-    <div id="login-spinner" class="login-spinner"><i class="ti ti-loader spin" style="font-size:24px;color:var(--blue)"></i></div>
-    <div id="login-error" class="login-error" style="display:none"><i class="ti ti-alert-circle"></i><span id="login-error-msg"></span></div>
+    <div class="login-spinner" style="display:flex"><i class="ti ti-loader spin" style="font-size:24px;color:var(--blue)"></i></div>
   </div>
 </div>
 
@@ -1049,83 +1036,38 @@ async function saveVnds(msg='Update vendors') {
 }
 const syncNow = () => loadData();
 
-// ── LOGIN ─────────────────────────────────────────────────────────────────────
-function showLoginError(msg){
-  const el=document.getElementById('login-error');
-  document.getElementById('login-error-msg').textContent=msg;
-  el.style.display='flex';
-  document.getElementById('login-spinner').style.display='none';
+// ── SSO AUTH ────────────────────────────────────────────────────────────────
+// Authentication is delegated to the central SSO (sso.kneuralabs.com). On every
+// visit we either consume a returned ?kn-auth= token or bounce to the SSO login.
+// Retained app logic: admins (role 'admin') see the full registry; individual
+// employees see only their own ID card.
+const SSO_URL = 'https://sso.kneuralabs.com/';
+function gotoSSO(){
+  document.getElementById('sso-splash').style.display='';
+  const back=new URL(location.href); back.searchParams.delete('kn-auth');
+  location.replace(SSO_URL+'?redirect='+encodeURIComponent(back.toString()));
 }
-function clearLoginError(){document.getElementById('login-error').style.display='none'}
-function backToStep1(){
-  document.getElementById('login-step2').style.display='none';
-  document.getElementById('login-step1').style.display='';
-  document.getElementById('login-pw').value='';
-  clearLoginError();
-  setTimeout(()=>document.getElementById('login-id').focus(),50);
+// UTF-8-safe base64 decode (mirrors the SSO's _encodeAuth).
+function decodeAuth(s){
+  const bin=atob(s); const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
 }
-function handleLoginId(){
-  clearLoginError();
-  const id=document.getElementById('login-id').value.trim();
-  if(!id){showLoginError('Please enter your ID');return}
-  if(id.toLowerCase()==='admin'){
-    document.getElementById('login-step1').style.display='none';
-    document.getElementById('login-step2').style.display='';
-    setTimeout(()=>document.getElementById('login-pw').focus(),50);
-    return;
-  }
-  if(/^KN-\d{4}-\d{3,}$/i.test(id)){
-    lookupEmployeeId(id.toUpperCase());
-    return;
-  }
-  showLoginError('Enter "admin" or your Employee ID (e.g. KN-2026-001)');
-}
-function handleLoginPw(){
-  clearLoginError();
-  const pw=document.getElementById('login-pw').value;
-  if(pw!=='S1ogger$'){
-    showLoginError('Incorrect password');
-    document.getElementById('login-pw').value='';
-    setTimeout(()=>document.getElementById('login-pw').focus(),50);
-    return;
-  }
-  authedAdmin=true;
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('theme-btn').style.display='';
-  if(!cfg.token){
-    document.getElementById('token-prompt').style.display='';
-  } else {
-    document.getElementById('app').style.display='';
-    loadData();
-  }
-}
-async function lookupEmployeeId(id){
-  clearLoginError();
-  const spinner=document.getElementById('login-spinner');
-  spinner.style.display='flex';
-  document.getElementById('login-step1').querySelector('.login-btn').disabled=true;
+async function showEmployeeCard(id){
   try{
     let data=null;
-    // Try public raw first
     try{
       const r=await fetch(`https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/main/data/employees.json`);
       if(r.ok) data=await r.json();
     }catch(e){}
-    // Fallback: GitHub API with token
     if(!data&&cfg.token){
       const r=await fetch(apiUrl(EMP_PATH),{headers:ghHdrs()});
       if(r.ok){const d=await r.json();data=JSON.parse(atob(d.content.replace(/\n/g,'')))}
     }
-    if(!data){showLoginError('Could not load employee data. Please try again.');return}
-    const emp=data.find(e=>e.id&&e.id.toUpperCase()===id);
-    if(!emp){showLoginError('Employee does not exist.');return}
-    document.getElementById('login-screen').style.display='none';
+    const emp=data&&data.find(e=>e.id&&e.id.toUpperCase()===String(id).toUpperCase());
+    if(!emp){alert('Employee record not found.');gotoSSO();return}
+    document.getElementById('theme-btn').style.display='';
     showIdCardOverlay(emp);
-  }catch(e){showLoginError('Error: '+e.message)}
-  finally{
-    spinner.style.display='none';
-    document.getElementById('login-step1').querySelector('.login-btn').disabled=false;
-  }
+  }catch(e){alert('Error loading your record: '+e.message);gotoSSO()}
 }
 
 // ── CONFIG ────────────────────────────────────────────────────────────────────
@@ -1862,13 +1804,9 @@ function closeIdCard(){
   document.body.style.overflow='';
   document.documentElement.style.overflow='';
   window.scrollTo(0, window._overlayScrollY||0);
-  // If came from login (not admin), go back to login
+  // Employees (non-admin) only have their ID card — closing signs them out.
   if(!authedAdmin){
-    document.getElementById('login-screen').style.display='';
-    document.getElementById('login-step1').style.display='';
-    document.getElementById('login-step2').style.display='none';
-    document.getElementById('login-id').value='';
-    clearLoginError();
+    gotoSSO();
   } else {
     document.getElementById('theme-btn').style.display='';
   }
@@ -1920,9 +1858,20 @@ function initSticky(){
 }
 function init(){
   initTheme(); populateCountrySelects();
-  document.getElementById('login-screen').style.display='';
   document.getElementById('theme-btn').style.display='none';
-  setTimeout(()=>document.getElementById('login-id').focus(),100);
+  const tok=new URLSearchParams(location.search).get('kn-auth');
+  if(!tok){ gotoSSO(); return; }
+  let auth; try{ auth=decodeAuth(tok); }catch(e){ gotoSSO(); return; }
+  // Strip the token from the URL so it isn't bookmarked or shared.
+  history.replaceState(null,'',location.pathname);
+  if(auth.role==='admin'){
+    authedAdmin=true;
+    document.getElementById('theme-btn').style.display='';
+    if(!cfg.token){ document.getElementById('token-prompt').style.display=''; }
+    else { document.getElementById('app').style.display=''; loadData(); }
+  } else {
+    showEmployeeCard(auth.id);
+  }
 }
 init();
 </script>
