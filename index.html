@@ -1604,11 +1604,18 @@ function printContract(p) {
   const logoUrl=`${origin}/LOGO.png`;
   const now=new Date();
   const fmtDate=d=>{try{return new Date(d).toLocaleDateString('en-US',{day:'2-digit',month:'long',year:'numeric'})}catch{return d||'—'}};
+  const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   const monthly=_monthlyAmt(p.ctc,p.tenure);
   const isEmp=p.type==='Employee';
   const partyLabel=isEmp?'Employee':'Service Provider';
+  const safeName=esc(p.name);
+  const safeStart=esc(fmtDate(p.start));
+  const safeEnd=esc(fmtDate(p.end));
+  const safeTenure=esc(p.tenure||'1 Year');
+  const safeCtc=esc(p.ctc||'As agreed');
+  const safeMonthly=monthly?esc(monthly):'';
   const w=window.open('','_blank','width=900,height=720');
-  w.document.write(`<!DOCTYPE html><html><head><title>Service Engagement Agreement — ${p.name}</title>
+  w.document.write(`<!DOCTYPE html><html><head><title>Service Engagement Agreement — ${safeName}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" media="print" onload="this.media='all'" />
@@ -1675,11 +1682,11 @@ td:last-child{color:#1a1d23}
 <div class="sec"><div class="slbl">Engagement Terms</div>
 <table>
   <tr><td>Type</td><td>Fixed-Term ${isEmp?'Employment':'Service'} Agreement</td></tr>
-  <tr><td>Start Date</td><td>${fmtDate(p.start)}</td></tr>
-  <tr><td>End Date</td><td>${fmtDate(p.end)}</td></tr>
-  <tr><td>Duration</td><td>${p.tenure||'1 Year'}</td></tr>
-  <tr><td>Total Value</td><td><strong>${p.ctc||'As agreed'}</strong></td></tr>
-  ${monthly?`<tr><td>Monthly</td><td><span class="highlight">${monthly} / month</span></td></tr>`:''}
+  <tr><td>Start Date</td><td>${safeStart}</td></tr>
+  <tr><td>End Date</td><td>${safeEnd}</td></tr>
+  <tr><td>Duration</td><td>${safeTenure}</td></tr>
+  <tr><td>Total Value</td><td><strong>${safeCtc}</strong></td></tr>
+  ${safeMonthly?`<tr><td>Monthly</td><td><span class="highlight">${safeMonthly} / month</span></td></tr>`:''}
 </table></div>
 </div>
 
