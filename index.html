@@ -993,7 +993,11 @@ const setProgress = w => { document.getElementById('progress-bar').style.width=w
 // Every create / update / delete is persisted to Supabase so the data survives.
 const SB_URL = 'https://brysartqcjylgqwmnjkk.supabase.co';
 const SB_KEY = 'sb_publishable_C5e5ViwIlW9dV14ZLi4O0A_ipIXhTB5';
-const sbHdrs = (extra={}) => ({'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json',...extra});
+// When the SSO returns a Supabase-signed JWT we authenticate Supabase calls as
+// that user (enabling role-scoped RLS). Until then sbAuthToken stays null and we
+// fall back to the publishable key — identical to the previous behaviour.
+let sbAuthToken = null;
+const sbHdrs = (extra={}) => ({'apikey':SB_KEY,'Authorization':'Bearer '+(sbAuthToken||SB_KEY),'Content-Type':'application/json',...extra});
 async function sbLoad(table) {
   const r = await fetch(`${SB_URL}/rest/v1/${table}?select=data`,{headers:sbHdrs()});
   if(!r.ok) throw new Error('Supabase '+r.status);
@@ -1071,6 +1075,23 @@ function gotoSSO(){
 function decodeAuth(s){
   const bin=atob(s); const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
   return JSON.parse(new TextDecoder().decode(bytes));
+}
+// Decode one base64url segment (e.g. a JWT payload) to a UTF-8 string.
+function b64urlDecode(s){
+  s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='=';
+  const bin=atob(s); return new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0)));
+}
+// Parse the ?kn-auth= value. Accepts both the legacy base64-JSON token and a
+// Supabase-signed JWT (header.payload.signature). For a JWT we retain the raw
+// token for Supabase auth and read identity from its claims; role lives in the
+// custom `app_role` claim (Supabase's own `role` claim is always 'authenticated').
+function parseAuth(s){
+  if(typeof s==='string' && s.split('.').length===3){
+    const claims=JSON.parse(b64urlDecode(s.split('.')[1]));
+    sbAuthToken=s;
+    return {...claims, role:claims.app_role||claims.role, id:claims.emp_id||claims.sub};
+  }
+  return decodeAuth(s); // legacy base64-JSON token
 }
 async function showEmployeeCard(id){
   try{
@@ -1878,7 +1899,7 @@ function init(){
   document.getElementById('theme-btn').style.display='none';
   const tok=new URLSearchParams(location.search).get('kn-auth');
   if(!tok){ gotoSSO(); return; }
-  let auth; try{ auth=decodeAuth(tok); }catch(e){ gotoSSO(); return; }
+  let auth; try{ auth=parseAuth(tok); }catch(e){ gotoSSO(); return; }
   // Strip the token from the URL so it isn't bookmarked or shared.
   history.replaceState(null,'',location.pathname);
   if(auth.role==='admin'){
