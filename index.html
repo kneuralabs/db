@@ -930,9 +930,12 @@ function toggleTheme(){const t=document.documentElement.getAttribute('data-theme
 function initTheme(){const s=localStorage.getItem(THEME_KEY),h=new Date().getHours();applyTheme(s||(h>=6&&h<18?'light':'dark'))}
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
+// HTML-escape any record field before it is interpolated into innerHTML. Safe
+// for both text and quoted-attribute contexts. Use for every user-supplied value.
+const esc = v => String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const initials = n => n.trim().split(/\s+/).map(x=>x[0]||'').join('').slice(0,2).toUpperCase();
 const tenure = s => { const y=(Date.now()-new Date(s))/(1000*60*60*24*365.25); return y<1?'<1':y.toFixed(1) };
-const badge = (txt,map) => { const c=map[txt]||map._; return `<span class="badge${txt==='Active'?' active-blink':''}" style="background:${c.bg};color:${c.c}">${txt}</span>` };
+const badge = (txt,map) => { const c=map[txt]||map._; return `<span class="badge${txt==='Active'?' active-blink':''}" style="background:${c.bg};color:${c.c}">${esc(txt)}</span>` };
 const dBadge = d => badge(d,DC);
 const cBadge = c => badge(c,VC);
 const sBadge = s => badge(s,SC);
@@ -966,7 +969,7 @@ function fileToBase64(file) {
 const avHtml = (e,sz=46,fs=13) => {
   const c=dc(e.dept);
   const s=`width:${sz}px;height:${sz}px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:${fs}px;overflow:hidden;flex-shrink:0;background:${c.bg};color:${c.c}`;
-  return e.photo?`<div style="${s}"><img src="${e.photo}" style="width:100%;height:100%;object-fit:cover" alt="${e.first} ${e.last}"></div>`:`<div style="${s}">${initials(e.first+' '+e.last)}</div>`;
+  return e.photo?`<div style="${s}"><img src="${esc(e.photo)}" style="width:100%;height:100%;object-fit:cover" alt="${esc(e.first)} ${esc(e.last)}"></div>`:`<div style="${s}">${esc(initials(e.first+' '+e.last))}</div>`;
 };
 
 // ── ID GENERATION ─────────────────────────────────────────────────────────────
@@ -1153,7 +1156,7 @@ function panelDocsSection(docs) {
     ${docs.length?`<div class="docs-section">${docs.map((d,i)=>`
       <div class="pdoc" style="padding:9px 12px;border-bottom:${i<docs.length-1?'1px solid var(--border)':'none'}">
         <i class="ti ${fileIcon(d.name)} doc-icon" style="font-size:16px;color:var(--blue);flex-shrink:0"></i>
-        <span class="pdoc-name" title="${d.name}" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;margin:0 8px">${d.name}</span>
+        <span class="pdoc-name" title="${esc(d.name)}" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;margin:0 8px">${esc(d.name)}</span>
         <span class="pdoc-meta" style="font-size:11px;color:var(--text3);margin-right:6px">${fmtSize(d.size)}</span>
         <button class="doc-btn dl" onclick="downloadDoc(${JSON.stringify(d).replace(/'/g,'\\x27')})" title="Download"><i class="ti ti-download"></i></button>
         <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
@@ -1166,12 +1169,12 @@ function renderEmps() {
   if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-users-off"></i><p>No employees found</p><button class="btn primary icon" onclick="openAdd()" title="Add employee" aria-label="Add employee"><i class="ti ti-plus"></i></button></div>`;return}
   if(activeView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((e,i)=>`
-      <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${e.first} ${e.last}">
-        <div class="ctop">${avHtml(e)}<div style="min-width:0"><div class="cname">${e.first} ${e.last}</div><div class="crole">${e.role||'—'}</div><div class="emp-id">${e.id||''}</div></div></div>
+      <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${esc(e.first)} ${esc(e.last)}">
+        <div class="ctop">${avHtml(e)}<div style="min-width:0"><div class="cname">${esc(e.first)} ${esc(e.last)}</div><div class="crole">${esc(e.role)||'—'}</div><div class="emp-id">${esc(e.id)||''}</div></div></div>
         <div class="cmeta">
-          <div class="cmr"><i class="ti ti-map-pin"></i><span>${e.loc||'—'}</span></div>
-          <div class="cmr"><i class="ti ti-mail"></i><span>${e.email||'—'}</span></div>
-          <div class="cmr"><i class="ti ti-calendar"></i><span>${e.start||'—'}</span></div>
+          <div class="cmr"><i class="ti ti-map-pin"></i><span>${esc(e.loc)||'—'}</span></div>
+          <div class="cmr"><i class="ti ti-mail"></i><span>${esc(e.email)||'—'}</span></div>
+          <div class="cmr"><i class="ti ti-calendar"></i><span>${esc(e.start)||'—'}</span></div>
         </div>
         <div class="badges">${dBadge(e.dept)}${e.status&&e.status!=='Active'?sBadge(e.status):''}</div>
         ${docCountBadge(e.docs)}
@@ -1180,12 +1183,12 @@ function renderEmps() {
     el.innerHTML=`<div class="tbl-wrap"><table><thead><tr>
       ${[['last','Name'],['id','ID'],['role','Role'],['dept','Department'],['loc','Location'],['start','Start'],['','']].map(([col,lbl])=>col?`<th onclick="sortE('${col}')" class="${eSortCol===col?'sorted':''}">${lbl} <i class="ti ti-chevron-${eSortCol===col&&eSortDir<0?'up':'down'} si"></i></th>`:`<th style="width:60px"></th>`).join('')}
     </tr></thead><tbody>${list.map(e=>`<tr onclick="openEmpPanel('${e.id}')">
-      <td><div style="display:flex;align-items:center;gap:9px">${avHtml(e,30,10)}${e.first} ${e.last}${e.docs&&e.docs.length?` <i class="ti ti-paperclip" style="font-size:11px;color:var(--text3)" title="${e.docs.length} document(s)"></i>`:''}</div></td>
-      <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${e.id||'—'}</td>
-      <td style="color:var(--text2)">${e.role||'—'}</td>
+      <td><div style="display:flex;align-items:center;gap:9px">${avHtml(e,30,10)}${esc(e.first)} ${esc(e.last)}${e.docs&&e.docs.length?` <i class="ti ti-paperclip" style="font-size:11px;color:var(--text3)" title="${e.docs.length} document(s)"></i>`:''}</div></td>
+      <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${esc(e.id)||'—'}</td>
+      <td style="color:var(--text2)">${esc(e.role)||'—'}</td>
       <td>${dBadge(e.dept)}</td>
-      <td style="color:var(--text2)">${e.loc||'—'}</td>
-      <td style="color:var(--text2)">${e.start||'—'}</td>
+      <td style="color:var(--text2)">${esc(e.loc)||'—'}</td>
+      <td style="color:var(--text2)">${esc(e.start)||'—'}</td>
       <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openEmpEdit('${e.id}')"><i class="ti ti-edit"></i></button></td>
     </tr>`).join('')}</tbody></table></div>`;
   }
@@ -1200,12 +1203,12 @@ function renderVnds() {
       <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openVndPanel('${v.id}')" tabindex="0" role="button">
         <div class="ctop">
           <div style="width:46px;height:46px;border-radius:10px;background:var(--blue-lt);display:grid;place-items:center;flex-shrink:0"><i class="ti ti-building-store" style="font-size:20px;color:var(--blue)"></i></div>
-          <div style="min-width:0"><div class="cname">${v.company}</div><div class="crole">${v.contact||'—'}</div><div class="emp-id">${v.id||''}</div></div>
+          <div style="min-width:0"><div class="cname">${esc(v.company)}</div><div class="crole">${esc(v.contact)||'—'}</div><div class="emp-id">${esc(v.id)||''}</div></div>
         </div>
         <div class="cmeta">
-          <div class="cmr"><i class="ti ti-mail"></i><span>${v.email||'—'}</span></div>
-          <div class="cmr"><i class="ti ti-phone"></i><span>${v.phone||'—'}</span></div>
-          <div class="cmr"><i class="ti ti-calendar"></i><span>${v.contractStart||'—'}</span></div>
+          <div class="cmr"><i class="ti ti-mail"></i><span>${esc(v.email)||'—'}</span></div>
+          <div class="cmr"><i class="ti ti-phone"></i><span>${esc(v.phone)||'—'}</span></div>
+          <div class="cmr"><i class="ti ti-calendar"></i><span>${esc(v.contractStart)||'—'}</span></div>
         </div>
         <div class="badges">${cBadge(v.category)}${sBadge(v.status)}</div>
         ${docCountBadge(v.docs)}
@@ -1214,12 +1217,12 @@ function renderVnds() {
     el.innerHTML=`<div class="tbl-wrap"><table><thead><tr>
       ${[['company','Company'],['id','ID'],['contact','Contact'],['category','Category'],['status','Status'],['contractStart','Since'],['','']].map(([col,lbl])=>col?`<th onclick="sortV('${col}')" class="${vSortCol===col?'sorted':''}">${lbl} <i class="ti ti-chevron-${vSortCol===col&&vSortDir<0?'up':'down'} si"></i></th>`:`<th style="width:60px"></th>`).join('')}
     </tr></thead><tbody>${list.map(v=>`<tr onclick="openVndPanel('${v.id}')">
-      <td style="font-weight:600">${v.company}${v.docs&&v.docs.length?` <i class="ti ti-paperclip" style="font-size:11px;color:var(--text3)" title="${v.docs.length} document(s)"></i>`:''}</td>
-      <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${v.id||'—'}</td>
-      <td style="color:var(--text2)">${v.contact||'—'}</td>
+      <td style="font-weight:600">${esc(v.company)}${v.docs&&v.docs.length?` <i class="ti ti-paperclip" style="font-size:11px;color:var(--text3)" title="${v.docs.length} document(s)"></i>`:''}</td>
+      <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${esc(v.id)||'—'}</td>
+      <td style="color:var(--text2)">${esc(v.contact)||'—'}</td>
       <td>${cBadge(v.category)}</td>
       <td>${sBadge(v.status)}</td>
-      <td style="color:var(--text2)">${v.contractStart||'—'}</td>
+      <td style="color:var(--text2)">${esc(v.contractStart)||'—'}</td>
       <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openVndEdit('${v.id}')"><i class="ti ti-edit"></i></button></td>
     </tr>`).join('')}</tbody></table></div>`;
   }
@@ -1296,8 +1299,8 @@ function renderModalDocs(section) {
   const el = document.getElementById(listId); if(!el) return;
   const existing = getModalDocs().filter(d=>!docsToDelete.find(r=>r.path===d.path));
   const rows = [
-    ...existing.map((d,i)=>`<div class="doc-item"><i class="ti ${fileIcon(d.name)} doc-icon"></i><span class="doc-name" title="${d.name}">${d.name}</span><span class="doc-meta">${fmtSize(d.size)}</span><button class="doc-btn del" onclick="removeExistingDoc('${d.path}','${section}')" title="Remove"><i class="ti ti-x"></i></button></div>`),
-    ...docsPending.map((f,i)=>`<div class="doc-item pending"><i class="ti ${fileIcon(f.name)} doc-icon"></i><span class="doc-name" title="${f.name}">${f.name}</span><span class="doc-meta" style="color:var(--blue)">${fmtSize(f.size)} · pending</span><button class="doc-btn del" onclick="removePendingDoc(${i},'${section}')" title="Remove"><i class="ti ti-x"></i></button></div>`)
+    ...existing.map((d,i)=>`<div class="doc-item"><i class="ti ${fileIcon(d.name)} doc-icon"></i><span class="doc-name" title="${esc(d.name)}">${esc(d.name)}</span><span class="doc-meta">${fmtSize(d.size)}</span><button class="doc-btn del" onclick="removeExistingDoc('${esc(d.path)}','${section}')" title="Remove"><i class="ti ti-x"></i></button></div>`),
+    ...docsPending.map((f,i)=>`<div class="doc-item pending"><i class="ti ${fileIcon(f.name)} doc-icon"></i><span class="doc-name" title="${esc(f.name)}">${esc(f.name)}</span><span class="doc-meta" style="color:var(--blue)">${fmtSize(f.size)} · pending</span><button class="doc-btn del" onclick="removePendingDoc(${i},'${section}')" title="Remove"><i class="ti ti-x"></i></button></div>`)
   ];
   el.innerHTML = rows.length ? rows.join('') : `<div class="doc-empty">No documents attached</div>`;
 }
@@ -1333,35 +1336,35 @@ function openEmpPanel(id) {
   const c=dc(e.dept);
   const av=document.getElementById('p-av');
   av.style.cssText=`width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:700;background:${c.bg};color:${c.c};overflow:hidden;flex-shrink:0`;
-  av.innerHTML=e.photo?`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover" alt="${e.first} ${e.last}">`:initials(e.first+' '+e.last);
+  av.innerHTML=e.photo?`<img src="${esc(e.photo)}" style="width:100%;height:100%;object-fit:cover" alt="${esc(e.first)} ${esc(e.last)}">`:esc(initials(e.first+' '+e.last));
   document.getElementById('p-name').textContent=e.first+' '+e.last;
   document.getElementById('p-role').textContent=e.role||'—';
   document.getElementById('p-id').textContent=e.id||'';
   const docs=e.docs||[];
   const revoked=e.status==='Revoked';
   document.getElementById('pb').innerHTML=`
-    ${revoked?`<div style="background:var(--red-lt);border:1px solid rgba(200,40,30,.2);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--red)"><i class="ti ti-ban" style="font-size:18px;flex-shrink:0"></i><div><b>Employment Revoked</b>${e.revokedAt?`<div style="font-size:11px;margin-top:1px;opacity:.75">on ${e.revokedAt}</div>`:''}</div></div>`:''}
+    ${revoked?`<div style="background:var(--red-lt);border:1px solid rgba(200,40,30,.2);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--red)"><i class="ti ti-ban" style="font-size:18px;flex-shrink:0"></i><div><b>Employment Revoked</b>${e.revokedAt?`<div style="font-size:11px;margin-top:1px;opacity:.75">on ${esc(e.revokedAt)}</div>`:''}</div></div>`:''}
     <div class="slbl">Contact</div>
-    <div class="drow"><i class="ti ti-mail"></i><span class="dk">Email</span><span class="dv" style="color:var(--blue)">${e.email||'—'}</span></div>
-    <div class="drow"><i class="ti ti-phone"></i><span class="dk">Phone</span><span class="dv">${e.phone||'—'}</span></div>
+    <div class="drow"><i class="ti ti-mail"></i><span class="dk">Email</span><span class="dv" style="color:var(--blue)">${esc(e.email)||'—'}</span></div>
+    <div class="drow"><i class="ti ti-phone"></i><span class="dk">Phone</span><span class="dv">${esc(e.phone)||'—'}</span></div>
     <div class="slbl">Details</div>
     <div class="drow"><i class="ti ti-briefcase"></i><span class="dk">Department</span><span class="dv">${dBadge(e.dept)}</span></div>
-    <div class="drow"><i class="ti ti-map-pin"></i><span class="dk">Location</span><span class="dv">${e.loc||'—'}</span></div>
-    ${e.premise?`<div class="drow"><i class="ti ti-door"></i><span class="dk">Premise</span><span class="dv">${e.premise}</span></div>`:''}
-    ${e.address?`<div class="drow"><i class="ti ti-home"></i><span class="dk">Address</span><span class="dv">${e.address}</span></div>`:''}
-    ${(e.city||e.pin)?`<div class="drow"><i class="ti ti-building-community"></i><span class="dk">City / PIN</span><span class="dv">${[e.city,e.pin].filter(Boolean).join(' — ')}</span></div>`:''}
-    ${e.country?`<div class="drow"><i class="ti ti-world"></i><span class="dk">Country</span><span class="dv">${e.country}${COUNTRY_ISD[e.country]?' ('+COUNTRY_ISD[e.country]+')':''}</span></div>`:''}
-    ${e.idProofType?`<div class="drow"><i class="ti ti-id-badge"></i><span class="dk">ID Proof</span><span class="dv">${e.idProofType}${e.idProofNum?' · '+e.idProofNum:''}</span></div>`:''}
-    <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Start date</span><span class="dv">${e.start||'—'}</span></div>
+    <div class="drow"><i class="ti ti-map-pin"></i><span class="dk">Location</span><span class="dv">${esc(e.loc)||'—'}</span></div>
+    ${e.premise?`<div class="drow"><i class="ti ti-door"></i><span class="dk">Premise</span><span class="dv">${esc(e.premise)}</span></div>`:''}
+    ${e.address?`<div class="drow"><i class="ti ti-home"></i><span class="dk">Address</span><span class="dv">${esc(e.address)}</span></div>`:''}
+    ${(e.city||e.pin)?`<div class="drow"><i class="ti ti-building-community"></i><span class="dk">City / PIN</span><span class="dv">${esc([e.city,e.pin].filter(Boolean).join(' — '))}</span></div>`:''}
+    ${e.country?`<div class="drow"><i class="ti ti-world"></i><span class="dk">Country</span><span class="dv">${esc(e.country)}${COUNTRY_ISD[e.country]?' ('+COUNTRY_ISD[e.country]+')':''}</span></div>`:''}
+    ${e.idProofType?`<div class="drow"><i class="ti ti-id-badge"></i><span class="dk">ID Proof</span><span class="dv">${esc(e.idProofType)}${e.idProofNum?' · '+esc(e.idProofNum):''}</span></div>`:''}
+    <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Start date</span><span class="dv">${esc(e.start)||'—'}</span></div>
     <div class="drow"><i class="ti ti-clock"></i><span class="dk">Tenure</span><span class="dv">${e.start?tenure(e.start)+' yrs':'—'}</span></div>
     <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${sBadge(e.status||'Active')}</span></div>
-    ${e.blood?`<div class="drow"><i class="ti ti-droplet"></i><span class="dk">Blood Group</span><span class="dv" style="font-weight:700;color:var(--red)">${e.blood}</span></div>`:''}
-    <div class="drow"><i class="ti ti-id"></i><span class="dk">Employee ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${e.id}</span></div>
+    ${e.blood?`<div class="drow"><i class="ti ti-droplet"></i><span class="dk">Blood Group</span><span class="dv" style="font-weight:700;color:var(--red)">${esc(e.blood)}</span></div>`:''}
+    <div class="drow"><i class="ti ti-id"></i><span class="dk">Employee ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${esc(e.id)}</span></div>
     ${e.ctc||e.tenure||e.contractEnd?`<div class="slbl">Contract</div>
-    ${e.ctc?`<div class="drow"><i class="ti ti-currency-rupee"></i><span class="dk">CTC</span><span class="dv">${e.ctc}</span></div>`:''}
-    ${e.tenure?`<div class="drow"><i class="ti ti-hourglass"></i><span class="dk">Duration</span><span class="dv">${e.tenure}</span></div>`:''}
-    ${e.contractEnd?`<div class="drow"><i class="ti ti-calendar-due"></i><span class="dk">Contract end</span><span class="dv">${e.contractEnd}</span></div>`:''}
-    ${e.idCardGenerated?`<div class="drow"><i class="ti ti-id-badge-2" style="color:var(--blue)"></i><span class="dk">ID Card</span><span class="dv" style="color:var(--blue);font-size:12px">Generated${e.idCardGeneratedAt?' · '+e.idCardGeneratedAt:''}</span></div>`:''}`:''}
+    ${e.ctc?`<div class="drow"><i class="ti ti-currency-rupee"></i><span class="dk">CTC</span><span class="dv">${esc(e.ctc)}</span></div>`:''}
+    ${e.tenure?`<div class="drow"><i class="ti ti-hourglass"></i><span class="dk">Duration</span><span class="dv">${esc(e.tenure)}</span></div>`:''}
+    ${e.contractEnd?`<div class="drow"><i class="ti ti-calendar-due"></i><span class="dk">Contract end</span><span class="dv">${esc(e.contractEnd)}</span></div>`:''}
+    ${e.idCardGenerated?`<div class="drow"><i class="ti ti-id-badge-2" style="color:var(--blue)"></i><span class="dk">ID Card</span><span class="dv" style="color:var(--blue);font-size:12px">Generated${e.idCardGeneratedAt?' · '+esc(e.idCardGeneratedAt):''}</span></div>`:''}`:''}
     ${panelDocsSection(docs)}
     <div class="panel-actions">
       <button class="btn" onclick="openEmpEdit('${e.id}')" title="Edit"${revoked?' disabled style="opacity:.4"':''}><i class="ti ti-edit"></i></button>
@@ -1387,19 +1390,19 @@ function openVndPanel(id) {
   const docs=v.docs||[];
   document.getElementById('pb').innerHTML=`
     <div class="slbl">Contact</div>
-    <div class="drow"><i class="ti ti-user"></i><span class="dk">Name</span><span class="dv">${v.contact||'—'}</span></div>
-    <div class="drow"><i class="ti ti-mail"></i><span class="dk">Email</span><span class="dv" style="color:var(--blue)">${v.email||'—'}</span></div>
-    <div class="drow"><i class="ti ti-phone"></i><span class="dk">Phone</span><span class="dv">${v.phone||'—'}</span></div>
+    <div class="drow"><i class="ti ti-user"></i><span class="dk">Name</span><span class="dv">${esc(v.contact)||'—'}</span></div>
+    <div class="drow"><i class="ti ti-mail"></i><span class="dk">Email</span><span class="dv" style="color:var(--blue)">${esc(v.email)||'—'}</span></div>
+    <div class="drow"><i class="ti ti-phone"></i><span class="dk">Phone</span><span class="dv">${esc(v.phone)||'—'}</span></div>
     <div class="slbl">Details</div>
     <div class="drow"><i class="ti ti-tag"></i><span class="dk">Category</span><span class="dv">${cBadge(v.category)}</span></div>
     <div class="drow"><i class="ti ti-activity"></i><span class="dk">Status</span><span class="dv">${sBadge(v.status)}</span></div>
-    <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Since</span><span class="dv">${v.contractStart||'—'}</span></div>
-    ${v.premise?`<div class="drow"><i class="ti ti-door"></i><span class="dk">Premise</span><span class="dv">${v.premise}</span></div>`:''}
-    ${v.address?`<div class="drow"><i class="ti ti-home"></i><span class="dk">Address</span><span class="dv">${v.address}</span></div>`:''}
-    ${(v.city||v.pin)?`<div class="drow"><i class="ti ti-building-community"></i><span class="dk">City / PIN</span><span class="dv">${[v.city,v.pin].filter(Boolean).join(' — ')}</span></div>`:''}
-    ${v.country?`<div class="drow"><i class="ti ti-world"></i><span class="dk">Country</span><span class="dv">${v.country}${COUNTRY_ISD[v.country]?' ('+COUNTRY_ISD[v.country]+')':''}</span></div>`:''}
-    <div class="drow"><i class="ti ti-id"></i><span class="dk">Vendor ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${v.id}</span></div>
-    ${v.notes?`<div class="slbl">Notes</div><div style="font-size:13px;color:var(--text2);line-height:1.65;padding:8px 0">${v.notes}</div>`:''}
+    <div class="drow"><i class="ti ti-calendar"></i><span class="dk">Since</span><span class="dv">${esc(v.contractStart)||'—'}</span></div>
+    ${v.premise?`<div class="drow"><i class="ti ti-door"></i><span class="dk">Premise</span><span class="dv">${esc(v.premise)}</span></div>`:''}
+    ${v.address?`<div class="drow"><i class="ti ti-home"></i><span class="dk">Address</span><span class="dv">${esc(v.address)}</span></div>`:''}
+    ${(v.city||v.pin)?`<div class="drow"><i class="ti ti-building-community"></i><span class="dk">City / PIN</span><span class="dv">${esc([v.city,v.pin].filter(Boolean).join(' — '))}</span></div>`:''}
+    ${v.country?`<div class="drow"><i class="ti ti-world"></i><span class="dk">Country</span><span class="dv">${esc(v.country)}${COUNTRY_ISD[v.country]?' ('+COUNTRY_ISD[v.country]+')':''}</span></div>`:''}
+    <div class="drow"><i class="ti ti-id"></i><span class="dk">Vendor ID</span><span class="dv" style="font-family:'Courier New',monospace;font-size:12px;color:var(--blue);font-weight:700">${esc(v.id)}</span></div>
+    ${v.notes?`<div class="slbl">Notes</div><div style="font-size:13px;color:var(--text2);line-height:1.65;padding:8px 0">${esc(v.notes)}</div>`:''}
     ${panelDocsSection(docs)}
     <div class="panel-actions">
       <button class="btn" onclick="openVndEdit('${v.id}')" title="Edit"><i class="ti ti-edit"></i></button>
@@ -1661,14 +1664,14 @@ td:last-child{color:#1a1d23}
 <div class="two-col">
 <div class="sec"><div class="slbl">${partyLabel} Details</div>
 <table>
-  <tr><td>Full Name</td><td><strong>${p.name}</strong></td></tr>
-  <tr><td>ID / Ref</td><td><code style="font-family:monospace;font-size:10px">${p.id}</code></td></tr>
-  ${p.role?`<tr><td>${isEmp?'Designation':'Category'}</td><td>${p.role}</td></tr>`:''}
-  ${p.dept?`<tr><td>Department</td><td>${p.dept}</td></tr>`:''}
-  ${p.contactName?`<tr><td>Contact Person</td><td>${p.contactName}</td></tr>`:''}
-  ${p.email?`<tr><td>Email</td><td>${p.email}</td></tr>`:''}
-  ${p.addr&&p.addr!=='—'?`<tr><td>Address</td><td>${p.addr}</td></tr>`:''}
-  ${p.idProofType?`<tr><td>ID Proof</td><td>${p.idProofType}${p.idProofNum?' · '+p.idProofNum:''}</td></tr>`:''}
+  <tr><td>Full Name</td><td><strong>${safeName}</strong></td></tr>
+  <tr><td>ID / Ref</td><td><code style="font-family:monospace;font-size:10px">${esc(p.id)}</code></td></tr>
+  ${p.role?`<tr><td>${isEmp?'Designation':'Category'}</td><td>${esc(p.role)}</td></tr>`:''}
+  ${p.dept?`<tr><td>Department</td><td>${esc(p.dept)}</td></tr>`:''}
+  ${p.contactName?`<tr><td>Contact Person</td><td>${esc(p.contactName)}</td></tr>`:''}
+  ${p.email?`<tr><td>Email</td><td>${esc(p.email)}</td></tr>`:''}
+  ${p.addr&&p.addr!=='—'?`<tr><td>Address</td><td>${esc(p.addr)}</td></tr>`:''}
+  ${p.idProofType?`<tr><td>ID Proof</td><td>${esc(p.idProofType)}${p.idProofNum?' · '+esc(p.idProofNum):''}</td></tr>`:''}
 </table></div>
 
 <div class="sec"><div class="slbl">Engagement Terms</div>
@@ -1684,8 +1687,8 @@ td:last-child{color:#1a1d23}
 
 <div class="sec"><div class="slbl">Terms &amp; Conditions</div>
 <div class="clauses">
-<div class="clause"><span class="cn">1. Scope of Engagement.</span> ${isEmp?`The Employee shall serve as ${p.role||'the designated role'} within ${p.dept?'the '+p.dept+' department':'the organisation'} and perform all duties reasonably assigned, exercising professional diligence.`:`The Service Provider shall deliver the services described in the mutually agreed scope of work and perform all tasks with professional skill and care.`}</div>
-<div class="clause"><span class="cn">2. Compensation &amp; Payment.</span> The total consideration is ${p.ctc||'as agreed'}${monthly?' payable in monthly instalments of '+monthly:''}. Payments are due on the last business day of each month. Neither party shall withhold amounts except as required by applicable law.</div>
+<div class="clause"><span class="cn">1. Scope of Engagement.</span> ${isEmp?`The Employee shall serve as ${esc(p.role)||'the designated role'} within ${p.dept?'the '+esc(p.dept)+' department':'the organisation'} and perform all duties reasonably assigned, exercising professional diligence.`:`The Service Provider shall deliver the services described in the mutually agreed scope of work and perform all tasks with professional skill and care.`}</div>
+<div class="clause"><span class="cn">2. Compensation &amp; Payment.</span> The total consideration is ${esc(p.ctc)||'as agreed'}${monthly?' payable in monthly instalments of '+esc(monthly):''}. Payments are due on the last business day of each month. Neither party shall withhold amounts except as required by applicable law.</div>
 <div class="clause"><span class="cn">3. ${isEmp?'Work Hours &amp; Location':'Deliverables &amp; Standards'}.</span> ${isEmp?'Standard working hours are 9 hours per day, 5 days a week, with flexibility for operational needs. Remote work may be permitted with prior approval.':'Deliverables shall meet the quality standards specified in the applicable scope of work. Any delays must be communicated promptly with a revised timeline.'}</div>
 <div class="clause"><span class="cn">4. ${isEmp?'Probation Period':'Acceptance &amp; Review'}.</span> ${isEmp?'The initial 90 days constitute a probation period during which either party may terminate with 7 days\' written notice. Satisfactory completion leads to confirmed engagement.':'All deliverables are subject to a 5-business-day review period. Reasonable revision requests will be addressed at no additional cost; material scope changes require a written amendment.'}</div>
 <div class="clause"><span class="cn">5. Confidentiality.</span> Each party shall keep confidential all non-public information disclosed by the other party and shall not use it for any purpose other than fulfilling obligations under this Agreement. This obligation survives termination for 3 years.</div>
@@ -1702,7 +1705,7 @@ td:last-child{color:#1a1d23}
   <div class="sb">
     <div class="sbn">${partyLabel} Signature</div>
     <div class="sb-line"></div>
-    <div class="sb-sub"><strong>${p.name}</strong><br>${p.role||partyLabel}<br>Date: ________________________</div>
+    <div class="sb-sub"><strong>${safeName}</strong><br>${esc(p.role)||partyLabel}<br>Date: ________________________</div>
   </div>
   <div class="sb">
     <div class="sbn">Authorised Signatory — Kneuralabs</div>
@@ -1727,8 +1730,8 @@ function genIdCard(id) {
 function showIdCardOverlay(e) {
   const ini=(e.first[0]||'')+(e.last[0]||'');
   const photoHtml=e.photo
-    ?`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${e.first} ${e.last}">`
-    :`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8edf4;font-size:32px;font-weight:700;color:#1C5CAA">${ini}</div>`;
+    ?`<img src="${esc(e.photo)}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${esc(e.first)} ${esc(e.last)}">`
+    :`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8edf4;font-size:32px;font-weight:700;color:#1C5CAA">${esc(ini)}</div>`;
   const startFmt=e.start?new Date(e.start).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
   const yr=e.start?new Date(e.start).getFullYear():new Date().getFullYear();
   const statusColor=e.status==='Revoked'?'#C8281E':e.status==='Active'?'#085041':'#633806';
@@ -1750,18 +1753,18 @@ function showIdCardOverlay(e) {
         </div>
       </div>
       <div class="kc-front-mid">
-        <div class="kc-front-name">${e.first} ${e.last}</div>
-        <div class="kc-front-role">${e.role||'Employee'}</div>
-        <div class="kc-front-dept">${e.dept||'—'}</div>
+        <div class="kc-front-name">${esc(e.first)} ${esc(e.last)}</div>
+        <div class="kc-front-role">${esc(e.role)||'Employee'}</div>
+        <div class="kc-front-dept">${esc(e.dept)||'—'}</div>
       </div>
       <div class="kc-front-div"></div>
       <div class="kc-front-bot">
         <div class="kc-front-photo">${photoHtml}</div>
         <div class="kc-front-idblock">
-          <div class="kc-front-idval">${e.id}</div>
+          <div class="kc-front-idval">${esc(e.id)}</div>
           <div class="kc-front-status">
             <div class="kc-status-dot${activeClass}" style="background:${statusDot}"></div>
-            <span class="${activeClass.trim()}" style="color:${statusColor}">${e.status||'Active'}</span>
+            <span class="${activeClass.trim()}" style="color:${statusColor}">${esc(e.status)||'Active'}</span>
           </div>
         </div>
       </div>
@@ -1776,13 +1779,13 @@ function showIdCardOverlay(e) {
       <div class="kc-back-header"><span class="kc-back-co">Kneuralabs</span><span class="kc-back-yr">${yr}</span></div>
       <div class="kc-back-body">
         <div class="kc-back-fields">
-          <div class="kc-field"><div class="kc-field-lbl">Employee ID</div><div class="kc-field-val">${e.id}</div></div>
-          <div class="kc-field"><div class="kc-field-lbl">Joined</div><div class="kc-field-val">${startFmt}</div></div>
-          ${e.email?`<div class="kc-field"><div class="kc-field-lbl">Email</div><div class="kc-field-val" style="font-size:10px">${e.email}</div></div>`:''}
-          ${e.phone?`<div class="kc-field"><div class="kc-field-lbl">Phone</div><div class="kc-field-val">${e.phone}</div></div>`:''}
-          <div class="kc-field"><div class="kc-field-lbl">Department</div><div class="kc-field-val">${e.dept||'—'}</div></div>
-          ${locStr!=='—'?`<div class="kc-field"><div class="kc-field-lbl">Location</div><div class="kc-field-val">${locStr}</div></div>`:''}
-          ${e.blood?`<div class="kc-field"><div class="kc-field-lbl">Blood Group</div><div class="kc-field-val" style="color:#C8281E;font-weight:700">${e.blood}</div></div>`:''}
+          <div class="kc-field"><div class="kc-field-lbl">Employee ID</div><div class="kc-field-val">${esc(e.id)}</div></div>
+          <div class="kc-field"><div class="kc-field-lbl">Joined</div><div class="kc-field-val">${esc(startFmt)}</div></div>
+          ${e.email?`<div class="kc-field"><div class="kc-field-lbl">Email</div><div class="kc-field-val" style="font-size:10px">${esc(e.email)}</div></div>`:''}
+          ${e.phone?`<div class="kc-field"><div class="kc-field-lbl">Phone</div><div class="kc-field-val">${esc(e.phone)}</div></div>`:''}
+          <div class="kc-field"><div class="kc-field-lbl">Department</div><div class="kc-field-val">${esc(e.dept)||'—'}</div></div>
+          ${locStr!=='—'?`<div class="kc-field"><div class="kc-field-lbl">Location</div><div class="kc-field-val">${esc(locStr)}</div></div>`:''}
+          ${e.blood?`<div class="kc-field"><div class="kc-field-lbl">Blood Group</div><div class="kc-field-val" style="color:#C8281E;font-weight:700">${esc(e.blood)}</div></div>`:''}
         </div>
         <div class="kc-back-qr">
           <img src="${qrUrl}" alt="QR" crossorigin="anonymous">
