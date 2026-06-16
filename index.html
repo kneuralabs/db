@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Auth gate — runs before any content is parsed or painted so an unauthenticated
+     visit bounces straight to the SSO without flashing the page. The token-present
+     path is handled by init() once the DOM is ready. -->
+<script>(function(){try{if(!new URLSearchParams(location.search).get('kn-auth')){var back=new URL(location.href);back.searchParams.delete('kn-auth');location.replace('https://sso.kneuralabs.com/?redirect='+encodeURIComponent(back.toString()))}}catch(e){}})()</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>KN PeopleBase · Employee &amp; Vendor Registry</title>
 <meta name="description" content="Kneuralabs internal employee and vendor registry — structured, precise, always current.">
