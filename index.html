@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Defense-in-depth CSP (GitHub Pages cannot set response headers, so this is a
+     meta policy). Every external origin the app talks to is enumerated below —
+     update this list when adding a new CDN/API. 'unsafe-inline' is required by
+     the inline script blocks and onclick= handlers this single-file app uses. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://api.qrserver.com; connect-src https://brysartqcjylgqwmnjkk.supabase.co https://api.github.com; base-uri 'none'; form-action 'none'">
 <!-- Auth gate — runs before any content is parsed or painted so an unauthenticated
      visit bounces straight to the SSO without flashing the page. The token-present
      path is handled by init() once the DOM is ready. -->
@@ -602,7 +607,7 @@ html{overflow-x:hidden}
       <span class="sync-badge loading" id="sync-badge"><i class="ti ti-loader spin"></i> <span>Loading</span></span>
       <div class="search-wrap">
         <i class="ti ti-search"></i>
-        <input id="search" type="search" placeholder="Search…" oninput="render()" aria-label="Search">
+        <input id="search" type="search" placeholder="Search…" oninput="debouncedRender()" aria-label="Search">
       </div>
     </div>
     <!-- action buttons: always on the same row as the logo -->
@@ -643,7 +648,7 @@ html{overflow-x:hidden}
         <div class="stat" style="animation-delay:0ms"><div class="stat-lbl">Total</div><div class="stat-val" id="s-total">—</div><div class="stat-sub">Employees</div></div>
         <div class="stat" style="animation-delay:60ms"><div class="stat-lbl">Departments</div><div class="stat-val" id="s-depts">—</div><div class="stat-sub">Teams</div></div>
         <div class="stat" style="animation-delay:120ms"><div class="stat-lbl">Avg tenure</div><div class="stat-val" id="s-tenure">—</div><div class="stat-sub">Years</div></div>
-        <div class="stat" style="animation-delay:180ms"><div class="stat-lbl">Last sync</div><div class="stat-val" id="s-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
+        <div class="stat" style="animation-delay:180ms"><div class="stat-lbl">Last sync</div><div class="stat-val" id="s-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">Database</div></div>
       </div>
       <div id="emp-list"></div>
     </main>
@@ -666,7 +671,7 @@ html{overflow-x:hidden}
         <div class="stat" style="animation-delay:0ms"><div class="stat-lbl">Total</div><div class="stat-val" id="vs-total">—</div><div class="stat-sub">Vendors</div></div>
         <div class="stat" style="animation-delay:60ms"><div class="stat-lbl">Active</div><div class="stat-val" id="vs-active">—</div><div class="stat-sub">Engaged</div></div>
         <div class="stat" style="animation-delay:120ms"><div class="stat-lbl">Categories</div><div class="stat-val" id="vs-cats">—</div><div class="stat-sub">Service types</div></div>
-        <div class="stat" style="animation-delay:180ms"><div class="stat-lbl">Last sync</div><div class="stat-val" id="vs-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">GitHub</div></div>
+        <div class="stat" style="animation-delay:180ms"><div class="stat-lbl">Last sync</div><div class="stat-val" id="vs-sync" style="font-size:15px;padding-top:4px">—</div><div class="stat-sub">Database</div></div>
       </div>
       <div id="vnd-list"></div>
     </main>
@@ -720,7 +725,7 @@ html{overflow-x:hidden}
     </div>
     <div class="f2">
       <div class="frow"><label class="flbl">Premise / Unit no.</label><input id="f-premise" placeholder="Flat 4B / Shop 12"></div>
-      <div class="frow"><label class="flbl">Country</label><select id="f-country" onchange="onEmpCountryChange()"><option value="">— Select country —</option></select></div>
+      <div class="frow"><label class="flbl">Country</label><select id="f-country" onchange="syncIsd('f-country','f-isd')"><option value="">— Select country —</option></select></div>
     </div>
     <div class="frow"><label class="flbl">Address</label><input id="f-address" placeholder="Street / Building / Area"></div>
     <div class="f2">
@@ -794,7 +799,7 @@ html{overflow-x:hidden}
     </div>
     <div class="f2">
       <div class="frow"><label class="flbl">Premise / Unit no.</label><input id="v-premise" placeholder="Office 7A / Floor 3"></div>
-      <div class="frow"><label class="flbl">Country</label><select id="v-country" onchange="onVndCountryChange()"><option value="">— Select country —</option></select></div>
+      <div class="frow"><label class="flbl">Country</label><select id="v-country" onchange="syncIsd('v-country','v-isd')"><option value="">— Select country —</option></select></div>
     </div>
     <div class="frow"><label class="flbl">Address</label><input id="v-address" placeholder="Street / Building / Area"></div>
     <div class="f2">
@@ -882,7 +887,6 @@ if(!cfg.owner) cfg.owner='kneuralabs';
 if(!cfg.repo) cfg.repo='db';
 let authedAdmin = false;
 let employees = [], vendors = [];
-let empSha = '', vndSha = '';
 let editEmpId = null, editVndId = null;
 let pendingPhoto = null;
 // Document state
@@ -895,9 +899,6 @@ let activeView = 'grid', activeVView = 'grid';
 let activeSection = 'employees';
 let eSortCol = 'last', eSortDir = 1;
 let vSortCol = 'company', vSortDir = 1;
-
-const EMP_PATH = 'data/employees.json';
-const VND_PATH = 'data/vendors.json';
 
 const DC = {
   Engineering:{bg:'#E6F1FB',c:'#0C447C'}, Design:{bg:'#EEEDFE',c:'#3C3489'},
@@ -924,8 +925,8 @@ const SC = {
 const COUNTRY_ISD={Afghanistan:'+93',Albania:'+355',Algeria:'+213',Argentina:'+54',Armenia:'+374',Australia:'+61',Austria:'+43',Azerbaijan:'+994',Bahrain:'+973',Bangladesh:'+880',Belarus:'+375',Belgium:'+32',Bolivia:'+591',Brazil:'+55',Bulgaria:'+359',Cambodia:'+855',Canada:'+1',Chile:'+56',China:'+86',Colombia:'+57',Croatia:'+385',Cyprus:'+357','Czech Republic':'+420',Denmark:'+45',Ecuador:'+593',Egypt:'+20',Estonia:'+372',Ethiopia:'+251',Finland:'+358',France:'+33',Georgia:'+995',Germany:'+49',Ghana:'+233',Greece:'+30','Hong Kong':'+852',Hungary:'+36',Iceland:'+354',India:'+91',Indonesia:'+62',Iran:'+98',Iraq:'+964',Ireland:'+353',Israel:'+972',Italy:'+39',Japan:'+81',Jordan:'+962',Kazakhstan:'+7',Kenya:'+254',Kuwait:'+965',Latvia:'+371',Lebanon:'+961',Lithuania:'+370',Luxembourg:'+352',Malaysia:'+60',Malta:'+356',Mexico:'+52',Morocco:'+212',Nepal:'+977',Netherlands:'+31','New Zealand':'+64',Nigeria:'+234',Norway:'+47',Oman:'+968',Pakistan:'+92',Palestine:'+970',Peru:'+51',Philippines:'+63',Poland:'+48',Portugal:'+351',Qatar:'+974',Romania:'+40',Russia:'+7','Saudi Arabia':'+966',Serbia:'+381',Singapore:'+65',Slovakia:'+421',Slovenia:'+386','South Africa':'+27','South Korea':'+82',Spain:'+34','Sri Lanka':'+94',Sweden:'+46',Switzerland:'+41',Taiwan:'+886',Thailand:'+66',Turkey:'+90',Ukraine:'+380','United Arab Emirates':'+971','United Kingdom':'+44','United States':'+1',Uruguay:'+598',Uzbekistan:'+998',Venezuela:'+58',Vietnam:'+84',Yemen:'+967',Zimbabwe:'+263'};
 function buildCountryOpts(sel=''){return '<option value="">— Select country —</option>'+Object.keys(COUNTRY_ISD).sort().map(c=>`<option value="${c}"${c===sel?' selected':''}>${c} (${COUNTRY_ISD[c]})</option>`).join('')}
 function populateCountrySelects(){document.getElementById('f-country').innerHTML=buildCountryOpts();document.getElementById('v-country').innerHTML=buildCountryOpts()}
-function onEmpCountryChange(){const c=document.getElementById('f-country').value;document.getElementById('f-isd').textContent=COUNTRY_ISD[c]||'—'}
-function onVndCountryChange(){const c=document.getElementById('v-country').value;document.getElementById('v-isd').textContent=COUNTRY_ISD[c]||'—'}
+// Reflect the selected country's dialling code into the adjacent ISD badge.
+function syncIsd(countrySelId,isdElId){const c=document.getElementById(countrySelId).value;document.getElementById(isdElId).textContent=COUNTRY_ISD[c]||'—'}
 
 // ── THEME ─────────────────────────────────────────────────────────────────────
 const THEME_KEY='kn_theme';
@@ -937,6 +938,10 @@ function initTheme(){const s=localStorage.getItem(THEME_KEY),h=new Date().getHou
 // HTML-escape any record field before it is interpolated into innerHTML. Safe
 // for both text and quoted-attribute contexts. Use for every user-supplied value.
 const esc = v => String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+// Encode a value as a JS string literal safe to interpolate inside an inline
+// onclick="fn(HERE)" attribute. JSON.stringify handles the JS-string context,
+// esc handles the HTML-attribute context. Use for every record-sourced argument.
+const jsArg = v => esc(JSON.stringify(String(v??'')));
 const initials = n => n.trim().split(/\s+/).map(x=>x[0]||'').join('').slice(0,2).toUpperCase();
 const tenure = s => { const y=(Date.now()-new Date(s))/(1000*60*60*24*365.25); return y<1?'<1':y.toFixed(1) };
 const badge = (txt,map) => { const c=map[txt]||map._; return `<span class="badge${txt==='Active'?' active-blink':''}" style="background:${c.bg};color:${c.c}">${esc(txt)}</span>` };
@@ -977,16 +982,14 @@ const avHtml = (e,sz=46,fs=13) => {
 };
 
 // ── ID GENERATION ─────────────────────────────────────────────────────────────
-function genEmpId() {
+// Next sequential id for the current year: <prefix>-<year>-<3-digit serial>.
+function genId(prefix, list) {
   const yr=new Date().getFullYear();
-  const nums=employees.map(e=>e.id).filter(id=>id&&id.startsWith(`KN-${yr}-`)).map(id=>parseInt(id.split('-')[2],10)).filter(n=>!isNaN(n));
-  return `KN-${yr}-${String(nums.length?Math.max(...nums)+1:1).padStart(3,'0')}`;
+  const nums=list.map(r=>r.id).filter(id=>id&&id.startsWith(`${prefix}-${yr}-`)).map(id=>parseInt(id.split('-')[2],10)).filter(n=>!isNaN(n));
+  return `${prefix}-${yr}-${String(nums.length?Math.max(...nums)+1:1).padStart(3,'0')}`;
 }
-function genVndId() {
-  const yr=new Date().getFullYear();
-  const nums=vendors.map(v=>v.id).filter(id=>id&&id.startsWith(`VN-${yr}-`)).map(id=>parseInt(id.split('-')[2],10)).filter(n=>!isNaN(n));
-  return `VN-${yr}-${String(nums.length?Math.max(...nums)+1:1).padStart(3,'0')}`;
-}
+const genEmpId = () => genId('KN', employees);
+const genVndId = () => genId('VN', vendors);
 
 // ── GITHUB API (document attachments only) ────────────────────────────────────
 const apiUrl = p => `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${p}`;
@@ -1019,21 +1022,6 @@ async function sbSync(table, rows) {
   const filter = ids.length ? `id=not.in.(${ids.map(i=>`"${i}"`).join(',')})` : 'id=not.is.null';
   const rd = await fetch(`${SB_URL}/rest/v1/${table}?${filter}`,{method:'DELETE',headers:sbHdrs({'Prefer':'return=minimal'})});
   if(!rd.ok) throw new Error('Supabase prune '+rd.status);
-}
-
-async function fetchFile(path) {
-  const r = await fetch(apiUrl(path),{headers:ghHdrs()});
-  if (r.status===404) return {data:[],sha:''};
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
-  return {data:JSON.parse(atob(d.content.replace(/\n/g,''))), sha:d.sha};
-}
-async function writeFile(path,sha,data,msg) {
-  const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
-  const body={message:msg,content}; if(sha) body.sha=sha;
-  const r=await fetch(apiUrl(path),{method:'PUT',headers:ghHdrs(),body:JSON.stringify(body)});
-  if(!r.ok){const e=await r.json();throw new Error(e.message||'HTTP '+r.status)}
-  return (await r.json()).content.sha;
 }
 
 async function loadData() {
@@ -1156,19 +1144,26 @@ function renderEmpStats() {
   document.getElementById('s-depts').textContent=new Set(employees.map(e=>e.dept)).size;
   const avg=employees.length?employees.reduce((s,e)=>s+(Date.now()-new Date(e.start))/(1000*60*60*24*365.25),0)/employees.length:0;
   document.getElementById('s-tenure').textContent=employees.length?avg.toFixed(1):'—';
-  ['All','Engineering','Design','Marketing','Sales','Operations','HR','Finance'].forEach(d=>{const el=document.getElementById('n-'+d);if(el)el.textContent=d==='All'?employees.length:employees.filter(e=>e.dept===d).length});
+  const byDept={};
+  employees.forEach(e=>{byDept[e.dept]=(byDept[e.dept]||0)+1});
+  ['All','Engineering','Design','Marketing','Sales','Operations','HR','Finance'].forEach(d=>{const el=document.getElementById('n-'+d);if(el)el.textContent=d==='All'?employees.length:(byDept[d]||0)});
 }
 function renderVndStats() {
   document.getElementById('vs-total').textContent=vendors.length;
   document.getElementById('vs-active').textContent=vendors.filter(v=>v.status==='Active').length;
   document.getElementById('vs-cats').textContent=new Set(vendors.map(v=>v.category)).size;
-  ['All','Active','Inactive','Under Review'].forEach(s=>{const el=document.getElementById('vn-'+s);if(el)el.textContent=s==='All'?vendors.length:vendors.filter(v=>v.status===s).length});
+  const byStatus={};
+  vendors.forEach(v=>{byStatus[v.status]=(byStatus[v.status]||0)+1});
+  ['All','Active','Inactive','Under Review'].forEach(s=>{const el=document.getElementById('vn-'+s);if(el)el.textContent=s==='All'?vendors.length:(byStatus[s]||0)});
 }
 function updateTabCounts() {
   document.getElementById('tc-employees').textContent=employees.length;
   document.getElementById('tc-vendors').textContent=vendors.length;
 }
 function render() { activeSection==='employees'?renderEmps():renderVnds(); updateTabCounts() }
+// Rebuilding the whole list per keystroke is wasteful — coalesce rapid input.
+let renderT;
+function debouncedRender(){ clearTimeout(renderT); renderT=setTimeout(render,150) }
 
 function docCountBadge(docs) {
   if (!docs||!docs.length) return '';
@@ -1183,7 +1178,7 @@ function panelDocsSection(docs) {
         <i class="ti ${fileIcon(d.name)} doc-icon" style="font-size:16px;color:var(--blue);flex-shrink:0"></i>
         <span class="pdoc-name" title="${esc(d.name)}" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500;margin:0 8px">${esc(d.name)}</span>
         <span class="pdoc-meta" style="font-size:11px;color:var(--text3);margin-right:6px">${fmtSize(d.size)}</span>
-        <button class="doc-btn dl" onclick="downloadDoc(${JSON.stringify(d).replace(/'/g,'\\x27')})" title="Download"><i class="ti ti-download"></i></button>
+        <button class="doc-btn dl" onclick="panelDownloadDoc(${i})" title="Download"><i class="ti ti-download"></i></button>
         <button class="doc-btn del" onclick="panelDeleteDoc(${i})" title="Delete"><i class="ti ti-trash"></i></button>
       </div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:8px 0">No documents attached — edit to add files.</div>`}`;
 }
@@ -1194,7 +1189,7 @@ function renderEmps() {
   if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-users-off"></i><p>No employees found</p><button class="btn primary icon" onclick="openAdd()" title="Add employee" aria-label="Add employee"><i class="ti ti-plus"></i></button></div>`;return}
   if(activeView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((e,i)=>`
-      <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openEmpPanel('${e.id}')" tabindex="0" role="button" aria-label="${esc(e.first)} ${esc(e.last)}">
+      <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openEmpPanel(${jsArg(e.id)})" tabindex="0" role="button" aria-label="${esc(e.first)} ${esc(e.last)}">
         <div class="ctop">${avHtml(e)}<div style="min-width:0"><div class="cname">${esc(e.first)} ${esc(e.last)}</div><div class="crole">${esc(e.role)||'—'}</div><div class="emp-id">${esc(e.id)||''}</div></div></div>
         <div class="cmeta">
           <div class="cmr"><i class="ti ti-map-pin"></i><span>${esc(e.loc)||'—'}</span></div>
@@ -1207,14 +1202,14 @@ function renderEmps() {
   } else {
     el.innerHTML=`<div class="tbl-wrap"><table><thead><tr>
       ${[['last','Name'],['id','ID'],['role','Role'],['dept','Department'],['loc','Location'],['start','Start'],['','']].map(([col,lbl])=>col?`<th onclick="sortE('${col}')" class="${eSortCol===col?'sorted':''}">${lbl} <i class="ti ti-chevron-${eSortCol===col&&eSortDir<0?'up':'down'} si"></i></th>`:`<th style="width:60px"></th>`).join('')}
-    </tr></thead><tbody>${list.map(e=>`<tr onclick="openEmpPanel('${e.id}')">
+    </tr></thead><tbody>${list.map(e=>`<tr onclick="openEmpPanel(${jsArg(e.id)})">
       <td><div style="display:flex;align-items:center;gap:9px">${avHtml(e,30,10)}${esc(e.first)} ${esc(e.last)}${e.docs&&e.docs.length?` <i class="ti ti-paperclip" style="font-size:11px;color:var(--text3)" title="${e.docs.length} document(s)"></i>`:''}</div></td>
       <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${esc(e.id)||'—'}</td>
       <td style="color:var(--text2)">${esc(e.role)||'—'}</td>
       <td>${dBadge(e.dept)}</td>
       <td style="color:var(--text2)">${esc(e.loc)||'—'}</td>
       <td style="color:var(--text2)">${esc(e.start)||'—'}</td>
-      <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openEmpEdit('${e.id}')"><i class="ti ti-edit"></i></button></td>
+      <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openEmpEdit(${jsArg(e.id)})"><i class="ti ti-edit"></i></button></td>
     </tr>`).join('')}</tbody></table></div>`;
   }
 }
@@ -1225,7 +1220,7 @@ function renderVnds() {
   if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-building-off"></i><p>No vendors found</p><button class="btn primary icon" onclick="openAdd()" title="Add vendor" aria-label="Add vendor"><i class="ti ti-plus"></i></button></div>`;return}
   if(activeVView==='grid'){
     el.innerHTML=`<div class="grid">${list.map((v,i)=>`
-      <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openVndPanel('${v.id}')" tabindex="0" role="button">
+      <div class="ecard" style="animation-delay:${Math.min(i,10)*32}ms" onclick="openVndPanel(${jsArg(v.id)})" tabindex="0" role="button">
         <div class="ctop">
           <div style="width:46px;height:46px;border-radius:10px;background:var(--blue-lt);display:grid;place-items:center;flex-shrink:0"><i class="ti ti-building-store" style="font-size:20px;color:var(--blue)"></i></div>
           <div style="min-width:0"><div class="cname">${esc(v.company)}</div><div class="crole">${esc(v.contact)||'—'}</div><div class="emp-id">${esc(v.id)||''}</div></div>
@@ -1241,14 +1236,14 @@ function renderVnds() {
   } else {
     el.innerHTML=`<div class="tbl-wrap"><table><thead><tr>
       ${[['company','Company'],['id','ID'],['contact','Contact'],['category','Category'],['status','Status'],['contractStart','Since'],['','']].map(([col,lbl])=>col?`<th onclick="sortV('${col}')" class="${vSortCol===col?'sorted':''}">${lbl} <i class="ti ti-chevron-${vSortCol===col&&vSortDir<0?'up':'down'} si"></i></th>`:`<th style="width:60px"></th>`).join('')}
-    </tr></thead><tbody>${list.map(v=>`<tr onclick="openVndPanel('${v.id}')">
+    </tr></thead><tbody>${list.map(v=>`<tr onclick="openVndPanel(${jsArg(v.id)})">
       <td style="font-weight:600">${esc(v.company)}${v.docs&&v.docs.length?` <i class="ti ti-paperclip" style="font-size:11px;color:var(--text3)" title="${v.docs.length} document(s)"></i>`:''}</td>
       <td style="color:var(--blue);font-family:'Courier New',monospace;font-size:11px;font-weight:700">${esc(v.id)||'—'}</td>
       <td style="color:var(--text2)">${esc(v.contact)||'—'}</td>
       <td>${cBadge(v.category)}</td>
       <td>${sBadge(v.status)}</td>
       <td style="color:var(--text2)">${esc(v.contractStart)||'—'}</td>
-      <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openVndEdit('${v.id}')"><i class="ti ti-edit"></i></button></td>
+      <td><button class="btn" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();openVndEdit(${jsArg(v.id)})"><i class="ti ti-edit"></i></button></td>
     </tr>`).join('')}</tbody></table></div>`;
   }
 }
@@ -1271,6 +1266,15 @@ async function uploadDoc(prefix, id, file) {
   if(!r.ok){const e=await r.json();throw new Error(e.message||'HTTP '+r.status)}
   const sha = (await r.json()).content.sha;
   return {name:file.name, path, sha, size:file.size, mimeType:file.type, uploadedAt:new Date().toISOString().slice(0,10)};
+}
+
+// Apply the modal's queued doc changes for one record: delete the files marked
+// for removal, upload the pending ones, and return the record's final docs array.
+async function reconcileDocs(prefix, id, currentDocs) {
+  for(const doc of docsToDelete){try{await deleteDocFile(doc)}catch(e){console.warn('Doc delete:',e)}}
+  const docs=(currentDocs||[]).filter(d=>!docsToDelete.find(r=>r.path===d.path));
+  for(const f of docsPending){try{docs.push(await uploadDoc(prefix,id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
+  return docs;
 }
 
 // Delete a file from GitHub
@@ -1297,18 +1301,27 @@ async function downloadDoc(doc) {
   } catch(e){toast('✗ Download failed: '+e.message)}
 }
 
+// Resolve the record currently shown in the detail panel.
+const panelRecord = () => (panelType==='emp'?employees:vendors).find(r=>r.id===panelId);
+
+// Download a doc from the panel by index (avoids serialising doc metadata into
+// an inline handler, which both broke on double quotes and allowed injection).
+function panelDownloadDoc(idx) {
+  const doc = panelRecord()?.docs?.[idx];
+  if(doc) downloadDoc(doc);
+}
+
 // Delete a doc from the panel (modifies record in-place and saves)
 async function panelDeleteDoc(idx) {
-  const arr = panelType==='emp'?employees:vendors;
-  const rec = arr.find(r=>r.id===panelId); if(!rec||!rec.docs||!rec.docs[idx]) return;
+  const rec = panelRecord(); if(!rec||!rec.docs||!rec.docs[idx]) return;
   const doc = rec.docs[idx];
   if(!confirm(`Delete "${doc.name}"?`)) return;
   toast('Deleting…');
   try {
     await deleteDocFile(doc);
     rec.docs.splice(idx,1);
-    if(panelType==='emp'){await saveEmps(`Remove doc from ${rec.first} ${rec.last}`);openEmpPanel(panelId);}
-    else{await saveVnds(`Remove doc from ${rec.company}`);openVndPanel(panelId);}
+    if(panelType==='emp'){await saveEmps();openEmpPanel(panelId);}
+    else{await saveVnds();openVndPanel(panelId);}
   } catch(e){toast('✗ Delete failed: '+e.message)}
 }
 
@@ -1324,7 +1337,7 @@ function renderModalDocs(section) {
   const el = document.getElementById(listId); if(!el) return;
   const existing = getModalDocs().filter(d=>!docsToDelete.find(r=>r.path===d.path));
   const rows = [
-    ...existing.map((d,i)=>`<div class="doc-item"><i class="ti ${fileIcon(d.name)} doc-icon"></i><span class="doc-name" title="${esc(d.name)}">${esc(d.name)}</span><span class="doc-meta">${fmtSize(d.size)}</span><button class="doc-btn del" onclick="removeExistingDoc('${esc(d.path)}','${section}')" title="Remove"><i class="ti ti-x"></i></button></div>`),
+    ...existing.map((d,i)=>`<div class="doc-item"><i class="ti ${fileIcon(d.name)} doc-icon"></i><span class="doc-name" title="${esc(d.name)}">${esc(d.name)}</span><span class="doc-meta">${fmtSize(d.size)}</span><button class="doc-btn del" onclick="removeExistingDoc(${i},'${section}')" title="Remove"><i class="ti ti-x"></i></button></div>`),
     ...docsPending.map((f,i)=>`<div class="doc-item pending"><i class="ti ${fileIcon(f.name)} doc-icon"></i><span class="doc-name" title="${esc(f.name)}">${esc(f.name)}</span><span class="doc-meta" style="color:var(--blue)">${fmtSize(f.size)} · pending</span><button class="doc-btn del" onclick="removePendingDoc(${i},'${section}')" title="Remove"><i class="ti ti-x"></i></button></div>`)
   ];
   el.innerHTML = rows.length ? rows.join('') : `<div class="doc-empty">No documents attached</div>`;
@@ -1340,11 +1353,10 @@ function handleDocs(e, section) {
   renderModalDocs(section);
 }
 
-function removeExistingDoc(path, section) {
-  const arr=activeSection==='employees'?employees:vendors;
-  const key=activeSection==='employees'?editEmpId:editVndId;
-  const rec=arr.find(r=>r.id===key);
-  const doc=rec?.docs?.find(d=>d.path===path);
+// `idx` indexes the not-yet-removed docs exactly as renderModalDocs listed them.
+function removeExistingDoc(idx, section) {
+  const existing=getModalDocs().filter(d=>!docsToDelete.find(r=>r.path===d.path));
+  const doc=existing[idx];
   if(doc) docsToDelete.push(doc);
   renderModalDocs(section);
 }
@@ -1392,13 +1404,13 @@ function openEmpPanel(id) {
     ${e.idCardGenerated?`<div class="drow"><i class="ti ti-id-badge-2" style="color:var(--blue)"></i><span class="dk">ID Card</span><span class="dv" style="color:var(--blue);font-size:12px">Generated${e.idCardGeneratedAt?' · '+esc(e.idCardGeneratedAt):''}</span></div>`:''}`:''}
     ${panelDocsSection(docs)}
     <div class="panel-actions">
-      <button class="btn" onclick="openEmpEdit('${e.id}')" title="Edit"${revoked?' disabled style="opacity:.4"':''}><i class="ti ti-edit"></i></button>
-      <button class="btn" onclick="genContract('${e.id}')" title="Job Contract"><i class="ti ti-file-text"></i></button>
-      <button class="btn" onclick="genIdCard('${e.id}')" title="ID Card"><i class="ti ti-id-badge-2"></i></button>
+      <button class="btn" onclick="openEmpEdit(${jsArg(e.id)})" title="Edit"${revoked?' disabled style="opacity:.4"':''}><i class="ti ti-edit"></i></button>
+      <button class="btn" onclick="genContract(${jsArg(e.id)})" title="Job Contract"><i class="ti ti-file-text"></i></button>
+      <button class="btn" onclick="genIdCard(${jsArg(e.id)})" title="ID Card"><i class="ti ti-id-badge-2"></i></button>
       ${revoked
         ?`<button class="btn" style="opacity:.4;color:var(--red)" disabled title="Revoked"><i class="ti ti-ban"></i></button>`
-        :`<button class="btn danger" onclick="revokeEmp('${e.id}')" title="Revoke"><i class="ti ti-ban"></i></button>`}
-      <button class="btn danger" onclick="deleteEmp('${e.id}')" title="Remove"><i class="ti ti-trash"></i></button>
+        :`<button class="btn danger" onclick="revokeEmp(${jsArg(e.id)})" title="Revoke"><i class="ti ti-ban"></i></button>`}
+      <button class="btn danger" onclick="deleteEmp(${jsArg(e.id)})" title="Remove"><i class="ti ti-trash"></i></button>
     </div>`;
   showPanel();
 }
@@ -1430,9 +1442,9 @@ function openVndPanel(id) {
     ${v.notes?`<div class="slbl">Notes</div><div style="font-size:13px;color:var(--text2);line-height:1.65;padding:8px 0">${esc(v.notes)}</div>`:''}
     ${panelDocsSection(docs)}
     <div class="panel-actions">
-      <button class="btn" onclick="openVndEdit('${v.id}')" title="Edit"><i class="ti ti-edit"></i></button>
-      <button class="btn" onclick="genContract('VND:${v.id}')" title="Service Agreement"><i class="ti ti-file-text"></i></button>
-      <button class="btn danger" onclick="deleteVnd('${v.id}')" title="Remove"><i class="ti ti-trash"></i></button>
+      <button class="btn" onclick="openVndEdit(${jsArg(v.id)})" title="Edit"><i class="ti ti-edit"></i></button>
+      <button class="btn" onclick="genContract(${jsArg('VND:'+v.id)})" title="Service Agreement"><i class="ti ti-file-text"></i></button>
+      <button class="btn danger" onclick="deleteVnd(${jsArg(v.id)})" title="Remove"><i class="ti ti-trash"></i></button>
     </div>`;
   showPanel();
 }
@@ -1501,26 +1513,20 @@ async function saveEmp(){
   const first=document.getElementById('f-first').value.trim(), last=document.getElementById('f-last').value.trim();
   if(!first||!last){toast('First and last name are required');return}
   const id=editEmpId||genEmpId();
-  // Delete removed docs
-  for(const doc of docsToDelete){try{await deleteDocFile(doc)}catch(e){console.warn('Doc delete:',e)}}
-  // Keep existing docs minus removed
-  const existingDocs=(editEmpId?(employees.find(e=>e.id===editEmpId)?.docs||[]):[]).filter(d=>!docsToDelete.find(r=>r.path===d.path));
-  // Upload pending docs
-  const newDocs=[];
-  for(const f of docsPending){try{newDocs.push(await uploadDoc('emp',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
-  const prev=editEmpId?employees.find(e=>e.id===editEmpId):{};
-  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,premise:document.getElementById('f-premise').value.trim(),address:document.getElementById('f-address').value.trim(),city:document.getElementById('f-city').value.trim(),pin:document.getElementById('f-pin').value.trim(),country:document.getElementById('f-country').value,idProofType:document.getElementById('f-idtype').value,idProofNum:document.getElementById('f-idnum').value.trim(),ctc:document.getElementById('f-ctc').value.trim(),tenure:document.getElementById('f-tenure').value.trim(),blood:document.getElementById('f-blood').value,contractEnd:prev.contractEnd||'',revokedAt:prev.revokedAt||'',idCardGenerated:prev.idCardGenerated||false,idCardGeneratedAt:prev.idCardGeneratedAt||'',photo:pendingPhoto||null,docs:[...existingDocs,...newDocs]};
+  const prev=(editEmpId?employees.find(e=>e.id===editEmpId):null)||{};
+  const docs=await reconcileDocs('emp',id,prev.docs);
+  const data={first,last,role:document.getElementById('f-role').value.trim()||'Employee',dept:document.getElementById('f-dept').value,loc:document.getElementById('f-loc').value.trim()||'Remote',email:document.getElementById('f-email').value.trim(),phone:document.getElementById('f-phone').value.trim(),start:document.getElementById('f-date').value||new Date().toISOString().slice(0,10),status:document.getElementById('f-status').value,premise:document.getElementById('f-premise').value.trim(),address:document.getElementById('f-address').value.trim(),city:document.getElementById('f-city').value.trim(),pin:document.getElementById('f-pin').value.trim(),country:document.getElementById('f-country').value,idProofType:document.getElementById('f-idtype').value,idProofNum:document.getElementById('f-idnum').value.trim(),ctc:document.getElementById('f-ctc').value.trim(),tenure:document.getElementById('f-tenure').value.trim(),blood:document.getElementById('f-blood').value,contractEnd:prev.contractEnd||'',revokedAt:prev.revokedAt||'',idCardGenerated:prev.idCardGenerated||false,idCardGeneratedAt:prev.idCardGeneratedAt||'',photo:pendingPhoto||null,docs};
   if(editEmpId) Object.assign(employees.find(e=>e.id===editEmpId),data);
   else employees.push({id,...data});
   closeModal('emp-modal'); render();
-  await saveEmps(editEmpId?`Update ${first} ${last}`:`Add ${first} ${last}`);
+  await saveEmps();
 }
 async function deleteEmp(id){
   const e=employees.find(x=>x.id===id); if(!e||!confirm(`Remove ${e.first} ${e.last}?`)) return;
   // Delete all attached docs
   for(const doc of(e.docs||[])){try{await deleteDocFile(doc)}catch(err){console.warn(err)}}
   employees=employees.filter(x=>x.id!==id); closePanel(); render();
-  await saveEmps(`Remove ${e.first} ${e.last}`);
+  await saveEmps();
 }
 
 // ── VENDOR MODAL ──────────────────────────────────────────────────────────────
@@ -1548,21 +1554,18 @@ function openVndEdit(id){
 async function saveVendor(){
   const company=document.getElementById('v-company').value.trim(); if(!company){toast('Company name is required');return}
   const id=editVndId||genVndId();
-  for(const doc of docsToDelete){try{await deleteDocFile(doc)}catch(e){console.warn('Doc delete:',e)}}
-  const existingDocs=(editVndId?(vendors.find(v=>v.id===editVndId)?.docs||[]):[]).filter(d=>!docsToDelete.find(r=>r.path===d.path));
-  const newDocs=[];
-  for(const f of docsPending){try{newDocs.push(await uploadDoc('vnd',id,f))}catch(e){toast('⚠ Could not upload '+f.name)}}
-  const data={company,contact:document.getElementById('v-contact').value.trim(),email:document.getElementById('v-email').value.trim(),phone:document.getElementById('v-phone').value.trim(),category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,contractStart:document.getElementById('v-start').value||new Date().toISOString().slice(0,10),premise:document.getElementById('v-premise').value.trim(),country:document.getElementById('v-country').value,address:document.getElementById('v-address').value.trim(),city:document.getElementById('v-city').value.trim(),pin:document.getElementById('v-pin').value.trim(),notes:document.getElementById('v-notes').value.trim(),docs:[...existingDocs,...newDocs]};
+  const docs=await reconcileDocs('vnd',id,editVndId?vendors.find(v=>v.id===editVndId)?.docs:[]);
+  const data={company,contact:document.getElementById('v-contact').value.trim(),email:document.getElementById('v-email').value.trim(),phone:document.getElementById('v-phone').value.trim(),category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,contractStart:document.getElementById('v-start').value||new Date().toISOString().slice(0,10),premise:document.getElementById('v-premise').value.trim(),country:document.getElementById('v-country').value,address:document.getElementById('v-address').value.trim(),city:document.getElementById('v-city').value.trim(),pin:document.getElementById('v-pin').value.trim(),notes:document.getElementById('v-notes').value.trim(),docs};
   if(editVndId) Object.assign(vendors.find(v=>v.id===editVndId),data);
   else vendors.push({id,...data});
   closeModal('vnd-modal'); render();
-  await saveVnds(editVndId?`Update vendor ${company}`:`Add vendor ${company}`);
+  await saveVnds();
 }
 async function deleteVnd(id){
   const v=vendors.find(x=>x.id===id); if(!v||!confirm(`Remove ${v.company}?`)) return;
   for(const doc of(v.docs||[])){try{await deleteDocFile(doc)}catch(err){console.warn(err)}}
   vendors=vendors.filter(x=>x.id!==id); closePanel(); render();
-  await saveVnds(`Remove vendor ${v.company}`);
+  await saveVnds();
 }
 
 const closeModal=id=>document.getElementById(id).classList.remove('on');
@@ -1594,14 +1597,14 @@ async function saveContractAndPrint() {
   if(isVnd){
     const v=vendors.find(x=>x.id===id); if(!v) return;
     v.ctc=ctc; v.tenure=tenure; v.contractEnd=contractEnd;
-    await saveVnds(`Contract for ${v.company}`);
+    await saveVnds();
     printContract({id:v.id,name:v.company,contactName:v.contact,type:'Vendor',role:v.category,dept:null,
       addr:[v.premise,v.address,v.city,v.country].filter(Boolean).join(', ')||v.loc||'—',
       email:v.email,idProofType:null,idProofNum:null,ctc,tenure,start:v.contractStart||contractStart,end:contractEnd,city:v.city});
   } else {
     const e=employees.find(x=>x.id===id); if(!e) return;
     e.ctc=ctc; e.tenure=tenure; e.contractEnd=contractEnd;
-    await saveEmps(`Contract for ${e.first} ${e.last}`);
+    await saveEmps();
     printContract({id:e.id,name:e.first+' '+e.last,contactName:null,type:'Employee',role:e.role,dept:e.dept,
       addr:[e.premise,e.address,e.city,e.country].filter(Boolean).join(', ')||e.loc||'—',
       email:e.email,idProofType:e.idProofType,idProofNum:e.idProofNum,ctc,tenure,start:e.start||contractStart,end:contractEnd,city:e.city});
@@ -1749,7 +1752,7 @@ function genIdCard(id) {
   const e=employees.find(x=>x.id===id); if(!e) return;
   showIdCardOverlay(e);
   e.idCardGenerated=true; e.idCardGeneratedAt=new Date().toISOString().slice(0,10);
-  saveEmps(`ID card generated for ${e.first} ${e.last}`);
+  saveEmps();
 }
 
 function showIdCardOverlay(e) {
@@ -1860,7 +1863,7 @@ async function revokeEmp(id) {
   if(!e||!confirm(`Revoke employment for ${e.first} ${e.last}?\n\nThe record will be locked and uneditable.`)) return;
   e.status='Revoked'; e.revokedAt=new Date().toISOString().slice(0,10);
   closePanel(); render();
-  await saveEmps(`Revoke employment: ${e.first} ${e.last}`);
+  await saveEmps();
   toast('Employment revoked — record is now locked');
 }
 
